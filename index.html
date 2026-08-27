@@ -150,36 +150,7 @@
       box-shadow: 0 8px 26px rgba(54,35,20,.055);
     }
     .user .bubble { color: #fff; background: #18120f; }
-    .action-card {
-      margin-top: 8px;
-      display: grid;
-      gap: 8px;
-      padding: 12px;
-      border-radius: 20px;
-      background: rgba(255, 250, 244, .72);
-      border: 1px solid rgba(28,20,16,.1);
-      width: min(410px, 100%);
-    }
-    .action-row { display: flex; justify-content: space-between; gap: 16px; color: #61574f; font-size: 13px; }
-    .action-row b { color: var(--ink); font-weight: 680; }
-    .quick {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding: 0 clamp(16px, 2vw, 24px) 12px;
-    }
-    .quick button {
-      white-space: nowrap;
-      cursor: pointer;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: rgba(255,255,255,.54);
-      color: #50463e;
-      padding: 9px 12px;
-      font-size: 13px;
-    }
+
     .composer {
       position: relative;
       z-index: 1;
@@ -302,20 +273,8 @@
           <div class="body">
             <div class="name">Rose Builder</div>
             <div class="bubble">Tell me what you want changed on the website assistant. I’ll edit the preview first, then the same config can be published to the live widget.</div>
-            <div class="action-card" aria-label="Live preview state">
-              <div class="action-row"><span>Assistant</span><b id="stateName">Rose</b></div>
-              <div class="action-row"><span>Accent</span><b id="stateAccent">Wildrose orange</b></div>
-              <div class="action-row"><span>Connections</span><b>Ready to connect</b></div>
-            </div>
           </div>
         </div>
-      </div>
-
-      <div class="quick" aria-label="Example commands">
-        <button type="button">Make it blue</button>
-        <button type="button">Call it Todd</button>
-        <button type="button">Connect HubSpot</button>
-        <button type="button">Make the tone more premium</button>
       </div>
 
       <form class="composer" id="commandForm">
@@ -349,8 +308,7 @@
     const input = document.getElementById('commandInput');
     const modeText = document.getElementById('modeText');
     const toast = document.getElementById('toast');
-    const stateName = document.getElementById('stateName');
-    const stateAccent = document.getElementById('stateAccent');
+
     const state = { name: 'Rose', accent: '#ff5722', accentLabel: 'Wildrose orange', description: 'AI intake assistant' };
     const colors = {
       blue: ['#2563eb', 'blue'], cobalt: ['#2563eb', 'blue'], navy: ['#1d4ed8', 'navy'],
@@ -391,8 +349,6 @@
       document.querySelectorAll('#rose-workground-widget .wr-title h3').forEach(el => el.textContent = state.name);
       document.querySelectorAll('#rose-workground-widget .wr-title small').forEach(el => el.textContent = state.description);
       document.querySelectorAll('#rose-workground-widget .wr-input').forEach(el => el.placeholder = `Ask ${state.name}…`);
-      stateName.textContent = state.name;
-      stateAccent.textContent = state.accentLabel;
       modeText.textContent = 'Preview updated';
       toast.classList.add('show');
       clearTimeout(window.__roseToast);
@@ -437,7 +393,6 @@
     });
     input.addEventListener('input', () => { input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 128) + 'px'; });
     input.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); } });
-    document.querySelectorAll('.quick button').forEach(button => button.addEventListener('click', () => { input.value = button.textContent; form.requestSubmit(); }));
     window.addEventListener('load', () => setTimeout(applyPreview, 650));
   </script>
 </body>
