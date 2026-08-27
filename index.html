@@ -11,9 +11,7 @@
       --muted: #7f746a;
       --line: rgba(48, 35, 27, .14);
       --paper: #f7f1e8;
-      --card: rgba(255, 252, 246, .76);
       --orange: #ff5722;
-      --orange-soft: #ffd7c7;
       --shadow: 0 30px 90px rgba(58, 39, 23, .18);
     }
     * { box-sizing: border-box; }
@@ -38,23 +36,23 @@
     .palette span { display: inline-flex; align-items: center; gap: 10px; }
     .palette i { width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(135deg, var(--orange), #ffc2a9); }
     .palette b { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--orange); }
-    .demo-wrap { align-self: center; position: relative; z-index: 2; width: min(760px, 100%); justify-self: center; }
-    .demo-label { color: var(--muted); letter-spacing: .14em; text-transform: uppercase; font-size: 11px; font-weight: 800; margin: 0 0 12px 14px; display: flex; align-items: center; gap: 8px; }
-    .demo-label i { width: 7px; height: 7px; border-radius: 50%; background: var(--orange); }
-    .browser { background: #14110f; border: 1px solid rgba(32,24,20,.18); border-radius: 28px; overflow: hidden; box-shadow: var(--shadow); min-height: min(720px, 76vh); }
-    .browser-top { height: 46px; display: flex; align-items: center; gap: 8px; padding: 0 16px; border-bottom: 1px solid rgba(255,255,255,.08); background: linear-gradient(180deg, #211a16, #14110f); color: rgba(255,255,255,.58); font-size: 12px; }
-    .browser-top i { width: 10px; height: 10px; border-radius: 50%; background: #ff6b52; box-shadow: 18px 0 #f4bf4f, 36px 0 #58c26d; margin-right: 44px; }
-    .browser-top span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-    iframe { display: block; width: 100%; height: min(674px, calc(76vh - 46px)); border: 0; background: #fff; }
+    .rose-wrap { align-self: center; position: relative; z-index: 2; width: min(520px, 100%); justify-self: center; }
+    .rose-label { color: var(--muted); letter-spacing: .14em; text-transform: uppercase; font-size: 11px; font-weight: 800; margin: 0 0 12px 14px; display: flex; align-items: center; gap: 8px; }
+    .rose-label i { width: 7px; height: 7px; border-radius: 50%; background: var(--orange); }
+    .rose-stage { min-height: min(620px, 76vh); display: grid; place-items: center; position: relative; border-radius: 34px; background:
+      radial-gradient(circle at 50% 24%, rgba(255, 87, 34, .18), transparent 34%),
+      linear-gradient(145deg, #0b0908, #17110e 58%, #090807);
+      border: 1px solid rgba(32,24,20,.18); box-shadow: var(--shadow); padding: 34px; overflow: hidden; }
+    .rose-stage:before { content: ""; position: absolute; inset: 10%; border-radius: 999px; background: rgba(255,87,34,.18); filter: blur(78px); opacity: .8; }
+    #rose-workground-widget { position: relative; width: min(430px, 100%); min-height: 560px; z-index: 1; }
     .note { margin: 14px 14px 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
     @media (max-width: 900px) {
       .workspace { grid-template-columns: 1fr; padding: 18px; }
       header { align-items: flex-start; flex-direction: column; }
       nav { width: 100%; overflow-x: auto; justify-content: flex-start; }
       .controls { align-self: start; }
-      .demo-wrap { width: 100%; }
-      .browser { min-height: 640px; }
-      iframe { height: 594px; }
+      .rose-wrap { width: 100%; }
+      .rose-stage { min-height: 640px; padding: 20px; }
     }
   </style>
 </head>
@@ -68,13 +66,13 @@
         <button>Connections</button>
         <button>Workflows</button>
       </nav>
-      <span class="status"><i></i>Demo ready</span>
+      <span class="status"><i></i>Workground ready</span>
     </header>
 
     <section class="controls" aria-label="Rose setup controls">
       <p class="kicker">Appearance</p>
       <h1>Set the tone.</h1>
-      <span class="lede">Choose the accent and preview Rose against a real client demo — not another Rose placeholder.</span>
+      <span class="lede">Make changes on the left and see the exact Rose widget surface that will sit on the live website.</span>
       <div class="palette" aria-label="Rose colour themes">
         <button><span><i></i>Wildrose</span><b>Selected</b></button>
         <button><span><i style="background:linear-gradient(135deg,#314f3d,#a4c48a)"></i>Moss</span></button>
@@ -85,14 +83,22 @@
       </div>
     </section>
 
-    <section class="demo-wrap" aria-label="Real demo preview">
-      <p class="demo-label"><i></i>Real demo</p>
-      <div class="browser">
-        <div class="browser-top"><i></i><span>guest-app-brown-three.vercel.app</span></div>
-        <iframe title="Lost Lake real demo" src="https://guest-app-brown-three.vercel.app/"></iframe>
+    <section class="rose-wrap" aria-label="Live Rose workground preview">
+      <p class="rose-label"><i></i>Live Rose workground</p>
+      <div class="rose-stage">
+        <div id="rose-workground-widget" aria-label="Rose widget workground"></div>
       </div>
-      <p class="note">Right side now shows the real installed demo site. The Rose widget preview and fallback card are removed.</p>
+      <p class="note">Right side is the real Rose widget code mounted exactly like it would be on the live website.</p>
     </section>
   </main>
+
+  <script
+    src="/rose-dashboard-preview/wildrose-widget-sandbox.js?v=workground-rose-1"
+    data-api-base="https://wildrose-widget.wildeautomations.com"
+    data-title="Rose"
+    data-accent="#ff5722"
+    data-mount="#rose-workground-widget"
+    data-inline="true"
+  ></script>
 </body>
 </html>
