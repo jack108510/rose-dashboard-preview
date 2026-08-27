@@ -3,372 +3,335 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#f5efe6" />
+  <meta name="theme-color" content="#f4eee5" />
   <title>Rose Workground — Wildrose Automations</title>
   <style>
     :root {
-      --paper: #f5efe6;
-      --paper-2: #fffaf2;
-      --ink: #16110e;
-      --muted: #786e64;
-      --line: rgba(32, 24, 20, .12);
-      --line-strong: rgba(32, 24, 20, .2);
+      --paper: #f4eee5;
+      --panel: rgba(255, 252, 246, .82);
+      --panel-solid: #fffaf4;
+      --ink: #17110e;
+      --muted: #7a7067;
+      --soft: #b3a79c;
+      --line: rgba(28, 20, 16, .12);
+      --line-strong: rgba(28, 20, 16, .2);
       --accent: #ff5722;
-      --accent-soft: #ffe0d2;
-      --green: #22a06b;
-      --shadow: 0 24px 70px rgba(60, 39, 22, .16);
-      --small: 12px;
+      --blue: #2563eb;
+      --green: #2f6b45;
+      --shadow: 0 28px 90px rgba(54, 35, 20, .14);
     }
     * { box-sizing: border-box; }
     html, body { margin: 0; min-height: 100%; }
     body {
       min-height: 100vh;
       background:
-        radial-gradient(circle at 82% 14%, rgba(255, 87, 34, .14), transparent 32%),
-        radial-gradient(circle at 16% 82%, rgba(32, 24, 20, .08), transparent 34%),
-        var(--paper);
+        radial-gradient(circle at 78% 20%, rgba(255, 87, 34, .11), transparent 32%),
+        radial-gradient(circle at 18% 74%, rgba(35, 25, 19, .07), transparent 36%),
+        linear-gradient(135deg, #f7f1e8, var(--paper));
       color: var(--ink);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       overflow-x: hidden;
     }
-    button, textarea, input { font: inherit; }
-    .shell {
+    button, textarea { font: inherit; }
+    .app {
       min-height: 100vh;
       display: grid;
-      grid-template-rows: auto 1fr;
-      padding: clamp(18px, 3vw, 36px);
-      gap: clamp(18px, 2vw, 28px);
-    }
-    .topbar {
-      height: 54px;
-      display: flex;
+      grid-template-columns: minmax(420px, 48vw) minmax(390px, 1fr);
+      gap: clamp(28px, 5vw, 86px);
+      padding: clamp(18px, 3vw, 42px);
       align-items: center;
-      justify-content: space-between;
-      gap: 18px;
-      position: relative;
-      z-index: 3;
     }
-    .brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 11px;
-      color: var(--ink);
-      font-weight: 720;
-      letter-spacing: -.02em;
-    }
-    .brand-mark {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle at 35% 26%, #fff, #ffb394 28%, var(--accent) 68%, #a92c10);
-      box-shadow: 0 0 0 8px rgba(255, 87, 34, .08), 0 10px 28px rgba(255, 87, 34, .22);
-    }
-    .pillbar {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: rgba(255, 252, 246, .62);
-      backdrop-filter: blur(18px);
-      box-shadow: 0 10px 28px rgba(60, 39, 22, .06);
-    }
-    .pillbar button {
-      border: 0;
-      border-radius: 999px;
-      padding: 9px 13px;
-      background: transparent;
-      color: var(--muted);
-      font-size: 11px;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      font-weight: 760;
-    }
-    .pillbar .active { background: #17110e; color: #fff; }
-    .live {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: #5e554d;
-      font-size: 11px;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      font-weight: 760;
-    }
-    .live i { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 7px rgba(34,160,107,.1); }
-    .workbench {
-      min-height: 0;
-      display: grid;
-      grid-template-columns: minmax(410px, .95fr) minmax(390px, .82fr);
-      gap: clamp(24px, 4vw, 64px);
-      align-items: center;
-      position: relative;
-    }
-    .left {
-      align-self: stretch;
-      display: grid;
-      grid-template-rows: auto 1fr;
-      gap: 22px;
-      min-height: 0;
-      max-width: 760px;
-    }
-    .hero { padding-top: clamp(8px, 2vw, 34px); }
-    .eyebrow {
-      color: var(--accent);
-      margin: 0 0 18px;
-      font-size: 11px;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      font-weight: 850;
-    }
-    h1 {
-      margin: 0;
-      max-width: 720px;
-      font-family: ui-serif, Georgia, "Times New Roman", serif;
-      font-size: clamp(48px, 6vw, 88px);
-      line-height: .91;
-      letter-spacing: -.07em;
-      font-weight: 520;
-    }
-    .sub {
-      margin: 20px 0 0;
-      max-width: 520px;
-      color: var(--muted);
-      font-size: clamp(15px, 1.25vw, 18px);
-      line-height: 1.55;
-    }
-    .console {
-      min-height: 500px;
-      max-height: 58vh;
+
+    /* Left side: the product surface is the LLM. Nothing else competes with it. */
+    .llm {
+      height: min(860px, calc(100vh - clamp(36px, 6vw, 84px)));
+      min-height: 640px;
       border: 1px solid var(--line);
       border-radius: 34px;
-      background: rgba(255, 250, 242, .74);
+      background: var(--panel);
+      backdrop-filter: blur(28px) saturate(1.05);
       box-shadow: var(--shadow);
-      backdrop-filter: blur(24px);
-      overflow: hidden;
       display: grid;
-      grid-template-rows: auto 1fr auto auto;
+      grid-template-rows: auto 1fr auto;
+      overflow: hidden;
+      position: relative;
     }
-    .console-head {
-      height: 58px;
+    .llm:before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: inherit;
+      background: linear-gradient(180deg, rgba(255,255,255,.56), rgba(255,255,255,0) 38%);
+    }
+    .llm-top {
+      position: relative;
+      z-index: 1;
+      height: 68px;
+      padding: 0 18px 0 20px;
+      border-bottom: 1px solid var(--line);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      padding: 0 18px 0 20px;
-      border-bottom: 1px solid var(--line);
-      background: rgba(255,255,255,.34);
+      gap: 14px;
+      background: rgba(255, 252, 246, .46);
     }
-    .console-title { display: flex; align-items: center; gap: 10px; font-weight: 760; }
-    .console-title i { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); }
-    .console-mode { color: var(--muted); font-size: 12px; }
-    .messages {
+    .identity { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .orb {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 34% 26%, #fff 0 10%, #ffb196 18%, var(--accent) 58%, #9d2d12 100%);
+      box-shadow: 0 0 0 8px rgba(255,87,34,.08), 0 12px 28px rgba(255,87,34,.18);
+      flex: 0 0 auto;
+    }
+    .identity strong { display: block; font-size: 15px; letter-spacing: -.02em; }
+    .identity span { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+    .model-pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: #4d433b;
+      background: rgba(255,255,255,.55);
+      padding: 8px 11px;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+    }
+    .model-pill i { width: 7px; height: 7px; border-radius: 50%; background: #28a66f; }
+    .thread {
+      position: relative;
+      z-index: 1;
       overflow: auto;
-      padding: 22px;
+      padding: 28px clamp(20px, 3vw, 34px);
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 22px;
       scroll-behavior: smooth;
     }
-    .turn { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 12px; max-width: 95%; }
-    .turn.user { align-self: flex-end; grid-template-columns: minmax(0, 1fr) 30px; }
+    .turn { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 13px; max-width: 94%; }
+    .turn.user { align-self: flex-end; grid-template-columns: minmax(0, 1fr) 36px; }
     .avatar {
-      width: 30px;
-      height: 30px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       display: grid;
       place-items: center;
       font-size: 12px;
       font-weight: 800;
-      background: #17110e;
       color: #fff;
-      box-shadow: 0 8px 22px rgba(23,17,14,.14);
+      background: #18120f;
+      box-shadow: 0 10px 28px rgba(24,18,15,.12);
     }
-    .turn.assistant .avatar { background: linear-gradient(135deg, var(--accent), #ffa17c); }
-    .copy { display: grid; gap: 6px; }
-    .meta { color: #7b7168; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; font-weight: 780; }
+    .turn.assistant .avatar { background: linear-gradient(135deg, var(--accent), #ff9b77); }
+    .body { display: grid; gap: 7px; }
+    .turn.user .body { justify-items: end; }
+    .name {
+      color: #8a8077;
+      font-size: 11px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      font-weight: 780;
+    }
     .bubble {
       width: fit-content;
       max-width: 100%;
-      border-radius: 23px;
-      padding: 13px 15px;
+      border-radius: 25px;
+      padding: 15px 16px;
       font-size: 15px;
-      line-height: 1.45;
+      line-height: 1.5;
       white-space: pre-wrap;
     }
-    .assistant .bubble { background: #fffdf8; color: #2c221d; border: 1px solid rgba(32,24,20,.1); box-shadow: 0 8px 26px rgba(60,39,22,.06); }
-    .user .copy { justify-items: end; }
-    .user .bubble { background: #17110e; color: #fff; }
-    .chips {
+    .assistant .bubble {
+      color: #28201b;
+      background: rgba(255, 255, 255, .78);
+      border: 1px solid rgba(28,20,16,.09);
+      box-shadow: 0 8px 26px rgba(54,35,20,.055);
+    }
+    .user .bubble { color: #fff; background: #18120f; }
+    .action-card {
+      margin-top: 8px;
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+      border-radius: 20px;
+      background: rgba(255, 250, 244, .72);
+      border: 1px solid rgba(28,20,16,.1);
+      width: min(410px, 100%);
+    }
+    .action-row { display: flex; justify-content: space-between; gap: 16px; color: #61574f; font-size: 13px; }
+    .action-row b { color: var(--ink); font-weight: 680; }
+    .quick {
+      position: relative;
+      z-index: 1;
       display: flex;
       gap: 8px;
       overflow-x: auto;
-      padding: 0 18px 14px;
+      padding: 0 clamp(16px, 2vw, 24px) 12px;
     }
-    .chips button {
+    .quick button {
       white-space: nowrap;
+      cursor: pointer;
       border: 1px solid var(--line);
       border-radius: 999px;
-      background: rgba(255,255,255,.52);
-      color: #4a4038;
+      background: rgba(255,255,255,.54);
+      color: #50463e;
       padding: 9px 12px;
       font-size: 13px;
-      cursor: pointer;
     }
     .composer {
+      position: relative;
+      z-index: 1;
+      padding: 0 clamp(16px, 2vw, 24px) clamp(16px, 2vw, 24px);
+    }
+    .input-shell {
+      border: 1px solid var(--line-strong);
+      border-radius: 28px;
+      background: var(--panel-solid);
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 10px;
+      align-items: end;
       padding: 12px;
-      border-top: 1px solid var(--line);
-      background: rgba(255,255,255,.52);
-    }
-    .input-wrap {
-      min-height: 58px;
-      border: 1px solid rgba(32,24,20,.08);
-      border-radius: 22px;
-      background: #fffdf8;
-      display: flex;
-      align-items: center;
-      padding: 0 14px;
+      box-shadow: 0 18px 48px rgba(54,35,20,.09);
     }
     textarea {
       width: 100%;
-      min-height: 30px;
-      max-height: 118px;
+      min-height: 46px;
+      max-height: 128px;
       resize: none;
       border: 0;
       outline: 0;
       background: transparent;
       color: var(--ink);
-      padding: 14px 0;
-      line-height: 1.4;
+      padding: 11px 8px;
+      line-height: 1.42;
+      font-size: 15px;
     }
-    textarea::placeholder { color: #a59b92; }
+    textarea::placeholder { color: #a39a91; }
     .send {
-      width: 58px;
-      height: 58px;
+      width: 48px;
+      height: 48px;
       border: 0;
-      border-radius: 22px;
-      background: #17110e;
+      border-radius: 18px;
+      background: var(--ink);
       color: #fff;
-      font-size: 24px;
+      font-size: 22px;
       cursor: pointer;
-      box-shadow: 0 14px 34px rgba(23,17,14,.2);
+      box-shadow: 0 12px 30px rgba(24,18,15,.22);
     }
-    .right {
-      align-self: stretch;
+    .hint {
+      padding: 10px 9px 0;
+      color: var(--soft);
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .preview {
+      min-height: 620px;
       display: grid;
       place-items: center;
       position: relative;
-      min-height: 620px;
     }
-    .right:before {
+    .preview:before {
       content: "";
       position: absolute;
-      width: min(420px, 80%);
-      height: min(420px, 80%);
+      width: min(460px, 80%);
+      height: min(460px, 80%);
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,87,34,.13), transparent 70%);
+      background: radial-gradient(circle, rgba(255,87,34,.12), transparent 68%);
       filter: blur(18px);
-      transform: translateY(22px);
+      transform: translateY(20px);
+      pointer-events: none;
     }
-    .preview-shell {
+    .widget-slot {
+      width: min(430px, 100%);
+      min-height: 560px;
       position: relative;
-      width: min(440px, 100%);
-      min-height: 580px;
-      display: grid;
-      place-items: center;
+      z-index: 1;
     }
-    #rose-workground-widget { position: relative; width: min(430px, 100%); min-height: 560px; z-index: 1; }
+    #rose-workground-widget { width: 100%; min-height: 560px; position: relative; }
     .toast {
       position: fixed;
       left: 50%;
       bottom: 22px;
-      transform: translateX(-50%) translateY(18px);
+      transform: translateX(-50%) translateY(16px);
       opacity: 0;
       pointer-events: none;
       padding: 10px 14px;
       border-radius: 999px;
-      background: rgba(23,17,14,.92);
+      background: rgba(24,18,15,.92);
       color: #fff;
       font-size: 13px;
-      transition: .24s ease;
-      z-index: 10;
+      transition: .22s ease;
+      z-index: 20;
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     @media (max-width: 980px) {
-      .workbench { grid-template-columns: 1fr; align-items: start; }
-      .left { max-width: none; }
-      .console { max-height: none; min-height: 480px; }
-      .right { min-height: 610px; }
-      .topbar { height: auto; align-items: flex-start; flex-direction: column; }
-      .pillbar { max-width: 100%; overflow-x: auto; }
+      .app { grid-template-columns: 1fr; align-items: start; }
+      .llm { height: auto; min-height: 620px; }
+      .preview { min-height: 610px; }
     }
     @media (max-width: 560px) {
-      .shell { padding: 16px; }
-      h1 { font-size: 48px; }
+      .app { padding: 14px; gap: 26px; }
+      .llm { border-radius: 28px; min-height: 610px; }
+      .llm-top { height: auto; min-height: 66px; align-items: flex-start; padding: 16px; flex-direction: column; }
+      .thread { padding: 22px 16px; }
       .turn { max-width: 100%; }
-      .pillbar button { padding: 8px 10px; }
+      .model-pill { align-self: flex-start; }
     }
   </style>
 </head>
 <body>
-  <main class="shell">
-    <header class="topbar">
-      <div class="brand"><span class="brand-mark"></span><span>Rose Workground</span></div>
-      <nav class="pillbar" aria-label="Rose workspace pages">
-        <button class="active">Command</button>
-        <button>Identity</button>
-        <button>Connections</button>
-        <button>Workflows</button>
-      </nav>
-      <span class="live"><i></i>Live preview</span>
-    </header>
-
-    <section class="workbench">
-      <div class="left">
-        <section class="hero" aria-label="Rose command intro">
-          <p class="eyebrow">Internal Rose builder</p>
-          <h1>Change the agent by talking to it.</h1>
-          <p class="sub">A plain-English workspace for editing the live website assistant. Test the change here, then publish the exact same config to the installed widget.</p>
-        </section>
-
-        <section class="console" aria-label="Rose command console">
-          <div class="console-head">
-            <div class="console-title"><i></i><span>Rose command</span></div>
-            <span class="console-mode" id="modeText">Preview only</span>
-          </div>
-          <div class="messages" id="messages">
-            <div class="turn assistant">
-              <div class="avatar">R</div>
-              <div class="copy">
-                <div class="meta">Rose setup</div>
-                <div class="bubble">Tell me what to change. I’ll update the live preview first — color, name, tone, lead routing, or CRM connection.</div>
-              </div>
-            </div>
-          </div>
-          <div class="chips" aria-label="Example commands">
-            <button type="button">Make the widget blue</button>
-            <button type="button">Call the assistant Todd</button>
-            <button type="button">Connect to HubSpot</button>
-            <button type="button">Make the tone more premium</button>
-          </div>
-          <form class="composer" id="commandForm">
-            <div class="input-wrap"><textarea id="commandInput" rows="1" placeholder="Ask Rose to change something…"></textarea></div>
-            <button class="send" aria-label="Send command" type="submit">→</button>
-          </form>
-        </section>
+  <main class="app">
+    <section class="llm" aria-label="Rose LLM workbench">
+      <div class="llm-top">
+        <div class="identity">
+          <span class="orb"></span>
+          <div><strong>Rose Builder</strong><span>Natural-language config workspace</span></div>
+        </div>
+        <span class="model-pill"><i></i>Preview agent</span>
       </div>
 
-      <aside class="right" aria-label="Rose live website preview">
-        <div class="preview-shell">
-          <div id="rose-workground-widget" aria-label="Rose widget workground"></div>
+      <div class="thread" id="messages">
+        <div class="turn assistant">
+          <div class="avatar">R</div>
+          <div class="body">
+            <div class="name">Rose Builder</div>
+            <div class="bubble">Tell me what you want changed on the website assistant. I’ll edit the preview first, then the same config can be published to the live widget.</div>
+            <div class="action-card" aria-label="Live preview state">
+              <div class="action-row"><span>Assistant</span><b id="stateName">Rose</b></div>
+              <div class="action-row"><span>Accent</span><b id="stateAccent">Wildrose orange</b></div>
+              <div class="action-row"><span>Connections</span><b>Ready to connect</b></div>
+            </div>
+          </div>
         </div>
-      </aside>
+      </div>
+
+      <div class="quick" aria-label="Example commands">
+        <button type="button">Make it blue</button>
+        <button type="button">Call it Todd</button>
+        <button type="button">Connect HubSpot</button>
+        <button type="button">Make the tone more premium</button>
+      </div>
+
+      <form class="composer" id="commandForm">
+        <div class="input-shell">
+          <textarea id="commandInput" rows="1" placeholder="Message Rose Builder…"></textarea>
+          <button class="send" aria-label="Send command" type="submit">→</button>
+        </div>
+        <div class="hint"><span>Enter to send · Shift Enter for new line</span><span id="modeText">Preview only</span></div>
+      </form>
     </section>
+
+    <aside class="preview" aria-label="Live Rose website preview">
+      <div class="widget-slot">
+        <div id="rose-workground-widget" aria-label="Rose widget workground"></div>
+      </div>
+    </aside>
   </main>
   <div class="toast" id="toast">Preview updated</div>
 
@@ -386,43 +349,40 @@
     const input = document.getElementById('commandInput');
     const modeText = document.getElementById('modeText');
     const toast = document.getElementById('toast');
-    const state = { name: 'Rose', accent: '#ff5722', description: 'AI intake assistant' };
-
+    const stateName = document.getElementById('stateName');
+    const stateAccent = document.getElementById('stateAccent');
+    const state = { name: 'Rose', accent: '#ff5722', accentLabel: 'Wildrose orange', description: 'AI intake assistant' };
     const colors = {
-      blue: '#2563eb', cobalt: '#2563eb', navy: '#1d4ed8',
-      green: '#2f6b45', moss: '#2f6b45',
-      purple: '#7c3aed', plum: '#6d3a7a',
-      gold: '#c8922a', orange: '#ff5722', wildrose: '#ff5722',
-      red: '#e23b2e', pink: '#d9468f', black: '#17110e'
+      blue: ['#2563eb', 'blue'], cobalt: ['#2563eb', 'blue'], navy: ['#1d4ed8', 'navy'],
+      green: ['#2f6b45', 'moss green'], moss: ['#2f6b45', 'moss green'],
+      purple: ['#7c3aed', 'purple'], plum: ['#6d3a7a', 'plum'],
+      gold: ['#c8922a', 'gold'], orange: ['#ff5722', 'Wildrose orange'], wildrose: ['#ff5722', 'Wildrose orange'],
+      red: ['#e23b2e', 'red'], pink: ['#d9468f', 'pink'], black: ['#17110e', 'black']
     };
-
     function add(role, text) {
       const turn = document.createElement('div');
       turn.className = `turn ${role}`;
       const avatar = document.createElement('div');
       avatar.className = 'avatar';
       avatar.textContent = role === 'user' ? 'J' : 'R';
-      const copy = document.createElement('div');
-      copy.className = 'copy';
-      const meta = document.createElement('div');
-      meta.className = 'meta';
-      meta.textContent = role === 'user' ? 'You' : 'Rose setup';
+      const body = document.createElement('div');
+      body.className = 'body';
+      const name = document.createElement('div');
+      name.className = 'name';
+      name.textContent = role === 'user' ? 'You' : 'Rose Builder';
       const bubble = document.createElement('div');
       bubble.className = 'bubble';
       bubble.textContent = text;
-      copy.append(meta, bubble);
-      role === 'user' ? turn.append(copy, avatar) : turn.append(avatar, copy);
+      body.append(name, bubble);
+      role === 'user' ? turn.append(body, avatar) : turn.append(avatar, body);
       messages.appendChild(turn);
       messages.scrollTop = messages.scrollHeight;
     }
-
     function soft(hex) {
-      const clean = hex.replace('#','');
-      const n = parseInt(clean, 16);
+      const n = parseInt(hex.replace('#',''), 16);
       const mix = v => Math.round(v + (255 - v) * .55);
       return '#' + [mix((n >> 16) & 255), mix((n >> 8) & 255), mix(n & 255)].map(v => v.toString(16).padStart(2,'0')).join('');
     }
-
     function applyPreview() {
       const root = document.querySelector('#rose-workground-widget .wr-ai');
       if (!root) return setTimeout(applyPreview, 100);
@@ -431,14 +391,13 @@
       document.querySelectorAll('#rose-workground-widget .wr-title h3').forEach(el => el.textContent = state.name);
       document.querySelectorAll('#rose-workground-widget .wr-title small').forEach(el => el.textContent = state.description);
       document.querySelectorAll('#rose-workground-widget .wr-input').forEach(el => el.placeholder = `Ask ${state.name}…`);
-      const label = document.querySelector('#rose-workground-widget .wr-panel');
-      if (label) label.setAttribute('aria-label', state.name);
+      stateName.textContent = state.name;
+      stateAccent.textContent = state.accentLabel;
       modeText.textContent = 'Preview updated';
       toast.classList.add('show');
-      window.clearTimeout(window.__roseToast);
-      window.__roseToast = window.setTimeout(() => toast.classList.remove('show'), 1200);
+      clearTimeout(window.__roseToast);
+      window.__roseToast = setTimeout(() => toast.classList.remove('show'), 1100);
     }
-
     function parseName(command) {
       const patterns = [
         /(?:call|rename|name)\s+(?:the\s+)?(?:assistant|agent|widget|rose)?\s*(?:to\s+)?([a-z][a-z\s'-]{1,24})/i,
@@ -450,53 +409,35 @@
       }
       return null;
     }
-
     function run(command) {
       const c = command.toLowerCase();
-      const changed = [];
-      for (const [name, hex] of Object.entries(colors)) {
-        if (c.includes(name)) { state.accent = hex; changed.push(`accent → ${name}`); break; }
+      const changes = [];
+      for (const [name, [hex, label]] of Object.entries(colors)) {
+        if (c.includes(name)) { state.accent = hex; state.accentLabel = label; changes.push(`Accent set to ${label}.`); break; }
       }
       const newName = parseName(command);
-      if (newName && !/color|colour|crm|hubspot|connect/.test(newName.toLowerCase())) { state.name = newName; changed.push(`name → ${newName}`); }
-      if (c.includes('premium') || c.includes('luxury') || c.includes('less cheap')) { state.description = 'Premium website concierge'; changed.push('tone → premium'); }
-      if (c.includes('friendly') || c.includes('warmer')) { state.description = 'Warm website concierge'; changed.push('tone → warmer'); }
-      if (changed.length) {
-        applyPreview();
-        return `Done. ${changed.join(', ')}.\n\nThis is previewed here first; the publish step would save the same config to the live site widget.`;
-      }
-      if (c.includes('crm') || c.includes('hubspot') || c.includes('salesforce') || c.includes('pipedrive')) {
-        return 'Yes. I’d open Connections, launch the secure Composio authorization, connect the CRM, then run one test lead before marking it live.';
-      }
-      if (c.includes('calendar') || c.includes('booking')) {
-        return 'Yes. I’d connect the calendar/booking tool, define what Rose can actually confirm, then test that Rose does not invent availability.';
-      }
-      if (c.includes('lead') || c.includes('email')) {
-        return 'Send me the destination email and I’d update lead routing, submit a test lead, and only mark it live after delivery verifies.';
-      }
-      return 'Got it. I’d translate that into a concrete Rose config change, preview it here, test chat/voice/lead behavior, then publish it to the installed website.';
+      if (newName && !/color|colour|crm|hubspot|connect|tone/.test(newName.toLowerCase())) { state.name = newName; changes.push(`Assistant renamed to ${newName}.`); }
+      if (c.includes('premium') || c.includes('luxury') || c.includes('cleaner')) { state.description = 'Premium website concierge'; changes.push('Tone tightened to premium.'); }
+      if (c.includes('friendly') || c.includes('warmer')) { state.description = 'Warm website concierge'; changes.push('Tone made warmer.'); }
+      if (changes.length) { applyPreview(); return `${changes.join(' ')}\n\nPreview updated. Publishing would save this same config to the live install.`; }
+      if (c.includes('crm') || c.includes('hubspot') || c.includes('salesforce') || c.includes('pipedrive')) return 'I’d open the secure Connections flow, authorize the CRM through Composio, then run one test lead before marking it live.';
+      if (c.includes('calendar') || c.includes('booking')) return 'I’d connect the calendar/booking source, set exact confirmation boundaries, then test Rose so it never invents availability.';
+      if (c.includes('lead') || c.includes('email')) return 'Send the destination email and I’d update lead routing, submit one test lead, and verify delivery before publishing.';
+      return 'Got it. I’d turn that into a concrete Rose config change, preview it here, test chat/voice/lead behavior, then publish it to the installed website.';
     }
-
-    form.addEventListener('submit', event => {
-      event.preventDefault();
+    form.addEventListener('submit', e => {
+      e.preventDefault();
       const value = input.value.trim();
       if (!value) return;
       add('user', value);
       input.value = '';
       input.style.height = 'auto';
-      modeText.textContent = 'Thinking';
-      setTimeout(() => add('assistant', run(value)), 240);
+      modeText.textContent = 'Working';
+      setTimeout(() => add('assistant', run(value)), 220);
     });
-    input.addEventListener('input', () => {
-      input.style.height = 'auto';
-      input.style.height = Math.min(input.scrollHeight, 118) + 'px';
-    });
-    input.addEventListener('keydown', event => {
-      if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); form.requestSubmit(); }
-    });
-    document.querySelectorAll('.chips button').forEach(button => {
-      button.addEventListener('click', () => { input.value = button.textContent; form.requestSubmit(); });
-    });
+    input.addEventListener('input', () => { input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 128) + 'px'; });
+    input.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); } });
+    document.querySelectorAll('.quick button').forEach(button => button.addEventListener('click', () => { input.value = button.textContent; form.requestSubmit(); }));
     window.addEventListener('load', () => setTimeout(applyPreview, 650));
   </script>
 </body>
