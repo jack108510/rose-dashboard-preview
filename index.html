@@ -37,22 +37,16 @@
     .palette i { width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(135deg, var(--orange), #ffc2a9); }
     .palette b { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--orange); }
     .rose-wrap { align-self: center; position: relative; z-index: 2; width: min(520px, 100%); justify-self: center; }
-    .rose-label { color: var(--muted); letter-spacing: .14em; text-transform: uppercase; font-size: 11px; font-weight: 800; margin: 0 0 12px 14px; display: flex; align-items: center; gap: 8px; }
-    .rose-label i { width: 7px; height: 7px; border-radius: 50%; background: var(--orange); }
-    .rose-stage { min-height: min(620px, 76vh); display: grid; place-items: center; position: relative; border-radius: 34px; background:
-      radial-gradient(circle at 50% 24%, rgba(255, 87, 34, .18), transparent 34%),
-      linear-gradient(145deg, #0b0908, #17110e 58%, #090807);
-      border: 1px solid rgba(32,24,20,.18); box-shadow: var(--shadow); padding: 34px; overflow: hidden; }
-    .rose-stage:before { content: ""; position: absolute; inset: 10%; border-radius: 999px; background: rgba(255,87,34,.18); filter: blur(78px); opacity: .8; }
+    .rose-stage { min-height: min(620px, 76vh); display: grid; place-items: center; position: relative; border-radius: 34px; background: transparent; padding: 0; overflow: visible; }
     #rose-workground-widget { position: relative; width: min(430px, 100%); min-height: 560px; z-index: 1; }
-    .note { margin: 14px 14px 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+
     @media (max-width: 900px) {
       .workspace { grid-template-columns: 1fr; padding: 18px; }
       header { align-items: flex-start; flex-direction: column; }
       nav { width: 100%; overflow-x: auto; justify-content: flex-start; }
       .controls { align-self: start; }
       .rose-wrap { width: 100%; }
-      .rose-stage { min-height: 640px; padding: 20px; }
+      .rose-stage { min-height: 620px; }
     }
   </style>
 </head>
@@ -83,12 +77,10 @@
       </div>
     </section>
 
-    <section class="rose-wrap" aria-label="Live Rose workground preview">
-      <p class="rose-label"><i></i>Live Rose workground</p>
+    <section class="rose-wrap" aria-label="Rose workground preview">
       <div class="rose-stage">
         <div id="rose-workground-widget" aria-label="Rose widget workground"></div>
       </div>
-      <p class="note">Right side is the real Rose widget code mounted exactly like it would be on the live website.</p>
     </section>
   </main>
 
