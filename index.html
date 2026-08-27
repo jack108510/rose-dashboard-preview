@@ -3,38 +3,96 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#050505" />
-  <title>Rose — Wildrose Automations</title>
+  <meta name="theme-color" content="#f7f1e8" />
+  <title>Rose Dashboard — Wildrose Automations</title>
   <style>
-    html, body {
-      margin: 0;
-      min-height: 100%;
-      background: #050505;
-      color: #fff;
-      overflow: hidden;
+    :root {
+      --ink: #201814;
+      --muted: #7f746a;
+      --line: rgba(48, 35, 27, .14);
+      --paper: #f7f1e8;
+      --card: rgba(255, 252, 246, .76);
+      --orange: #ff5722;
+      --orange-soft: #ffd7c7;
+      --shadow: 0 30px 90px rgba(58, 39, 23, .18);
     }
-    body {
-      width: 100vw;
-      height: 100vh;
-      display: grid;
-      place-items: center;
-    }
-    #rose-hero-widget {
-      width: min(430px, calc(100vw - 32px));
-      min-height: min(560px, calc(100vh - 32px));
-      position: relative;
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: var(--paper); color: var(--ink); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    body { overflow-x: hidden; }
+    .workspace { min-height: 100vh; display: grid; grid-template-columns: minmax(340px, 42vw) minmax(420px, 1fr); gap: clamp(28px, 5vw, 76px); padding: clamp(20px, 4vw, 56px); position: relative; }
+    .workspace:before { content: ""; position: fixed; inset: -30% -20% auto auto; width: 64vw; height: 64vw; border-radius: 50%; background: radial-gradient(circle, rgba(255, 87, 34, .18), rgba(255, 87, 34, 0) 66%); pointer-events: none; }
+    header { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 18px; position: relative; z-index: 2; }
+    .brand { border: 0; background: transparent; color: var(--ink); display: inline-flex; align-items: center; gap: 10px; font-weight: 650; font-size: 18px; padding: 0; }
+    .brand i { width: 12px; height: 12px; border-radius: 50%; background: var(--orange); box-shadow: 0 0 0 8px rgba(255, 87, 34, .12); }
+    nav { display: flex; align-items: center; gap: 8px; padding: 5px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.45); backdrop-filter: blur(18px); }
+    nav button { border: 0; border-radius: 999px; padding: 10px 14px; background: transparent; color: var(--muted); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; }
+    nav button.active { background: var(--ink); color: #fff; }
+    .status { color: var(--muted); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 8px; }
+    .status i { width: 8px; height: 8px; border-radius: 50%; background: #2fbb73; }
+    .controls { align-self: center; max-width: 560px; position: relative; z-index: 2; }
+    .kicker { color: var(--orange); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; font-weight: 800; margin: 0 0 22px; }
+    h1 { font-family: ui-serif, Georgia, "Times New Roman", serif; font-size: clamp(56px, 7vw, 108px); line-height: .88; letter-spacing: -.07em; margin: 0; font-weight: 500; }
+    .lede { display: block; margin-top: 26px; max-width: 430px; color: var(--muted); font-size: 18px; line-height: 1.55; }
+    .palette { margin-top: 36px; display: grid; gap: 10px; max-width: 360px; }
+    .palette button { border: 1px solid var(--line); background: rgba(255,255,255,.48); border-radius: 18px; padding: 14px 16px; color: var(--ink); display: flex; align-items: center; justify-content: space-between; font-weight: 650; box-shadow: 0 10px 30px rgba(58,39,23,.05); }
+    .palette span { display: inline-flex; align-items: center; gap: 10px; }
+    .palette i { width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(135deg, var(--orange), #ffc2a9); }
+    .palette b { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--orange); }
+    .demo-wrap { align-self: center; position: relative; z-index: 2; width: min(760px, 100%); justify-self: center; }
+    .demo-label { color: var(--muted); letter-spacing: .14em; text-transform: uppercase; font-size: 11px; font-weight: 800; margin: 0 0 12px 14px; display: flex; align-items: center; gap: 8px; }
+    .demo-label i { width: 7px; height: 7px; border-radius: 50%; background: var(--orange); }
+    .browser { background: #14110f; border: 1px solid rgba(32,24,20,.18); border-radius: 28px; overflow: hidden; box-shadow: var(--shadow); min-height: min(720px, 76vh); }
+    .browser-top { height: 46px; display: flex; align-items: center; gap: 8px; padding: 0 16px; border-bottom: 1px solid rgba(255,255,255,.08); background: linear-gradient(180deg, #211a16, #14110f); color: rgba(255,255,255,.58); font-size: 12px; }
+    .browser-top i { width: 10px; height: 10px; border-radius: 50%; background: #ff6b52; box-shadow: 18px 0 #f4bf4f, 36px 0 #58c26d; margin-right: 44px; }
+    .browser-top span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    iframe { display: block; width: 100%; height: min(674px, calc(76vh - 46px)); border: 0; background: #fff; }
+    .note { margin: 14px 14px 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+    @media (max-width: 900px) {
+      .workspace { grid-template-columns: 1fr; padding: 18px; }
+      header { align-items: flex-start; flex-direction: column; }
+      nav { width: 100%; overflow-x: auto; justify-content: flex-start; }
+      .controls { align-self: start; }
+      .demo-wrap { width: 100%; }
+      .browser { min-height: 640px; }
+      iframe { height: 594px; }
     }
   </style>
 </head>
 <body>
-  <div id="rose-hero-widget" aria-label="Rose"></div>
-  <script
-    src="/rose-dashboard-preview/wildrose-widget-sandbox.js?v=exact-rose-1"
-    data-api-base="https://wildrose-widget.wildeautomations.com"
-    data-title="Rose"
-    data-accent="#ff5722"
-    data-mount="#rose-hero-widget"
-    data-inline="true"
-  ></script>
+  <main class="workspace">
+    <header>
+      <button class="brand" aria-label="Go to Rose appearance"><i></i>Rose</button>
+      <nav aria-label="Rose workspace pages">
+        <button class="active">Appearance</button>
+        <button>Identity</button>
+        <button>Connections</button>
+        <button>Workflows</button>
+      </nav>
+      <span class="status"><i></i>Demo ready</span>
+    </header>
+
+    <section class="controls" aria-label="Rose setup controls">
+      <p class="kicker">Appearance</p>
+      <h1>Set the tone.</h1>
+      <span class="lede">Choose the accent and preview Rose against a real client demo — not another Rose placeholder.</span>
+      <div class="palette" aria-label="Rose colour themes">
+        <button><span><i></i>Wildrose</span><b>Selected</b></button>
+        <button><span><i style="background:linear-gradient(135deg,#314f3d,#a4c48a)"></i>Moss</span></button>
+        <button><span><i style="background:linear-gradient(135deg,#264b78,#9bd1ff)"></i>Cobalt</span></button>
+        <button><span><i style="background:linear-gradient(135deg,#5b3269,#e0b4ff)"></i>Plum</span></button>
+        <button><span><i style="background:linear-gradient(135deg,#d98917,#ffe1a1)"></i>Solar</span></button>
+        <button><span><i style="background:linear-gradient(135deg,#dceeff,#7ca8bf)"></i>Ice</span></button>
+      </div>
+    </section>
+
+    <section class="demo-wrap" aria-label="Real demo preview">
+      <p class="demo-label"><i></i>Real demo</p>
+      <div class="browser">
+        <div class="browser-top"><i></i><span>guest-app-brown-three.vercel.app</span></div>
+        <iframe title="Lost Lake real demo" src="https://guest-app-brown-three.vercel.app/"></iframe>
+      </div>
+      <p class="note">Right side now shows the real installed demo site. The Rose widget preview and fallback card are removed.</p>
+    </section>
+  </main>
 </body>
 </html>
