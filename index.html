@@ -6,335 +6,56 @@
   <meta name="theme-color" content="#f6f0e8" />
   <title>Rose Workground</title>
   <style>
-    :root {
-      --paper: #f6f0e8;
-      --surface: #fbf7f0;
-      --ink: #19130f;
-      --muted: #7b7168;
-      --line: rgba(25, 19, 15, .12);
-      --line-strong: rgba(25, 19, 15, .22);
-      --accent: #ff5722;
-      --shadow: 0 28px 90px rgba(54, 35, 20, .12);
-    }
-    * { box-sizing: border-box; }
-    html, body { margin: 0; min-height: 100%; }
-    body {
-      min-height: 100vh;
-      background: var(--paper);
-      color: var(--ink);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      overflow: hidden;
-    }
-    button, textarea { font: inherit; }
-    .app {
-      width: 100vw;
-      height: 100vh;
-      display: grid;
-      grid-template-columns: minmax(460px, 52vw) minmax(390px, 1fr);
-    }
-
-    .llm {
-      height: 100vh;
-      min-width: 0;
-      background:
-        radial-gradient(circle at 18% 18%, rgba(255, 87, 34, .08), transparent 32%),
-        var(--surface);
-      border-right: 1px solid var(--line);
-      display: grid;
-      grid-template-rows: 1fr auto;
-      overflow: hidden;
-    }
-    .thread {
-      overflow: auto;
-      padding: clamp(28px, 5vw, 72px) clamp(24px, 5vw, 76px) 24px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 24px;
-      min-height: 0;
-    }
-    .empty {
-      max-width: 680px;
-      margin: 0 auto;
-      width: 100%;
-    }
-    .empty h1 {
-      margin: 0;
-      font-family: ui-serif, Georgia, "Times New Roman", serif;
-      font-size: clamp(46px, 5.7vw, 86px);
-      line-height: .94;
-      letter-spacing: -.065em;
-      font-weight: 520;
-    }
-    .turn {
-      width: min(680px, 100%);
-      margin: 0 auto;
-      display: grid;
-      gap: 8px;
-    }
-    .turn.user { justify-items: end; }
-    .role {
-      color: #8a8077;
-      font-size: 11px;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      font-weight: 780;
-    }
-    .bubble {
-      width: fit-content;
-      max-width: 100%;
-      border-radius: 20px;
-      padding: 14px 16px;
-      font-size: 15px;
-      line-height: 1.48;
-      white-space: pre-wrap;
-    }
-    .assistant .bubble {
-      background: rgba(255,255,255,.66);
-      border: 1px solid rgba(25,19,15,.09);
-      color: #2c231d;
-    }
-    .user .bubble { background: #19130f; color: white; }
-
-    .composer-wrap {
-      padding: 0 clamp(18px, 4vw, 54px) clamp(18px, 3vw, 34px);
-    }
-    .composer {
-      width: 100%;
-      max-width: 820px;
-      margin: 0 auto;
-      border: 1px solid var(--line-strong);
-      border-radius: 24px;
-      background: #fffaf3;
-      box-shadow: 0 18px 55px rgba(54, 35, 20, .13);
-      overflow: hidden;
-    }
-    .composer textarea {
-      width: 100%;
-      min-height: 76px;
-      max-height: 180px;
-      resize: none;
-      border: 0;
-      outline: 0;
-      background: transparent;
-      color: var(--ink);
-      padding: 20px 20px 10px;
-      line-height: 1.45;
-      font-size: 16px;
-      display: block;
-    }
-    .composer textarea::placeholder { color: #8d837a; }
-    .bar {
-      height: 52px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 0 12px 12px;
-    }
-    .bar-left, .bar-right { display: flex; align-items: center; gap: 8px; min-width: 0; }
-    .icon, .tool, .model, .send {
-      border: 1px solid var(--line);
-      background: transparent;
-      color: #5a5149;
-      height: 36px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .icon { width: 36px; font-size: 22px; line-height: 1; }
-    .tool { padding: 0 13px; font-size: 13px; }
-    .model { padding: 0 12px; font-size: 13px; max-width: 190px; overflow: hidden; text-overflow: ellipsis; }
-    .send {
-      width: 36px;
-      background: var(--ink);
-      color: white;
-      border-color: var(--ink);
-      font-size: 18px;
-    }
-    .mode {
-      color: #9a9087;
-      font-size: 12px;
-      padding: 0 4px;
-    }
-
-    .preview {
-      height: 100vh;
-      min-width: 0;
-      display: grid;
-      place-items: center;
-      position: relative;
-      background:
-        radial-gradient(circle at 50% 22%, rgba(255,87,34,.11), transparent 34%),
-        linear-gradient(135deg, #f7f1e8, #efe5d8);
-      overflow: hidden;
-    }
-    .widget-slot {
-      width: min(430px, calc(100% - 48px));
-      min-height: 560px;
-      position: relative;
-      z-index: 1;
-    }
-    #rose-workground-widget { width: 100%; min-height: 560px; position: relative; }
-    .toast {
-      position: fixed;
-      left: calc(26vw);
-      bottom: 24px;
-      transform: translateX(-50%) translateY(12px);
-      opacity: 0;
-      pointer-events: none;
-      padding: 9px 13px;
-      border-radius: 999px;
-      background: rgba(25,19,15,.92);
-      color: white;
-      font-size: 13px;
-      transition: .22s ease;
-      z-index: 20;
-    }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    @media (max-width: 900px) {
-      body { overflow: auto; }
-      .app { height: auto; min-height: 100vh; grid-template-columns: 1fr; }
-      .llm { height: min(720px, 100vh); border-right: 0; border-bottom: 1px solid var(--line); }
-      .preview { height: 640px; }
-      .empty h1 { font-size: 46px; }
-      .toast { left: 50%; }
-    }
+    :root{--paper:#f6f0e8;--surface:#fbf7f0;--ink:#19130f;--muted:#766c63;--line:rgba(25,19,15,.12);--line-strong:rgba(25,19,15,.22);--accent:#ff5722;--shadow:0 28px 90px rgba(54,35,20,.12)}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%}body{min-height:100vh;background:var(--paper);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow:hidden}button,textarea{font:inherit}
+    .shell{width:100vw;height:100vh;display:grid;grid-template-rows:58px 1fr;background:var(--paper)}
+    .top{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:0 22px;border-bottom:1px solid var(--line);background:rgba(251,247,240,.86);backdrop-filter:blur(18px);position:relative;z-index:5}.brand{display:flex;align-items:center;gap:10px;font-weight:720;letter-spacing:-.02em}.brand i{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 25%,#fff 0 12%,#ffb49b 20%,var(--accent) 62%,#9a2b12)}.top-actions{display:flex;align-items:center;gap:9px}.chip{height:34px;border:1px solid var(--line);border-radius:999px;background:#fffaf3;color:#594f47;padding:0 12px;font-size:13px}.publish-top{height:34px;border:0;border-radius:999px;background:#19130f;color:#fff;padding:0 14px;font-size:13px;box-shadow:0 10px 26px rgba(25,19,15,.16)}
+    .app{min-height:0;display:grid;grid-template-columns:minmax(460px,52vw) minmax(430px,1fr)}
+    .llm{height:calc(100vh - 58px);min-width:0;background:radial-gradient(circle at 17% 18%,rgba(255,87,34,.07),transparent 32%),var(--surface);border-right:1px solid var(--line);display:grid;grid-template-rows:1fr auto;overflow:hidden}.thread{overflow:auto;padding:clamp(28px,5vw,72px) clamp(24px,5vw,76px) 24px;display:flex;flex-direction:column;justify-content:center;gap:24px;min-height:0}.empty{width:100%;max-width:720px;margin:0 auto}.empty h1{margin:0;font-family:ui-serif,Georgia,"Times New Roman",serif;font-size:clamp(48px,5.8vw,88px);line-height:.94;letter-spacing:-.066em;font-weight:520}.turn{width:min(720px,100%);margin:0 auto;display:grid;gap:8px}.turn.user{justify-items:end}.role{color:#8b8178;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:780}.bubble{width:fit-content;max-width:100%;border-radius:20px;padding:14px 16px;font-size:15px;line-height:1.48;white-space:pre-wrap}.assistant .bubble{background:rgba(255,255,255,.66);border:1px solid rgba(25,19,15,.09);color:#2c231d}.user .bubble{background:#19130f;color:white}
+    .composer-wrap{padding:0 clamp(16px,3vw,42px) clamp(16px,3vw,32px)}.composer{width:100%;max-width:none;margin:0;border:1px solid var(--line-strong);border-radius:24px;background:#fffaf3;box-shadow:0 18px 55px rgba(54,35,20,.13);overflow:hidden}.composer textarea{width:100%;min-height:76px;max-height:180px;resize:none;border:0;outline:0;background:transparent;color:var(--ink);padding:20px 20px 10px;line-height:1.45;font-size:16px;display:block}.composer textarea::placeholder{color:#8d837a}.bar{height:52px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 12px 12px}.bar-left,.bar-right{display:flex;align-items:center;gap:8px;min-width:0}.icon,.tool,.model,.send{border:1px solid var(--line);background:transparent;color:#5a5149;height:36px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;white-space:nowrap}.icon{width:36px;font-size:22px;line-height:1}.tool{padding:0 13px;font-size:13px}.model{padding:0 12px;font-size:13px;max-width:190px;overflow:hidden;text-overflow:ellipsis}.send{width:36px;background:var(--ink);color:white;border-color:var(--ink);font-size:18px}.mode{color:#9a9087;font-size:12px;padding:0 4px}
+    .right{height:calc(100vh - 58px);min-width:0;display:grid;grid-template-rows:1fr auto;background:radial-gradient(circle at 50% 22%,rgba(255,87,34,.11),transparent 34%),linear-gradient(135deg,#f7f1e8,#efe5d8);overflow:hidden}.preview{min-height:0;display:grid;place-items:center;position:relative;padding:24px}.widget-slot{width:min(430px,100%);min-height:560px;position:relative;z-index:1}#rose-workground-widget{width:100%;min-height:560px;position:relative}
+    .publish{border-top:1px solid var(--line);background:rgba(255,250,243,.72);backdrop-filter:blur(20px);padding:14px 18px 16px;display:grid;gap:12px}.publish-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.publish-head strong{font-size:14px;letter-spacing:-.01em}.publish-head span{font-size:12px;color:var(--muted)}.publish-grid{display:grid;grid-template-columns:1fr 1fr auto;gap:9px}.version{border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.54);padding:11px 12px;display:grid;gap:3px}.version b{font-size:13px}.version small{font-size:11px;color:var(--muted)}.publish-btn{border:0;border-radius:16px;background:#19130f;color:#fff;padding:0 18px;font-weight:680;cursor:pointer;box-shadow:0 12px 30px rgba(25,19,15,.18)}.toast{position:fixed;left:calc(26vw);bottom:24px;transform:translateX(-50%) translateY(12px);opacity:0;pointer-events:none;padding:9px 13px;border-radius:999px;background:rgba(25,19,15,.92);color:white;font-size:13px;transition:.22s ease;z-index:20}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    @media(max-width:900px){body{overflow:auto}.shell{height:auto;min-height:100vh}.top{height:auto;min-height:58px;align-items:flex-start;flex-direction:column;padding:14px 16px}.app{grid-template-columns:1fr}.llm{height:min(680px,calc(100vh - 58px));border-right:0;border-bottom:1px solid var(--line)}.right{height:auto;min-height:720px}.publish-grid{grid-template-columns:1fr}.publish-btn{height:48px}.empty h1{font-size:46px}.toast{left:50%}}
   </style>
 </head>
 <body>
-  <main class="app">
-    <section class="llm" aria-label="Rose command workground">
-      <div class="thread" id="messages">
-        <div class="empty" id="emptyState">
-          <h1>What should Rose change?</h1>
-        </div>
-      </div>
-      <form class="composer-wrap" id="commandForm">
-        <div class="composer">
-          <textarea id="commandInput" rows="1" placeholder="Message Rose…"></textarea>
-          <div class="bar">
-            <div class="bar-left">
-              <button class="icon" type="button" aria-label="Add">+</button>
-              <button class="tool" type="button">Tools</button>
-            </div>
-            <div class="bar-right">
-              <span class="mode" id="modeText">Preview</span>
-              <button class="model" type="button">Rose Builder</button>
-              <button class="send" aria-label="Send" type="submit">↑</button>
-            </div>
+  <main class="shell">
+    <header class="top">
+      <div class="brand"><i></i><span>Rose Workground</span></div>
+      <div class="top-actions"><button class="chip" type="button">Draft v3</button><button class="publish-top" id="publishTop" type="button">Publish</button></div>
+    </header>
+    <section class="app">
+      <section class="llm" aria-label="Rose command workground">
+        <div class="thread" id="messages"><div class="empty" id="emptyState"><h1>What should Rose change?</h1></div></div>
+        <form class="composer-wrap" id="commandForm"><div class="composer"><textarea id="commandInput" rows="1" placeholder="Message Rose…"></textarea><div class="bar"><div class="bar-left"><button class="icon" type="button" aria-label="Add">+</button><button class="tool" type="button">Tools</button></div><div class="bar-right"><span class="mode" id="modeText">Preview</span><button class="model" type="button">Rose Builder</button><button class="send" aria-label="Send" type="submit">↑</button></div></div></div></form>
+      </section>
+      <aside class="right" aria-label="Rose preview and publishing">
+        <div class="preview"><div class="widget-slot"><div id="rose-workground-widget" aria-label="Rose widget workground"></div></div></div>
+        <section class="publish" aria-label="Publish Rose versions">
+          <div class="publish-head"><div><strong>Publish Rose</strong><br><span>Push the tested draft to the live website widget.</span></div><span id="publishState">Draft saved</span></div>
+          <div class="publish-grid">
+            <div class="version"><b>Current live</b><small>Wildrose orange · Rose</small></div>
+            <div class="version"><b>Preview draft</b><small id="draftLabel">Wildrose orange · Rose</small></div>
+            <button class="publish-btn" id="publishBtn" type="button">Publish version</button>
           </div>
-        </div>
-      </form>
+        </section>
+      </aside>
     </section>
-
-    <aside class="preview" aria-label="Live Rose website preview">
-      <div class="widget-slot">
-        <div id="rose-workground-widget" aria-label="Rose widget workground"></div>
-      </div>
-    </aside>
   </main>
   <div class="toast" id="toast">Preview updated</div>
-
-  <script
-    src="/rose-dashboard-preview/wildrose-widget-sandbox.js?v=workground-rose-1"
-    data-api-base="https://wildrose-widget.wildeautomations.com"
-    data-title="Rose"
-    data-accent="#ff5722"
-    data-mount="#rose-workground-widget"
-    data-inline="true"
-  ></script>
+  <script src="/rose-dashboard-preview/wildrose-widget-sandbox.js?v=workground-rose-1" data-api-base="https://wildrose-widget.wildeautomations.com" data-title="Rose" data-accent="#ff5722" data-mount="#rose-workground-widget" data-inline="true"></script>
   <script>
-    const messages = document.getElementById('messages');
-    const empty = document.getElementById('emptyState');
-    const form = document.getElementById('commandForm');
-    const input = document.getElementById('commandInput');
-    const modeText = document.getElementById('modeText');
-    const toast = document.getElementById('toast');
-    const state = { name: 'Rose', accent: '#ff5722', accentLabel: 'Wildrose orange', description: 'AI intake assistant' };
-    const colors = {
-      blue: ['#2563eb', 'blue'], cobalt: ['#2563eb', 'blue'], navy: ['#1d4ed8', 'navy'],
-      green: ['#2f6b45', 'moss green'], moss: ['#2f6b45', 'moss green'],
-      purple: ['#7c3aed', 'purple'], plum: ['#6d3a7a', 'plum'],
-      gold: ['#c8922a', 'gold'], orange: ['#ff5722', 'Wildrose orange'], wildrose: ['#ff5722', 'Wildrose orange'],
-      red: ['#e23b2e', 'red'], pink: ['#d9468f', 'pink'], black: ['#19130f', 'black']
-    };
-    function add(role, text) {
-      if (empty) empty.remove();
-      const turn = document.createElement('div');
-      turn.className = `turn ${role}`;
-      const label = document.createElement('div');
-      label.className = 'role';
-      label.textContent = role === 'user' ? 'You' : 'Rose';
-      const bubble = document.createElement('div');
-      bubble.className = 'bubble';
-      bubble.textContent = text;
-      turn.append(label, bubble);
-      messages.appendChild(turn);
-      messages.style.justifyContent = 'flex-start';
-      messages.scrollTop = messages.scrollHeight;
-    }
-    function soft(hex) {
-      const n = parseInt(hex.replace('#',''), 16);
-      const mix = v => Math.round(v + (255 - v) * .55);
-      return '#' + [mix((n >> 16) & 255), mix((n >> 8) & 255), mix(n & 255)].map(v => v.toString(16).padStart(2,'0')).join('');
-    }
-    function applyPreview() {
-      const root = document.querySelector('#rose-workground-widget .wr-ai');
-      if (!root) return setTimeout(applyPreview, 100);
-      root.style.setProperty('--accent', state.accent);
-      root.style.setProperty('--accent-soft', soft(state.accent));
-      document.querySelectorAll('#rose-workground-widget .wr-title h3').forEach(el => el.textContent = state.name);
-      document.querySelectorAll('#rose-workground-widget .wr-title small').forEach(el => el.textContent = state.description);
-      document.querySelectorAll('#rose-workground-widget .wr-input').forEach(el => el.placeholder = `Ask ${state.name}…`);
-      modeText.textContent = 'Updated';
-      toast.classList.add('show');
-      clearTimeout(window.__roseToast);
-      window.__roseToast = setTimeout(() => toast.classList.remove('show'), 1000);
-    }
-    function parseName(command) {
-      const patterns = [
-        /(?:call|rename|name)\s+(?:the\s+)?(?:assistant|agent|widget|rose|it)?\s*(?:to\s+)?([a-z][a-z\s'-]{1,24})/i,
-        /(?:make\s+(?:it|her|him)\s+called)\s+([a-z][a-z\s'-]{1,24})/i
-      ];
-      for (const p of patterns) {
-        const m = command.match(p);
-        if (m) return m[1].trim().replace(/\s+/g, ' ').replace(/\b\w/g, x => x.toUpperCase());
-      }
-      return null;
-    }
-    function run(command) {
-      const c = command.toLowerCase();
-      const changes = [];
-      for (const [name, [hex, label]] of Object.entries(colors)) {
-        if (c.includes(name)) { state.accent = hex; state.accentLabel = label; changes.push(`Accent set to ${label}.`); break; }
-      }
-      const newName = parseName(command);
-      if (newName && !/color|colour|crm|hubspot|connect|tone|blue|green|orange/.test(newName.toLowerCase())) { state.name = newName; changes.push(`Renamed to ${newName}.`); }
-      if (c.includes('premium') || c.includes('luxury') || c.includes('cleaner')) { state.description = 'Premium website concierge'; changes.push('Tone tightened.'); }
-      if (c.includes('friendly') || c.includes('warmer')) { state.description = 'Warm website concierge'; changes.push('Tone warmed up.'); }
-      if (changes.length) { applyPreview(); return changes.join(' '); }
-      if (c.includes('crm') || c.includes('hubspot') || c.includes('salesforce') || c.includes('pipedrive')) return 'Open Connections → authorize through Composio → send one test lead → publish.';
-      if (c.includes('calendar') || c.includes('booking')) return 'Connect the booking source, set confirmation rules, test availability boundaries, then publish.';
-      if (c.includes('lead') || c.includes('email')) return 'Set the lead destination, submit one test lead, verify delivery, then publish.';
-      return 'I’d preview that as a Rose config change, test it here, then publish it to the installed widget.';
-    }
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      const value = input.value.trim();
-      if (!value) return;
-      add('user', value);
-      input.value = '';
-      input.style.height = 'auto';
-      modeText.textContent = 'Working';
-      setTimeout(() => add('assistant', run(value)), 180);
-    });
-    input.addEventListener('input', () => { input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 180) + 'px'; });
-    input.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); } });
-    window.addEventListener('load', () => setTimeout(applyPreview, 650));
+    const messages=document.getElementById('messages'),empty=document.getElementById('emptyState'),form=document.getElementById('commandForm'),input=document.getElementById('commandInput'),modeText=document.getElementById('modeText'),toast=document.getElementById('toast'),draftLabel=document.getElementById('draftLabel'),publishState=document.getElementById('publishState');
+    const state={name:'Rose',accent:'#ff5722',accentLabel:'Wildrose orange',description:'AI intake assistant'};
+    const colors={blue:['#2563eb','blue'],cobalt:['#2563eb','blue'],navy:['#1d4ed8','navy'],green:['#2f6b45','moss green'],moss:['#2f6b45','moss green'],purple:['#7c3aed','purple'],plum:['#6d3a7a','plum'],gold:['#c8922a','gold'],orange:['#ff5722','Wildrose orange'],wildrose:['#ff5722','Wildrose orange'],red:['#e23b2e','red'],pink:['#d9468f','pink'],black:['#19130f','black']};
+    function add(role,text){if(empty)empty.remove();const turn=document.createElement('div');turn.className=`turn ${role}`;const label=document.createElement('div');label.className='role';label.textContent=role==='user'?'You':'Rose';const bubble=document.createElement('div');bubble.className='bubble';bubble.textContent=text;turn.append(label,bubble);messages.appendChild(turn);messages.style.justifyContent='flex-start';messages.scrollTop=messages.scrollHeight}
+    function soft(hex){const n=parseInt(hex.replace('#',''),16),mix=v=>Math.round(v+(255-v)*.55);return '#'+[mix((n>>16)&255),mix((n>>8)&255),mix(n&255)].map(v=>v.toString(16).padStart(2,'0')).join('')}
+    function applyPreview(){const root=document.querySelector('#rose-workground-widget .wr-ai');if(!root)return setTimeout(applyPreview,100);root.style.setProperty('--accent',state.accent);root.style.setProperty('--accent-soft',soft(state.accent));document.querySelectorAll('#rose-workground-widget .wr-title h3').forEach(el=>el.textContent=state.name);document.querySelectorAll('#rose-workground-widget .wr-title small').forEach(el=>el.textContent=state.description);document.querySelectorAll('#rose-workground-widget .wr-input').forEach(el=>el.placeholder=`Ask ${state.name}…`);draftLabel.textContent=`${state.accentLabel} · ${state.name}`;modeText.textContent='Updated';publishState.textContent='Draft ready';toast.textContent='Preview updated';toast.classList.add('show');clearTimeout(window.__roseToast);window.__roseToast=setTimeout(()=>toast.classList.remove('show'),1000)}
+    function parseName(command){for(const p of[/(?:call|rename|name)\s+(?:the\s+)?(?:assistant|agent|widget|rose|it)?\s*(?:to\s+)?([a-z][a-z\s'-]{1,24})/i,/(?:make\s+(?:it|her|him)\s+called)\s+([a-z][a-z\s'-]{1,24})/i]){const m=command.match(p);if(m)return m[1].trim().replace(/\s+/g,' ').replace(/\b\w/g,x=>x.toUpperCase())}return null}
+    function run(command){const c=command.toLowerCase(),changes=[];for(const[name,[hex,label]]of Object.entries(colors)){if(c.includes(name)){state.accent=hex;state.accentLabel=label;changes.push(`Accent set to ${label}.`);break}}const newName=parseName(command);if(newName&&!/color|colour|crm|hubspot|connect|tone|blue|green|orange/.test(newName.toLowerCase())){state.name=newName;changes.push(`Renamed to ${newName}.`)}if(c.includes('premium')||c.includes('luxury')||c.includes('cleaner')){state.description='Premium website concierge';changes.push('Tone tightened.')}if(c.includes('friendly')||c.includes('warmer')){state.description='Warm website concierge';changes.push('Tone warmed up.')}if(changes.length){applyPreview();return changes.join(' ')}if(c.includes('crm')||c.includes('hubspot')||c.includes('salesforce')||c.includes('pipedrive'))return 'Open Connections → authorize through Composio → send one test lead → publish.';if(c.includes('calendar')||c.includes('booking'))return 'Connect the booking source, set confirmation rules, test availability boundaries, then publish.';if(c.includes('lead')||c.includes('email'))return 'Set the lead destination, submit one test lead, verify delivery, then publish.';return 'I’d preview that as a Rose config change, test it here, then publish it to the installed widget.'}
+    form.addEventListener('submit',e=>{e.preventDefault();const value=input.value.trim();if(!value)return;add('user',value);input.value='';input.style.height='auto';modeText.textContent='Working';setTimeout(()=>add('assistant',run(value)),180)});input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,180)+'px'});input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit()}});
+    function publish(){publishState.textContent='Published';toast.textContent=`Published ${state.name} · ${state.accentLabel}`;toast.classList.add('show');clearTimeout(window.__roseToast);window.__roseToast=setTimeout(()=>toast.classList.remove('show'),1300);add('assistant',`Published preview version: ${state.name} · ${state.accentLabel}.`)}
+    document.getElementById('publishBtn').addEventListener('click',publish);document.getElementById('publishTop').addEventListener('click',publish);window.addEventListener('load',()=>setTimeout(applyPreview,650));
   </script>
 </body>
 </html>
