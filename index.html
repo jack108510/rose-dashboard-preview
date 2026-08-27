@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#f7f1e8" />
-  <title>Rose Dashboard — Wildrose Automations</title>
+  <title>Rose Workground — Wildrose Automations</title>
   <style>
     :root {
       --ink: #201814;
@@ -17,7 +17,7 @@
     * { box-sizing: border-box; }
     html, body { margin: 0; min-height: 100%; background: var(--paper); color: var(--ink); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
     body { overflow-x: hidden; }
-    .workspace { min-height: 100vh; display: grid; grid-template-columns: minmax(340px, 42vw) minmax(420px, 1fr); gap: clamp(28px, 5vw, 76px); padding: clamp(20px, 4vw, 56px); position: relative; }
+    .workspace { min-height: 100vh; display: grid; grid-template-columns: minmax(380px, 44vw) minmax(420px, 1fr); gap: clamp(28px, 5vw, 76px); padding: clamp(20px, 4vw, 56px); position: relative; }
     .workspace:before { content: ""; position: fixed; inset: -30% -20% auto auto; width: 64vw; height: 64vw; border-radius: 50%; background: radial-gradient(circle, rgba(255, 87, 34, .18), rgba(255, 87, 34, 0) 66%); pointer-events: none; }
     header { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 18px; position: relative; z-index: 2; }
     .brand { border: 0; background: transparent; color: var(--ink); display: inline-flex; align-items: center; gap: 10px; font-weight: 650; font-size: 18px; padding: 0; }
@@ -27,19 +27,26 @@
     nav button.active { background: var(--ink); color: #fff; }
     .status { color: var(--muted); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 8px; }
     .status i { width: 8px; height: 8px; border-radius: 50%; background: #2fbb73; }
-    .controls { align-self: center; max-width: 560px; position: relative; z-index: 2; }
-    .kicker { color: var(--orange); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; font-weight: 800; margin: 0 0 22px; }
-    h1 { font-family: ui-serif, Georgia, "Times New Roman", serif; font-size: clamp(56px, 7vw, 108px); line-height: .88; letter-spacing: -.07em; margin: 0; font-weight: 500; }
-    .lede { display: block; margin-top: 26px; max-width: 430px; color: var(--muted); font-size: 18px; line-height: 1.55; }
-    .palette { margin-top: 36px; display: grid; gap: 10px; max-width: 360px; }
-    .palette button { border: 1px solid var(--line); background: rgba(255,255,255,.48); border-radius: 18px; padding: 14px 16px; color: var(--ink); display: flex; align-items: center; justify-content: space-between; font-weight: 650; box-shadow: 0 10px 30px rgba(58,39,23,.05); }
-    .palette span { display: inline-flex; align-items: center; gap: 10px; }
-    .palette i { width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(135deg, var(--orange), #ffc2a9); }
-    .palette b { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--orange); }
+    .controls { align-self: center; max-width: 650px; position: relative; z-index: 2; }
+    .kicker { color: var(--orange); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; font-weight: 800; margin: 0 0 18px; }
+    h1 { font-family: ui-serif, Georgia, "Times New Roman", serif; font-size: clamp(48px, 6.4vw, 92px); line-height: .9; letter-spacing: -.065em; margin: 0; font-weight: 500; }
+    .lede { display: block; margin-top: 22px; max-width: 520px; color: var(--muted); font-size: 17px; line-height: 1.55; }
+    .console { margin-top: 32px; width: min(620px, 100%); border: 1px solid var(--line); border-radius: 30px; background: rgba(255,255,255,.58); box-shadow: 0 24px 70px rgba(58,39,23,.12); backdrop-filter: blur(22px); overflow: hidden; }
+    .messages { min-height: 285px; max-height: 36vh; overflow: auto; padding: 20px; display: grid; gap: 14px; }
+    .msg { display: grid; gap: 6px; max-width: 92%; }
+    .msg.user { justify-self: end; }
+    .msg strong { color: #4f453d; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+    .bubble { border-radius: 22px; padding: 13px 15px; line-height: 1.42; font-size: 15px; }
+    .assistant .bubble { background: #fffaf3; border: 1px solid rgba(48,35,27,.1); color: #302620; }
+    .user .bubble { background: #201814; color: #fff; }
+    .composer { border-top: 1px solid var(--line); padding: 12px; display: grid; grid-template-columns: 1fr auto; gap: 10px; background: rgba(255,255,255,.48); }
+    .composer textarea { resize: none; min-height: 58px; max-height: 120px; border: 0; outline: 0; background: transparent; color: var(--ink); font: inherit; padding: 12px 10px; }
+    .composer button { width: 52px; height: 52px; border-radius: 18px; border: 0; background: var(--orange); color: #fff; font-size: 22px; cursor: pointer; box-shadow: 0 12px 30px rgba(255,87,34,.26); }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 20px 18px; }
+    .chips button { border: 1px solid var(--line); background: rgba(255,255,255,.54); border-radius: 999px; padding: 8px 11px; color: #4f453d; font-size: 13px; cursor: pointer; }
     .rose-wrap { align-self: center; position: relative; z-index: 2; width: min(520px, 100%); justify-self: center; }
     .rose-stage { min-height: min(620px, 76vh); display: grid; place-items: center; position: relative; border-radius: 34px; background: transparent; padding: 0; overflow: visible; }
     #rose-workground-widget { position: relative; width: min(430px, 100%); min-height: 560px; z-index: 1; }
-
     @media (max-width: 900px) {
       .workspace { grid-template-columns: 1fr; padding: 18px; }
       header { align-items: flex-start; flex-direction: column; }
@@ -53,31 +60,39 @@
 <body>
   <main class="workspace">
     <header>
-      <button class="brand" aria-label="Go to Rose appearance"><i></i>Rose</button>
+      <button class="brand" aria-label="Rose workground"><i></i>Rose</button>
       <nav aria-label="Rose workspace pages">
-        <button class="active">Appearance</button>
+        <button class="active">Workground</button>
         <button>Identity</button>
         <button>Connections</button>
         <button>Workflows</button>
       </nav>
-      <span class="status"><i></i>Workground ready</span>
+      <span class="status"><i></i>Live preview</span>
     </header>
 
-    <section class="controls" aria-label="Rose setup controls">
-      <p class="kicker">Appearance</p>
-      <h1>Set the tone.</h1>
-      <span class="lede">Make changes on the left and see the exact Rose widget surface that will sit on the live website.</span>
-      <div class="palette" aria-label="Rose colour themes">
-        <button><span><i></i>Wildrose</span><b>Selected</b></button>
-        <button><span><i style="background:linear-gradient(135deg,#314f3d,#a4c48a)"></i>Moss</span></button>
-        <button><span><i style="background:linear-gradient(135deg,#264b78,#9bd1ff)"></i>Cobalt</span></button>
-        <button><span><i style="background:linear-gradient(135deg,#5b3269,#e0b4ff)"></i>Plum</span></button>
-        <button><span><i style="background:linear-gradient(135deg,#d98917,#ffe1a1)"></i>Solar</span></button>
-        <button><span><i style="background:linear-gradient(135deg,#dceeff,#7ca8bf)"></i>Ice</span></button>
+    <section class="controls" aria-label="Rose command workground">
+      <p class="kicker">Rose command workground</p>
+      <h1>Tell Rose what to change.</h1>
+      <span class="lede">Type plain English. The right side updates like the live website preview would.</span>
+
+      <div class="console" aria-label="Rose setup chat">
+        <div class="messages" id="messages">
+          <div class="msg assistant"><strong>Rose setup</strong><div class="bubble">Tell me what you want to change. Try “make the widget blue”, “rename Rose to Todd”, or “connect to my CRM”.</div></div>
+        </div>
+        <form class="composer" id="commandForm">
+          <textarea id="commandInput" placeholder="I want to change your color to blue…"></textarea>
+          <button aria-label="Send command" type="submit">→</button>
+        </form>
+        <div class="chips" aria-label="Example commands">
+          <button type="button">Make Rose blue</button>
+          <button type="button">Rename Rose to Todd</button>
+          <button type="button">Connect to my CRM</button>
+          <button type="button">Make it more premium</button>
+        </div>
       </div>
     </section>
 
-    <section class="rose-wrap" aria-label="Rose workground preview">
+    <section class="rose-wrap" aria-label="Rose live website preview">
       <div class="rose-stage">
         <div id="rose-workground-widget" aria-label="Rose widget workground"></div>
       </div>
@@ -92,5 +107,90 @@
     data-mount="#rose-workground-widget"
     data-inline="true"
   ></script>
+  <script>
+    const messages = document.getElementById('messages');
+    const form = document.getElementById('commandForm');
+    const input = document.getElementById('commandInput');
+    let state = { name: 'Rose', accent: '#ff5722', description: 'AI intake assistant' };
+
+    function add(role, text) {
+      const wrap = document.createElement('div');
+      wrap.className = `msg ${role}`;
+      wrap.innerHTML = `<strong>${role === 'user' ? 'You' : 'Rose setup'}</strong><div class="bubble"></div>`;
+      wrap.querySelector('.bubble').textContent = text;
+      messages.appendChild(wrap);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function applyPreview() {
+      const root = document.querySelector('#rose-workground-widget .wr-ai');
+      if (!root) return setTimeout(applyPreview, 120);
+      root.style.setProperty('--accent', state.accent);
+      root.style.setProperty('--accent-soft', soften(state.accent));
+      document.querySelectorAll('#rose-workground-widget .wr-title h3').forEach(el => el.textContent = state.name);
+      document.querySelectorAll('#rose-workground-widget .wr-title small').forEach(el => el.textContent = state.description);
+      document.querySelectorAll('#rose-workground-widget .wr-input').forEach(el => el.placeholder = `Ask ${state.name}…`);
+    }
+
+    function soften(hex) {
+      const clean = hex.replace('#','');
+      const n = parseInt(clean, 16);
+      const r = Math.min(255, ((n >> 16) & 255) + 115);
+      const g = Math.min(255, ((n >> 8) & 255) + 115);
+      const b = Math.min(255, (n & 255) + 115);
+      return '#' + [r,g,b].map(x => x.toString(16).padStart(2,'0')).join('');
+    }
+
+    function run(command) {
+      const c = command.toLowerCase();
+      if (c.includes('blue')) {
+        state.accent = '#2563eb';
+        applyPreview();
+        return 'Done — I changed the live preview accent to blue. This is the same kind of setting that would publish to the installed widget.';
+      }
+      if (c.includes('green') || c.includes('moss')) {
+        state.accent = '#2f6b45';
+        applyPreview();
+        return 'Done — I changed the preview to a moss green accent.';
+      }
+      if (c.includes('orange') || c.includes('wildrose')) {
+        state.accent = '#ff5722';
+        applyPreview();
+        return 'Done — I put Rose back on the Wildrose orange accent.';
+      }
+      const rename = command.match(/(?:rename|call|name)\s+(?:rose\s+)?(?:to\s+)?([a-z][a-z\s'-]{1,24})/i);
+      if (rename) {
+        state.name = rename[1].trim().replace(/\s+/g, ' ').replace(/\b\w/g, m => m.toUpperCase());
+        applyPreview();
+        return `Done — I renamed the preview assistant to ${state.name}.`;
+      }
+      if (c.includes('crm') || c.includes('hubspot') || c.includes('salesforce')) {
+        return 'I can do that. I’d open the secure Connections flow, pick the CRM, authorize it through Composio, then test a lead handoff before marking it live.';
+      }
+      if (c.includes('premium') || c.includes('clean') || c.includes('minimal')) {
+        state.description = 'Premium website concierge';
+        applyPreview();
+        return 'Done — I tightened the assistant label to feel more premium. Next I would apply matching spacing/type changes to the installed widget config.';
+      }
+      if (c.includes('lead') || c.includes('email')) {
+        return 'Lead routing is the right setting. Tell me the destination email and I’d save it, send a test lead, and verify delivery.';
+      }
+      return 'Got it. I would turn that into a Rose config change, show it in this live preview first, then publish it to the installed website after the test passes.';
+    }
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const value = input.value.trim();
+      if (!value) return;
+      add('user', value);
+      input.value = '';
+      setTimeout(() => add('assistant', run(value)), 180);
+    });
+    document.querySelectorAll('.chips button').forEach(btn => btn.addEventListener('click', () => {
+      input.value = btn.textContent;
+      form.requestSubmit();
+    }));
+    window.addEventListener('load', () => setTimeout(applyPreview, 600));
+  </script>
 </body>
 </html>
