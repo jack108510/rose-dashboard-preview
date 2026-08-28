@@ -117,6 +117,8 @@
     const greet = $(".wr-msg.bot"); if (greet) greet.textContent = cfg.greeting;
     if (input) input.placeholder = `Ask ${cfg.title}…`;
   }
+  root.__applyRoseConfig = applyPublishedConfig;
+  if (cfg.inline || cfg.mount === "#rose-workground-widget") window.__roseWorkgroundApplyConfig = applyPublishedConfig;
   async function loadPublishedConfig() {
     if (!cfg.apiBase || cfg.inline || !cfg.loadPublished) return;
     const qs = new URLSearchParams({ businessId: cfg.businessId, ownerEmail: cfg.ownerEmail, website: cfg.website });
