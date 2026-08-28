@@ -206,7 +206,7 @@
   }
   async function ensureChat() {
     if (chatId) return chatId;
-    const data = await api("/api/chat/start", { page: location.href, businessId: cfg.businessId, ownerEmail: cfg.ownerEmail, businessName: cfg.businessName, website: cfg.website, businessContext: cfg.businessContext, services: cfg.services });
+    const data = await api("/api/chat/start", { page: location.href, businessId: cfg.businessId, ownerEmail: cfg.ownerEmail, businessName: cfg.businessName, website: cfg.website, businessContext: cfg.businessContext, services: cfg.services, title: cfg.title, assistantName: cfg.title, greetingMessage: cfg.greeting, previewMode: cfg.inline || !cfg.loadPublished });
     chatId = data.chatId;
     return chatId;
   }
@@ -238,7 +238,7 @@
       status.textContent = "Connecting…";
       const [{ RetellWebClient }, call] = await Promise.all([
         import("https://esm.sh/retell-client-js-sdk@2.0.7"),
-        api("/api/voice/start", { page: location.href, businessId: cfg.businessId, ownerEmail: cfg.ownerEmail, businessName: cfg.businessName, website: cfg.website, businessContext: cfg.businessContext, services: cfg.services })
+        api("/api/voice/start", { page: location.href, businessId: cfg.businessId, ownerEmail: cfg.ownerEmail, businessName: cfg.businessName, website: cfg.website, businessContext: cfg.businessContext, services: cfg.services, title: cfg.title, assistantName: cfg.title, greetingMessage: cfg.greeting, previewMode: cfg.inline || !cfg.loadPublished })
       ]);
       retellClient = new RetellWebClient();
       let speechReleaseTimer = null;
