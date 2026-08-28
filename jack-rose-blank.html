@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fffaf3">
+  <title>Rose Blank Website Test</title>
+  <style>
+    :root { color-scheme: light; --paper:#fffaf3; --ink:#17110d; --muted:#7d7167; --line:rgba(23,17,13,.12); --accent:#ff5722; }
+    * { box-sizing: border-box; }
+    html, body { margin:0; min-height:100%; }
+    body { min-height:100vh; background:var(--paper); color:var(--ink); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .blank-site { min-height:100vh; display:grid; place-items:center; padding:28px; }
+    .card { width:min(760px, 100%); border:1px solid var(--line); border-radius:32px; background:rgba(255,255,255,.56); box-shadow:0 26px 80px rgba(55,36,20,.10); padding:clamp(28px, 5vw, 54px); }
+    .eyebrow { margin:0 0 10px; color:var(--accent); font-size:12px; letter-spacing:.14em; text-transform:uppercase; font-weight:850; }
+    h1 { margin:0; font-family: ui-serif, Georgia, "Times New Roman", serif; font-size:clamp(46px, 8vw, 88px); line-height:.92; letter-spacing:-.07em; font-weight:520; }
+    p { margin:18px 0 0; color:var(--muted); max-width:560px; line-height:1.55; }
+    .meta { margin-top:24px; display:flex; gap:10px; flex-wrap:wrap; }
+    .pill { border:1px solid var(--line); border-radius:999px; padding:8px 12px; color:#5f554d; background:#fff; font-size:13px; }
+  </style>
+</head>
+<body>
+  <main class="blank-site">
+    <section class="card">
+      <p class="eyebrow">Rose mirror test site</p>
+      <h1>Blank website.</h1>
+      <p>This page intentionally has almost no content. It exists only to test that Rose can be installed on a plain website and mirror dashboard changes.</p>
+      <div class="meta">
+        <span class="pill">Client: Jack Rose Test</span>
+        <span class="pill">Business ID: jack-rose-test</span>
+        <span class="pill">Owner: wildejack1010@gmail.com</span>
+      </div>
+    </section>
+  </main>
+
+  <script
+    src="https://jack108510.github.io/rose-dashboard-preview/wildrose-widget-sandbox.js?v=jack-blank-1"
+    data-api-base="https://wildrose-widget.wildeautomations.com"
+    data-business-id="jack-rose-test"
+    data-owner-email="wildejack1010@gmail.com"
+    data-business-name="Jack Rose Test"
+    data-title="Rose"
+    data-accent="#ff5722"
+    data-website="https://jack108510.github.io/rose-dashboard-preview/jack-rose-blank.html"
+    data-business-context="Blank website created to test Rose dashboard mirror functionality."
+    async></script>
+</body>
+</html>
