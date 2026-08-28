@@ -92,6 +92,36 @@
     $$(".wr-view").forEach(v => v.classList.toggle("active", v.dataset.view === view));
     $(".wr-compose").style.display = view === "chat" ? "flex" : "none";
   }
+  function applyPublishedConfig(config) {
+    if (!config) return;
+    const a = config.appearance || {};
+    cfg.title = a.assistantName || cfg.title;
+    cfg.subtitle = a.greetingMessage || cfg.subtitle;
+    cfg.greeting = a.greetingMessage || cfg.greeting;
+    cfg.accent = a.brandPrimary || cfg.accent;
+    cfg.businessContext = (config.context || []).map(n => n.text).filter(Boolean).join("\n").slice(0, 3600) || cfg.businessContext;
+    cfg.businessName = config.settings?.businessName || cfg.businessName;
+    cfg.website = config.settings?.website || cfg.website;
+    cfg.ownerEmail = config.settings?.ownerEmail || cfg.ownerEmail;
+    root.style.setProperty("--accent", a.brandPrimary || cfg.accent);
+    root.style.setProperty("--accent-soft", a.brandAccent || "color-mix(in srgb,var(--accent) 32%,white)");
+    root.style.setProperty("--rose-bg", a.backgroundColor || "#fffaf3");
+    root.style.setProperty("--rose-text", a.textColor || "#18120f");
+    root.style.setProperty("--rose-bubble", a.bubbleColor || "rgba(255,255,255,.54)");
+    root.style.setProperty("--rose-button", a.buttonColor || a.brandPrimary || cfg.accent);
+    root.style.setProperty("--sphere-a", a.brandPrimary || cfg.accent);
+    root.style.setProperty("--sphere-b", a.brandAccent || a.brandPrimary || cfg.accent);
+    $$(".wr-title h3").forEach(el => el.textContent = cfg.title);
+    $$(".wr-title small").forEach(el => el.textContent = cfg.subtitle);
+    const greet = $(".wr-msg.bot"); if (greet) greet.textContent = cfg.greeting;
+    if (input) input.placeholder = `Ask ${cfg.title}…`;
+  }
+  async function loadPublishedConfig() {
+    if (!cfg.apiBase) return;
+    const qs = new URLSearchParams({ businessId: cfg.businessId, ownerEmail: cfg.ownerEmail, website: cfg.website });
+    try { const r = await fetch(`${cfg.apiBase}/api/rose-public-config?${qs}`); const j = await r.json().catch(() => ({})); if (j?.config) applyPublishedConfig(j.config); } catch (err) { console.warn("Rose public config unavailable", err); }
+  }
+  loadPublishedConfig();
   function addMsg(role, text) {
     if (role === "bot") {
       const row = document.createElement("div");
