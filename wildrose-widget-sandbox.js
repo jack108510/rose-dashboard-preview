@@ -10,6 +10,7 @@
     businessId: script?.dataset.businessId || script?.dataset.clientId || "",
     mount: script?.dataset.mount || "",
     inline: script?.dataset.inline === "true",
+    loadPublished: script?.dataset.loadPublished !== "false",
     contained: script?.dataset.contained === "true",
     subtitle: script?.dataset.subtitle || "AI intake assistant",
     greeting: script?.dataset.greeting || "Tell me what you want automated and I’ll turn it into a clear next step.",
@@ -117,7 +118,7 @@
     if (input) input.placeholder = `Ask ${cfg.title}…`;
   }
   async function loadPublishedConfig() {
-    if (!cfg.apiBase) return;
+    if (!cfg.apiBase || cfg.inline || !cfg.loadPublished) return;
     const qs = new URLSearchParams({ businessId: cfg.businessId, ownerEmail: cfg.ownerEmail, website: cfg.website });
     try { const r = await fetch(`${cfg.apiBase}/api/rose-public-config?${qs}`); const j = await r.json().catch(() => ({})); if (j?.config) applyPublishedConfig(j.config); } catch (err) { console.warn("Rose public config unavailable", err); }
   }
