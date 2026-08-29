@@ -23,10 +23,7 @@
   <main class="shell" data-build="jack-blank-1">
     <header class="top">
       <div class="brand"><i></i><span>Rose Workground</span></div>
-      <nav class="sections" aria-label="Rose sections">
-        <button class="section-tab active" type="button" data-section="Appearance">Appearance</button>
-        <button class="section-tab" type="button" data-section="Settings">Settings</button>
-      </nav>
+      <div></div>
       <div class="top-actions"><button class="chip meta-chip" type="button" id="contextMeta">0 KB ctx · 0 conn</button><button class="chip" type="button" id="draftChip">Draft v3</button><button class="publish-top" id="publishTop" type="button">Publish</button></div>
     </header>
     <section class="app">
@@ -54,7 +51,7 @@
     function notify(text){toast.textContent=text;toast.classList.add('show');clearTimeout(window.__roseToast);window.__roseToast=setTimeout(()=>toast.classList.remove('show'),1300)}
     function saveCommandMemory(){localStorage.setItem('roseCommandHistory',JSON.stringify(chatHistory.slice(-12)));localStorage.setItem('roseSavedContext',JSON.stringify(savedContext.slice(-40)))}
     function esc(s){return String(s||'').replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]))}
-    function refreshContextStrip(){const notes=settings.knowledge.filter(n=>!n.revokedAt),conn=[...new Set(connectionQueue)].filter(Boolean);const chars=notes.reduce((n,x)=>n+String(x.text||'').length,0),kb=chars?Math.max(1,Math.ceil(chars/1024)):0;if(contextMeta){contextMeta.textContent=`${kb} KB ctx · ${conn.length} conn`;contextMeta.title=`${notes.length} context note${notes.length===1?'':'s'} · ${chars.toLocaleString()} characters · ${conn.length} connection${conn.length===1?'':'s'}`;contextMeta.onclick=()=>showSection('Settings')}}
+    function refreshContextStrip(){const notes=settings.knowledge.filter(n=>!n.revokedAt),conn=[...new Set(connectionQueue)].filter(Boolean);const chars=notes.reduce((n,x)=>n+String(x.text||'').length,0),kb=chars?Math.max(1,Math.ceil(chars/1024)):0;if(contextMeta){contextMeta.textContent=`${kb} KB ctx · ${conn.length} conn`;contextMeta.title=`${notes.length} context note${notes.length===1?'':'s'} · ${chars.toLocaleString()} characters · ${conn.length} connection${conn.length===1?'':'s'}`;contextMeta.onclick=null}}
     function readDocFile(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve({name:file.name,text:String(reader.result||'').slice(0,12000)});reader.onerror=()=>reject(reader.error||new Error('Could not read file'));reader.readAsText(file)})}
     async function attachDocuments(files){const list=[...files].slice(0,5);for(const f of list){if(f.size>500000){notify(`${f.name} is too large`);continue}try{pendingDocuments.push(await readDocFile(f));notify(`Attached ${f.name}`)}catch{notify(`Could not read ${f.name}`)}}}
     function roseCommandApi(){return new URLSearchParams(location.search).get('api')||localStorage.getItem('roseCommandApi')||'https://wildrose-widget.wildeautomations.com/api/rose/command'}
