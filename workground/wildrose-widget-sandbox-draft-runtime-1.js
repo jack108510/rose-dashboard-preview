@@ -5,7 +5,7 @@
     title: script?.dataset.title || "Rose",
     businessName: script?.dataset.businessName || script?.dataset.company || "Wildrose Automations",
     accent: script?.dataset.accent || "#ff5722",
-    logo: script?.dataset.logo || "/rose-dashboard-preview/logos/wildrose.png",
+    logo: script?.dataset.logo || "logos/wildrose.png",
     ownerEmail: script?.dataset.ownerEmail || script?.dataset.leadEmail || script?.dataset.notificationEmail || "",
     businessId: script?.dataset.businessId || script?.dataset.clientId || "",
     mount: script?.dataset.mount || "",
