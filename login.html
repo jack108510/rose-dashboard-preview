@@ -14,8 +14,8 @@
   <form id="loginForm">
     <div class="brand"><i></i><span>Rose</span></div>
     <h1>Sign in.</h1>
-    <p>Use the Wildrose account credentials for this Rose test workspace.</p>
-    <label>Email<input id="email" type="email" autocomplete="email" value="wildejack1010@gmail.com" required></label>
+    <p>Use the Wildrose account credentials for the Lost Lake / Todd workspace.</p>
+    <label>Email<input id="email" type="email" autocomplete="email" value="Scott-wilde@live.com" required></label>
     <label>Password<input id="password" type="password" autocomplete="current-password" required></label>
     <button type="submit">Open dashboard</button>
     <div class="msg" id="msg"></div>
@@ -30,8 +30,8 @@
         if(!r.ok||!j.token)throw new Error(j.error||'Login failed');
         localStorage.setItem('roseDashboardToken',j.token);
         localStorage.setItem('wildroseDashboardToken',j.token);
-        localStorage.setItem('roseClientSettings',JSON.stringify({businessName:j.customer?.businessName||'Jack Rose Test',website:j.customer?.website||'',ownerEmail:j.account?.email||document.getElementById('email').value.trim(),ownerName:'Jack Wilde'}));
-        location.href='index.html';
+        localStorage.setItem('roseClientSettings',JSON.stringify({businessName:j.customer?.businessName||'Lost Lake Resort',website:j.customer?.website||'https://thelostlakeresort.com',ownerEmail:j.account?.email||document.getElementById('email').value.trim(),ownerName:'Scott Wilde'}));
+        location.href='workground/?v=e178b18';
       }catch(err){msg.className='msg error';msg.textContent=err.message||'Login failed';}
     });
   </script>
