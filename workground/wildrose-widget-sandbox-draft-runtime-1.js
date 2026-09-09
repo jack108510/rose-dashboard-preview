@@ -63,7 +63,7 @@
   const root = document.createElement("div");
   root.className = cfg.inline ? "wr-ai inline" : (cfg.contained ? "wr-ai contained" : "wr-ai");
   root.innerHTML = `
-    <button class="wr-fab" aria-label="Open Rose assistant"><span class="wr-dot"><img src="${cfg.logo}" alt=""></span></button>
+    ${cfg.inline ? "" : `<button class="wr-fab" aria-label="Open Rose assistant"><span class="wr-dot"><img src="${cfg.logo}" alt=""></span></button>`}
     <section class="wr-panel" aria-label="${cfg.title}">
       <header class="wr-head"><div class="wr-top"><div class="wr-brand"><div class="wr-mark"><img src="${cfg.logo}" alt=""></div><div class="wr-title"><h3>${cfg.title}</h3><small>${cfg.subtitle}</small></div></div><button class="wr-close" aria-label="Close">×</button></div></header>
       <div class="wr-tabs" role="tablist"><button class="wr-tab" data-view="chat">Chat</button><button class="wr-tab active" data-view="voice">Voice</button></div>
@@ -84,8 +84,8 @@
   let retellClient = null;
   let voiceBusy = false;
 
-  fab.addEventListener("click", () => { setView("voice"); panel.classList.add("open"); fab.style.display = "none"; });
-  $(".wr-close").addEventListener("click", () => { try { retellClient?.stopCall(); } catch {} voiceBusy = false; $(".wr-start-voice").disabled = false; panel.classList.remove("open"); fab.style.display = "grid"; });
+  fab?.addEventListener("click", () => { setView("voice"); panel.classList.add("open"); if (fab) fab.style.display = "none"; });
+  $(".wr-close")?.addEventListener("click", () => { try { retellClient?.stopCall(); } catch {} voiceBusy = false; $(".wr-start-voice").disabled = false; panel.classList.remove("open"); if (fab) fab.style.display = "grid"; });
   $$(".wr-tab").forEach(t => t.addEventListener("click", () => setView(t.dataset.view)));
 
   function setView(view) {

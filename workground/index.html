@@ -105,7 +105,7 @@
       const token=new URLSearchParams(location.search).get('token')||localStorage.getItem('wildroseDashboardToken')||localStorage.getItem('roseDashboardToken')||'';
       const authed=Boolean(token);
       const s=document.createElement('script');
-      s.src='wildrose-widget-sandbox-draft-runtime-1.js?v=workflow-bubble-1';
+      s.src='wildrose-widget-sandbox-draft-runtime-1.js?v=no-extra-floating-logo-1';
       s.dataset.apiBase='https://wildrose-widget.wildeautomations.com';
       s.dataset.client=authed?'lost-lake-resort':'preview';
       s.dataset.businessId=authed?'lost-lake-resort':'preview';
