@@ -117,6 +117,12 @@
     const greet = $(".wr-msg.bot"); if (greet) greet.textContent = cfg.greeting;
     if (input) input.placeholder = `Ask ${cfg.title}…`;
   }
+  if (cfg.inline || cfg.mount === "#rose-workground-widget") window.__roseWorkgroundSetIdentity = identity => {
+    cfg.businessId = identity.businessId || "preview";
+    cfg.businessName = identity.businessName || cfg.businessName;
+    cfg.ownerEmail = identity.ownerEmail || cfg.ownerEmail;
+    cfg.website = identity.website || cfg.website;
+  };
   root.__applyRoseConfig = applyPublishedConfig;
   if (cfg.inline || cfg.mount === "#rose-workground-widget") window.__roseWorkgroundApplyConfig = applyPublishedConfig;
   async function loadPublishedConfig() {
