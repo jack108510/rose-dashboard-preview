@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f6f0e8">
+  <title>Context web · Rose Workground</title>
+  <link rel="stylesheet" href="context.css">
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="./"><img src="logos/wildrose.png" alt="">Rose <span>Workground</span></a>
+    <nav aria-label="Workground pages"><a href="./">Builder</a><a class="active" href="context.html" aria-current="page">Context web</a></nav>
+    <button class="account" id="accountButton" type="button">Sign in</button>
+  </header>
+  <main>
+    <section class="heading">
+      <div><p class="eyebrow">BUSINESS KNOWLEDGE</p><h1>Your website,<br><em>connected.</em></h1><p class="intro">Explore the facts Rose can use, and review what your website scan found.</p></div>
+      <form id="scanForm" class="scan-form"><label for="websiteInput">Business website</label><div><input id="websiteInput" type="url" placeholder="https://yourbusiness.com" autocomplete="url" required><button class="primary" id="scanButton" type="submit">Scan website <span aria-hidden="true">↗</span></button></div><p id="scanHint">Website suggestions need your approval before Rose can use them.</p></form>
+    </section>
+    <div id="notice" class="notice" role="status" hidden></div>
+    <section class="workspace" aria-label="Website context">
+      <div class="graph-panel">
+        <div class="graph-top"><div><span class="sync-dot" aria-hidden="true"></span><span id="businessLabel">Website context</span></div><span id="syncLabel">Connecting…</span></div>
+        <div class="graph" id="graph" aria-label="Interactive web of website context. Use the fact list to explore with a keyboard.">
+          <div class="world" id="world"><svg id="edges" width="1100" height="800" aria-hidden="true"></svg><div id="nodes"></div></div>
+          <div class="empty" id="emptyState" hidden><span class="empty-mark" aria-hidden="true">✳</span><h2>A little context goes a long way.</h2><p id="emptyText">Sign in to see your business knowledge, or scan your website to build its context web.</p><a id="emptyAction" class="primary" href="./?returnTo=context">Sign in to Workground</a></div>
+          <div class="graph-legend"><span><i class="approved-dot"></i>Approved</span><span><i class="pending-dot"></i>Needs review</span><span><i class="source-dot"></i>Source page</span></div>
+          <div class="graph-controls"><button id="zoomOut" aria-label="Zoom out" type="button">−</button><button id="fit" type="button">Fit web</button><button id="zoomIn" aria-label="Zoom in" type="button">+</button></div>
+        </div>
+        <div class="graph-bottom"><p>Drag to explore · select a fact to see its source</p><div><span><b id="approvedCount">0</b> approved</span><span><b id="pendingCount">0</b> to review</span><span><b id="sourceCount">0</b> source pages</span></div></div>
+      </div>
+      <aside class="inspector">
+        <div class="inspector-head"><p class="eyebrow">EXPLORE YOUR CONTEXT</p><button id="refresh" type="button" aria-label="Refresh context">↻</button></div>
+        <div class="filters" role="group" aria-label="Filter facts"><button data-filter="all" class="active" type="button" aria-pressed="true">All facts</button><button data-filter="approved" type="button" aria-pressed="false">Approved</button><button data-filter="pending" type="button" aria-pressed="false">Needs review</button></div>
+        <label class="search-label" for="search">Find a fact</label><input class="search" id="search" type="search" placeholder="Services, hours, locations…">
+        <section class="detail" id="detail" aria-live="polite"><p class="detail-placeholder">Select a point in the web, or choose a fact below.</p></section>
+        <div class="list-heading"><span id="listCount">0 facts</span><span>YOUR KNOWLEDGE</span></div>
+        <div class="facts" id="facts"></div>
+      </aside>
+    </section>
+    <p class="footnote">This web shows your recorded context and its sources. Only approved knowledge is available to the published Rose widget.</p>
+  </main>
+  <script src="context.js"></script>
+</body>
+</html>
