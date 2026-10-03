@@ -350,7 +350,7 @@ function connectCardLabel(kind){return kind==='crm'?'CRM / lead destination':kin
         const r=await fetch('https://wildrose-widget.wildeautomations.com/api/rose-account-dashboard',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify({token})});
         const j=await r.json().catch(()=>({}));
         if(!r.ok){const error=new Error(j.error||'Account sync failed');error.status=r.status;throw error}
-        accountValidated=true;accountTop.textContent='Sign out';
+        if(settings.ownerEmail&&j.account?.email&&settings.ownerEmail.toLowerCase()!==j.account.email.toLowerCase()){contextReview.splice(0);lastSiteScan=null;localStorage.removeItem('rosePendingContextReview');localStorage.removeItem('roseLastSiteScan')}accountValidated=true;accountTop.textContent='Sign out';
         settings.businessName=j.customer?.businessName||settings.businessName;
         settings.website=j.customer?.website||settings.website;
         settings.ownerEmail=j.account?.email||settings.ownerEmail;
