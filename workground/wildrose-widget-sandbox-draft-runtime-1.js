@@ -18,6 +18,7 @@
     website: script?.dataset.website || "",
     businessContext: script?.dataset.businessContext || "",
     services: script?.dataset.services || "",
+    previewReceptionist: script?.dataset.previewReceptionist === "swift-line-locating",
   };
 
   const css = `
@@ -205,6 +206,17 @@
     }
   }
   async function api(path, body) {
+    if (cfg.previewReceptionist && /^\/api\/(?:chat|voice)\//.test(path)) {
+      body = { ...body, website: "https://swiftlocating.ca", businessName: "Swift Line Locating" };
+      delete body.businessId;
+      delete body.clientId;
+      delete body.ownerEmail;
+      if (path === "/api/chat/start" || path === "/api/voice/start") {
+        body.prospectPreview = true;
+        body.previewMode = true;
+        body.previewReceptionist = true;
+      }
+    }
     const r = await fetch(cfg.apiBase + path, { method: "POST", headers: { "Content-Type": "application/json", "bypass-tunnel-reminder": "1" }, body: JSON.stringify(body || {}) });
     const data = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error(data.error || "Request failed");
