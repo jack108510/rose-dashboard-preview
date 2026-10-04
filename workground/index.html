@@ -245,7 +245,7 @@ function connectCardLabel(kind){return kind==='crm'?'CRM / lead destination':kin
     function workflowReadyToPublish(wf){return !!(wf&&wf.puzzleComplete&&allWorkflowToolsConnected(wf)&&(wf.testEvents||[]).some(e=>e.ok&&e.mode==='runtime_dry_run'))}
     async function answerPendingWorkflow(command){
       const wf=workflows.find(w=>w&&!w.active&&!w.puzzleComplete&&w.askedFirstQuestion);if(!wf)return'';
-      const answer=String(command||'').trim();if(answer.length<2||/^(connect|test|publish|activate|edit)\b/i.test(answer))return'';
+      const answer=String(command||'').trim();if(answer.length<2||/^(connect|test|publish|activate|edit)\b/i.test(answer)||(/\btest\b/i.test(answer)&&/\b(?:send|email|mail)\b/i.test(answer)&&/\b(?:email|mail|gmail)\b/i.test(answer)))return'';
       const blocker=(wf.setup||[]).find(x=>x.blocking&&x.status!=='done');
       if(blocker){blocker.status='done';wf.config={...(wf.config||{}),setupAnswers:{...(wf.config?.setupAnswers||{}),[blocker.id]:answer}}}
       else{wf.config={...(wf.config||{}),setupAnswer:answer};const c=normalizedCommand(answer);if(/forward/.test(c))wf.config.deliveryMode='forward';if(/summary|lead-summary|lead summary|only/.test(c))wf.config.deliveryMode='lead_summary'}
