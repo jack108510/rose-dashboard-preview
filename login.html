@@ -3,37 +3,59 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Rose Account Login</title>
+  <meta name="theme-color" content="#f6f0e8">
+  <title>Sign in · Rose Workground</title>
   <style>
-    :root{--paper:#f6f0e8;--surface:#fffaf3;--ink:#19130f;--muted:#746a61;--line:rgba(25,19,15,.12);--accent:#ff5722}
-    *{box-sizing:border-box}html,body{margin:0;min-height:100%}body{min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at 25% 20%,rgba(255,87,34,.13),transparent 30%),var(--paper);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:22px}
-    form{width:min(430px,100%);border:1px solid var(--line);border-radius:28px;background:rgba(255,250,243,.82);box-shadow:0 28px 90px rgba(54,35,20,.14);padding:28px;display:grid;gap:15px}.brand{display:flex;align-items:center;gap:10px;font-weight:850}.brand i{width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 35% 25%,#fff 0 12%,#ffb49b 20%,var(--accent) 62%,#9a2b12)}h1{font-family:ui-serif,Georgia,"Times New Roman",serif;margin:10px 0 0;font-size:48px;line-height:.96;letter-spacing:-.06em;font-weight:520}p{margin:0;color:var(--muted);line-height:1.5}label{display:grid;gap:7px;font-size:12px;font-weight:800;color:#6f645b}input{width:100%;border:1px solid var(--line);border-radius:15px;background:#fff;color:var(--ink);padding:13px 14px;font:inherit}button{height:44px;border:0;border-radius:999px;background:var(--ink);color:white;font-weight:820;cursor:pointer}.msg{min-height:20px;font-size:13px;color:var(--muted)}.error{color:#b3261e}
+    :root{color-scheme:light;--paper:#f6f0e8;--surface:#fffaf3;--ink:#19130f;--muted:#746a61;--line:rgba(25,19,15,.12);--accent:#ff5722}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%}body{min-height:100vh;display:grid;place-items:center;background:radial-gradient(ellipse at 19% 14%,rgba(255,115,70,.14),transparent 33%),radial-gradient(ellipse at 85% 86%,rgba(203,173,144,.2),transparent 38%),var(--paper);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:24px}
+    .layout{width:min(980px,100%);min-height:580px;display:grid;grid-template-columns:1.05fr .95fr;border:1px solid rgba(25,19,15,.1);border-radius:30px;overflow:hidden;background:rgba(255,250,243,.76);box-shadow:0 32px 100px rgba(54,35,20,.13)}
+    .story{padding:clamp(30px,6vw,64px);display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(145deg,rgba(255,255,255,.58),rgba(255,240,228,.65))}.brand{display:flex;align-items:center;gap:12px;font-size:18px;font-weight:780;letter-spacing:-.04em}.brand img{width:42px;height:42px;border-radius:13px;background:white;box-shadow:0 0 0 1px rgba(255,87,34,.14),0 8px 22px rgba(255,87,34,.12)}.eyebrow{margin:0 0 16px;color:#a34823;font-size:11px;font-weight:850;letter-spacing:.16em;text-transform:uppercase}.story-copy{max-width:410px}.story h1{margin:0;font-family:ui-serif,Georgia,"Times New Roman",serif;font-size:clamp(46px,6.5vw,76px);font-weight:500;line-height:.92;letter-spacing:-.065em}.story-copy p{max-width:360px;margin:21px 0 0;color:#746a61;font-size:16px;line-height:1.6}.story-foot{color:#92877d;font-size:12px}
+    .panel{padding:clamp(30px,5vw,56px);display:flex;align-items:center;background:rgba(255,253,249,.74)}form{width:100%;max-width:370px;margin:auto;display:grid;gap:17px}.panel h2{margin:0;font-size:29px;letter-spacing:-.055em}.intro{margin:-9px 0 2px;color:var(--muted);font-size:14px;line-height:1.5}.field{display:grid;gap:7px}.field label{color:#655a51;font-size:12px;font-weight:760}.field input{width:100%;height:48px;border:1px solid rgba(25,19,15,.15);border-radius:13px;background:white;color:var(--ink);padding:0 14px;font:inherit;outline:none;transition:border-color .16s,box-shadow .16s}.field input:focus{border-color:rgba(255,87,34,.68);box-shadow:0 0 0 4px rgba(255,87,34,.1)}.password-wrap{position:relative}.password-wrap input{padding-right:76px}.reveal{position:absolute;right:8px;top:7px;height:34px;padding:0 9px;border:0;border-radius:9px;background:#f7f1e9;color:#655a51;font-size:12px;font-weight:700;cursor:pointer}.submit{height:48px;border:0;border-radius:999px;background:#19130f;color:#fff;font-size:14px;font-weight:780;box-shadow:0 12px 24px rgba(25,19,15,.14);cursor:pointer;transition:transform .16s,opacity .16s}.submit:hover{transform:translateY(-1px)}.submit:disabled{opacity:.65;cursor:wait}.message{min-height:18px;margin:-7px 0 0;color:#b3261e;font-size:13px;line-height:1.4}.message:empty{display:none}.help{margin:0;color:#897f76;text-align:center;font-size:12px;line-height:1.55}.help a,.demo a{color:#a34823;font-weight:750;text-decoration:none}.help a:hover,.demo a:hover{text-decoration:underline}.divider{height:1px;background:var(--line);margin:1px 0}.demo{padding:13px 14px;border:1px solid rgba(255,87,34,.15);border-radius:14px;background:#fff5ed;color:#6d5548;font-size:12px;line-height:1.5}.demo b{display:block;margin-bottom:3px;color:#3e2a20}.demo a{display:inline-block;margin-top:5px}
+    @media(max-width:720px){body{padding:12px}.layout{min-height:0;grid-template-columns:1fr;border-radius:23px}.story{min-height:220px;padding:25px 26px 27px;gap:35px}.brand img{width:36px;height:36px}.story h1{font-size:48px}.story-copy p{margin-top:12px;font-size:14px}.story-foot{display:none}.panel{padding:29px 25px 32px}.panel h2{font-size:27px}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
   </style>
 </head>
 <body>
-  <form id="loginForm">
-    <div class="brand"><i></i><span>Rose</span></div>
-    <h1>Sign in.</h1>
-    <p>Use the Wildrose account credentials for the Lost Lake / Todd workspace.</p>
-    <label>Email<input id="email" type="email" autocomplete="email" value="Scott-wilde@live.com" required></label>
-    <label>Password<input id="password" type="password" autocomplete="current-password" required></label>
-    <button type="submit">Open dashboard</button>
-    <div class="msg" id="msg"></div>
-  </form>
+  <main class="layout">
+    <section class="story" aria-label="Rose Workground">
+      <div class="brand"><img src="logos/wildrose.png" alt=""><span>Rose Workground</span></div>
+      <div class="story-copy"><p class="eyebrow">Your workspace</p><h1>Build Rose<br>around your<br>business.</h1><p>Sign in to continue setting up your assistant, reviewing context, connecting tools, and testing workflows.</p></div>
+      <div class="story-foot">A calmer way to make your work flow.</div>
+    </section>
+    <section class="panel" aria-labelledby="formTitle">
+      <form id="loginForm" novalidate>
+        <h2 id="formTitle">Welcome back</h2>
+        <p class="intro">Use the email and password for your Rose account.</p>
+        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false" required></div>
+        <div class="field"><label for="password">Password</label><div class="password-wrap"><input id="password" name="password" type="password" autocomplete="current-password" required><button class="reveal" id="revealPassword" type="button" aria-label="Show password">Show</button></div></div>
+        <button class="submit" id="submitButton" type="submit">Sign in</button>
+        <p class="message" id="message" role="alert" aria-live="polite"></p>
+        <div class="divider" aria-hidden="true"></div>
+        <p class="help">Need a Rose account? <a href="mailto:invites@wildroseautomations.ca?subject=Rose%20Workground%20access">Contact Wildrose</a></p>
+        <div class="demo"><b>Just testing the Swift Line receptionist?</b>Open the isolated demo without signing in.<br><a href="workground/?demo=swift-line-locating">Open Swift Line test demo →</a></div>
+      </form>
+    </section>
+  </main>
   <script>
-    const form=document.getElementById('loginForm'),msg=document.getElementById('msg');
-    form.addEventListener('submit',async e=>{
-      e.preventDefault();msg.className='msg';msg.textContent='Signing in…';
+    const API='https://wildrose-widget.wildeautomations.com/api/rose-account-login';
+    const form=document.getElementById('loginForm'),emailInput=document.getElementById('email'),passwordInput=document.getElementById('password'),submitButton=document.getElementById('submitButton'),message=document.getElementById('message');
+    const params=new URLSearchParams(location.search);
+    const next=params.get('next')==='workground/context.html'?'workground/context.html':'workground/';
+    document.getElementById('revealPassword').addEventListener('click',event=>{const showing=passwordInput.type==='text';passwordInput.type=showing?'password':'text';event.currentTarget.textContent=showing?'Show':'Hide';event.currentTarget.setAttribute('aria-label',showing?'Show password':'Hide password')});
+    form.addEventListener('submit',async event=>{
+      event.preventDefault();message.textContent='';
+      if(!emailInput.value.trim()||!passwordInput.value){message.textContent='Enter your email and password to sign in.';return}
+      submitButton.disabled=true;submitButton.textContent='Signing in…';
       try{
-        const r=await fetch('https://wildrose-widget.wildeautomations.com/api/rose-account-login',{method:'POST',headers:{'Content-Type':'application/json','bypass-tunnel-reminder':'1'},body:JSON.stringify({email:document.getElementById('email').value.trim(),password:document.getElementById('password').value})});
-        const j=await r.json().catch(()=>({}));
-        if(!r.ok||!j.token)throw new Error(j.error||'Login failed');
-        localStorage.setItem('roseDashboardToken',j.token);
-        localStorage.setItem('wildroseDashboardToken',j.token);
-        localStorage.setItem('roseClientSettings',JSON.stringify({businessName:j.customer?.businessName||'Lost Lake Resort',website:j.customer?.website||'https://thelostlakeresort.com',ownerEmail:j.account?.email||document.getElementById('email').value.trim(),ownerName:'Scott Wilde'}));
-        location.href='workground/?v=e178b18';
-      }catch(err){msg.className='msg error';msg.textContent=err.message||'Login failed';}
+        const response=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:emailInput.value.trim(),password:passwordInput.value})});
+        const result=await response.json().catch(()=>({}));
+        if(!response.ok||!result.token)throw new Error(response.status===401?'That email and password did not match an account.':(result.error||'Rose could not sign you in. Try again.'));
+        localStorage.setItem('wildroseDashboardToken',result.token);localStorage.removeItem('roseDashboardToken');
+        localStorage.setItem('roseClientSettings',JSON.stringify({businessName:result.customer?.businessName||'',website:result.customer?.website||'',ownerEmail:result.account?.email||emailInput.value.trim()}));
+        location.replace(next);
+      }catch(error){message.textContent=error.message||'Could not connect to Rose. Check your connection and try again.';submitButton.disabled=false;submitButton.textContent='Sign in'}
     });
+    if(localStorage.getItem('wildroseDashboardToken')||localStorage.getItem('roseDashboardToken'))location.replace(next);
   </script>
 </body>
 </html>
