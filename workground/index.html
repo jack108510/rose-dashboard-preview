@@ -114,6 +114,9 @@
   @media(max-width:760px){.shell{grid-template-columns:minmax(0,1fr)}.shell>*{min-width:0}.top{grid-template-columns:auto minmax(0,1fr)}.top-actions{flex:none;width:100%;min-width:0;max-width:100%;overflow-x:auto;scrollbar-width:none;justify-self:end}.top-actions{justify-content:flex-start!important}.top-actions::-webkit-scrollbar{display:none}.top-actions>*{flex:none}.meta-chip{display:none}.wf-page-head{flex-wrap:wrap;align-items:flex-start}}
   @media(max-width:620px){.workflow-card{padding:16px}.wf-title h3{font-size:21px}.wf-node{width:44px;height:44px;border-radius:14px}.wf-track{top:39px}.wf-step b{font-size:11.5px}.wf-stats .wf-last{margin-left:0;text-align:left}}
   .section-link{height:30px;display:inline-flex;align-items:center;padding:0 12px;border-radius:999px;color:#6d6259;text-decoration:none;font-size:13px;white-space:nowrap}.section-link:hover{background:#fff}@media(max-width:760px){.sections{display:flex;width:100%;justify-content:center;gap:0}.section-tab,.section-link{font-size:12px;padding:0 9px}}</style>
+  <script>
+    (()=>{const params=new URLSearchParams(location.search);const demo=params.get('demo')==='swift-line-locating';const token=localStorage.getItem('wildroseDashboardToken')||localStorage.getItem('roseDashboardToken');if(!demo&&!token){const next=params.get('returnTo')==='context'?'workground/context.html':'workground/';location.replace(`../login.html?next=${encodeURIComponent(next)}`)}})();
+  </script>
 </head>
 <body>
   <main class="shell" data-build="jack-blank-1">
