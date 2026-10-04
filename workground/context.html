@@ -15,14 +15,14 @@
   </header>
   <main>
     <section class="heading">
-      <div><p class="eyebrow">BUSINESS KNOWLEDGE</p><h1>Your website,<br><em>connected.</em></h1><p class="intro">Explore the facts Rose can use, and review what your website scan found.</p></div>
+      <div><p class="eyebrow">BUSINESS KNOWLEDGE</p><h1>Your context,<br><em>connected.</em></h1><p class="intro">Explore what Rose learned from your website and Builder conversations. Review new facts before publishing them.</p></div>
       <form id="scanForm" class="scan-form"><label for="websiteInput">Business website</label><div><input id="websiteInput" type="url" placeholder="https://yourbusiness.com" autocomplete="url" required><button class="primary" id="scanButton" type="submit">Scan website <span aria-hidden="true">↗</span></button></div><p id="scanHint">Website suggestions need your approval before Rose can use them.</p></form>
     </section>
     <div id="notice" class="notice" role="status" hidden></div>
-    <section class="workspace" aria-label="Website context">
+    <section class="workspace" aria-label="Business context">
       <div class="graph-panel">
         <div class="graph-top"><div><span class="sync-dot" aria-hidden="true"></span><span id="businessLabel">Website context</span></div><span id="syncLabel">Connecting…</span></div>
-        <div class="graph" id="graph" aria-label="Interactive web of website context. Use the fact list to explore with a keyboard.">
+        <div class="graph" id="graph" aria-label="Interactive web of business context. Use the fact list to explore with a keyboard.">
           <div class="world" id="world"><svg id="edges" width="1100" height="800" aria-hidden="true"></svg><div id="nodes"></div></div>
           <div class="empty" id="emptyState" hidden><span class="empty-mark" aria-hidden="true">✳</span><h2>A little context goes a long way.</h2><p id="emptyText">Sign in to see your business knowledge, or scan your website to build its context web.</p><a id="emptyAction" class="primary" href="./?returnTo=context">Sign in to Workground</a></div>
           <div class="graph-legend"><span><i class="approved-dot"></i>Approved</span><span><i class="pending-dot"></i>Needs review</span><span><i class="source-dot"></i>Source page</span></div>
@@ -39,7 +39,7 @@
         <div class="facts" id="facts"></div>
       </aside>
     </section>
-    <p class="footnote">This web shows your recorded context and its sources. Only approved knowledge is available to the published Rose widget.</p>
+    <p class="footnote">This web grows as your website scans and Builder conversations add facts. Only approved knowledge is available to the published Rose widget.</p>
   </main>
   <script src="context.js"></script>
 </body>

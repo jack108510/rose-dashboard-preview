@@ -13,6 +13,7 @@
   ];
   let account = {}, approved = [], pending = [], selected = null, filter = 'all', query = '';
   let lastSiteScan = null, currentSession = '', loading = false, nodes = [], links = [], zoom = 1, panX = 0, panY = 0, pointer = null;
+  let worldWidth = 1100, worldHeight = 800;
   const token = () => localStorage.getItem('wildroseDashboardToken') || localStorage.getItem('roseDashboardToken') || '';
   const clean = (value, max = 2400) => String(value || '').slice(0, max);
   function safeUrl(value) {
@@ -77,7 +78,7 @@
     localStorage.setItem(SNAPSHOT_KEY, JSON.stringify({ version: 1, session: currentSession,
       lastSiteScan, website: $('websiteInput').value, businessName: account.businessName || '',
       pending: pending.map(fact => ({ id: fact.originalId, text: fact.text, label: fact.label,
-        sourceUrl: fact.sourceUrl, source: fact.source, scanId: fact.scanId })),
+        sourceUrl: fact.sourceUrl, source: fact.source, scanId: fact.scanId, createdAt: fact.createdAt })),
       updatedAt: new Date().toISOString() }));
   }
   async function loadContext() {
@@ -105,34 +106,44 @@
   }
   function buildWeb() {
     const all = facts();
-    const root = { id: 'root', kind: 'root', x: 550, y: 390, label: account.businessName || 'Your business', mark: '✳' };
-    nodes = [root]; links = [];
     const populated = groups.filter(group => all.some(fact => fact.group === group.id));
+    const largestGroup = Math.max(0, ...populated.map(group => all.filter(fact => fact.group === group.id).length));
+    const factRadius = largestGroup ? 145 + Math.floor((largestGroup - 1) / 8) * 125 : 0;
+    const categoryRadius = populated.length > 1 ? Math.max(280, factRadius * 2 + 80) : 250;
+    const sourceUrls = [...new Set(all.map(fact => fact.sourceUrl).filter(Boolean))];
+    const sourceRadius = categoryRadius + factRadius + (sourceUrls.length ? 120 : 0);
+    const extent = Math.max(400, sourceRadius + 150);
+    worldWidth = worldHeight = Math.ceil(extent * 2);
+    const center = extent;
+    const world = $('world'); world.style.width = worldWidth + 'px'; world.style.height = worldHeight + 'px';
+    const svg = $('edges'); svg.setAttribute('width', worldWidth); svg.setAttribute('height', worldHeight);
+    const root = { id: 'root', kind: 'root', x: center, y: center, label: account.businessName || 'Your business', mark: '✳' };
+    nodes = [root]; links = [];
     populated.forEach((group, groupIndex) => {
       const angle = -Math.PI / 2 + groupIndex * Math.PI * 2 / populated.length;
       const category = { id: 'group:' + group.id, kind: 'category', group: group.id, label: group.name, mark: group.mark,
-        x: 550 + Math.cos(angle) * 235, y: 390 + Math.sin(angle) * 235 };
+        x: center + Math.cos(angle) * categoryRadius, y: center + Math.sin(angle) * categoryRadius };
       nodes.push(category); links.push({ from: root.id, to: category.id, flow: true });
       const groupFacts = all.filter(fact => fact.group === group.id);
-      const shown = groupFacts.slice(0, 12);
-      shown.forEach((fact, index) => {
-        const arc = shown.length === 1 ? 0 : (index / Math.max(1, shown.length - 1) - .5) * 1.9;
-        const radius = 95 + (index % 3) * 24;
+      groupFacts.forEach((fact, index) => {
+        const ring = Math.floor(index / 8), inRing = Math.min(8, groupFacts.length - ring * 8);
+        const arc = angle + (index % 8) * Math.PI * 2 / inRing;
+        const radius = 145 + ring * 125;
         const node = { id: fact.id, kind: 'fact', fact, group: group.id,
-          label: fact.label || fact.text, x: category.x + Math.cos(angle + arc) * radius,
-          y: category.y + Math.sin(angle + arc) * radius };
+          label: fact.label || fact.text, x: category.x + Math.cos(arc) * radius,
+          y: category.y + Math.sin(arc) * radius };
         nodes.push(node); links.push({ from: category.id, to: node.id });
       });
     });
-    const sources = [...new Set(all.map(fact => fact.sourceUrl).filter(Boolean))];
-    sources.slice(0, 6).forEach((url, index) => {
+    sourceUrls.forEach((url, index) => {
+      const angle = -Math.PI / 2 + index * Math.PI * 2 / sourceUrls.length;
       const node = { id: 'source:' + url, kind: 'source', label: sourceLabel(url), url, mark: '↗',
-        x: 180 + index * 145, y: 695 + (index % 2) * 75 };
+        x: center + Math.cos(angle) * sourceRadius, y: center + Math.sin(angle) * sourceRadius };
       nodes.push(node);
       links.push({ from: root.id, to: node.id, source: true });
       nodes.filter(item => item.fact?.sourceUrl === url).forEach(item => links.push({ from: node.id, to: item.id, source: true }));
     });
-    const svg = $('edges'); svg.replaceChildren();
+    svg.replaceChildren();
     const byId = new Map(nodes.map(node => [node.id, node]));
     links.forEach(link => {
       const a = byId.get(link.from), b = byId.get(link.to);
@@ -145,7 +156,7 @@
         const flow = path.cloneNode(); flow.classList.add('flow'); svg.appendChild(flow);
       }
     });
-    document.querySelector('.graph-bottom p').textContent = all.length > nodes.filter(node=>node.fact).length || sources.length > 6 ? 'Web shows up to 12 facts per topic and 6 sources · all facts are listed' : 'Drag to explore · select a fact to see its source';
+    document.querySelector('.graph-bottom p').textContent = 'Drag to explore · every fact and source has a point';
     $('nodes').replaceChildren();
     nodes.forEach(node => {
       const button = document.createElement('button');
@@ -165,11 +176,12 @@
   function transform() {
     $('world').style.transform = 'translate(' + panX + 'px,' + panY + 'px) scale(' + zoom + ')';
     $('world').style.setProperty('--counter-scale', String(1 / zoom));
+    $('graph').classList.toggle('compact', zoom < .6);
   }
   function fitWeb() {
     const bounds = $('graph').getBoundingClientRect();
-    zoom = Math.min(bounds.width / 1100, (bounds.height - 60) / 800);
-    panX = (bounds.width - 1100 * zoom) / 2; panY = (bounds.height - 800 * zoom) / 2 - 10; transform();
+    zoom = Math.min(bounds.width / worldWidth, (bounds.height - 60) / worldHeight);
+    panX = (bounds.width - worldWidth * zoom) / 2; panY = (bounds.height - worldHeight * zoom) / 2 - 10; transform();
   }
   function zoomBy(factor) {
     const width = $('graph').clientWidth, height = $('graph').clientHeight;
@@ -190,7 +202,7 @@
   }
   function sourceInfo(container, url, source) {
     const box = element('div', 'source-info');
-    box.appendChild(element('span', '', url ? 'Source page' : source === 'owner' ? 'Added by the business owner' : 'Source not recorded'));
+    box.appendChild(element('span', '', url ? 'Source page' : source === 'owner-chat' ? 'Suggested from your Builder conversation' : source === 'owner' ? 'Added by the business owner' : 'Source not recorded'));
     if (url) { const anchor = element('a', '', sourceLabel(url)); anchor.href = url; anchor.target = '_blank'; anchor.rel = 'noopener noreferrer'; box.appendChild(anchor); }
     container.appendChild(box);
   }
@@ -206,7 +218,7 @@
     detail.appendChild(element('h2', '', fact.label || groups.find(group => group.id === fact.group).name));
     let editor;
     if (fact.status === 'pending') {
-      editor = element('textarea'); editor.value = fact.text; editor.setAttribute('aria-label', 'Edit website fact before approval'); detail.appendChild(editor);
+      editor = element('textarea'); editor.value = fact.text; editor.setAttribute('aria-label', 'Edit context fact before approval'); detail.appendChild(editor);
     } else detail.appendChild(element('p', 'fact-text', fact.text));
     sourceInfo(detail, fact.sourceUrl, fact.source);
     if (fact.status === 'pending') {
@@ -220,13 +232,13 @@
         if (text.length < 3) { notify('Add a little more detail before approving this fact.'); return; }
         approve.disabled = discard.disabled = true; approve.textContent = 'Saving…';
         try {
-          const data = await request('/api/rose-account-knowledge', { action: 'add', text, source: 'website-scan', sourceUrl: fact.sourceUrl, scanId: fact.scanId });
+          const data = await request('/api/rose-account-knowledge', { action: 'add', text, source: fact.source === 'owner-chat' ? 'owner-chat' : 'website-scan', sourceUrl: fact.sourceUrl, scanId: fact.scanId });
           if (!data.note?.id) throw new Error('The approved fact could not be saved. Please try again.');
           approved.push(normalise(data.note, 'approved')); pending = pending.filter(item => item.id !== fact.id);
           selected = 'approved:' + data.note.id; saveSnapshot(); notify('Fact approved. Publish from Builder when your context is ready.'); render();
         } catch (error) { errorMessage(error); approve.disabled = discard.disabled = false; approve.textContent = 'Approve fact'; }
       });
-      discard.addEventListener('click', () => { pending = pending.filter(item => item.id !== fact.id); selected = null; saveSnapshot(); notify('Website suggestion discarded.'); render(); });
+      discard.addEventListener('click', () => { pending = pending.filter(item => item.id !== fact.id); selected = null; saveSnapshot(); notify('Suggestion discarded.'); render(); });
     }
   }
   function renderList() {
@@ -235,7 +247,7 @@
     if (selected?.startsWith('source:')) rows = rows.filter(fact => fact.sourceUrl === selected.slice(7));
     $('listCount').textContent = rows.length + (rows.length === 1 ? ' fact' : ' facts');
     const list = $('facts'); list.replaceChildren();
-    if (!rows.length) { list.appendChild(element('p', 'no-results', facts().length ? 'No facts match this view. Try another filter or search.' : 'Your website facts will appear here.')); return; }
+    if (!rows.length) { list.appendChild(element('p', 'no-results', facts().length ? 'No facts match this view. Try another filter or search.' : 'New website and conversation facts will appear here.')); return; }
     rows.forEach(fact => {
       const row = element('button', 'fact-row ' + fact.status + (selected === fact.id ? ' selected' : '')); row.type = 'button';
       const dot = element('i'); dot.setAttribute('aria-hidden', 'true');
@@ -266,7 +278,7 @@
     $('approvedCount').textContent = approved.length; $('pendingCount').textContent = pending.length;
     $('sourceCount').textContent = new Set(facts().map(fact => fact.sourceUrl).filter(Boolean)).size;
     $('emptyState').hidden = facts().length > 0;
-    $('emptyText').textContent = signedIn ? 'Scan your business website to find facts, then review what Rose should know.' : 'Sign in to see your business knowledge and build a web of your website context.';
+    $('emptyText').textContent = signedIn ? 'Scan your website or tell Builder about your business, then review what Rose should know.' : 'Sign in to build a web of your business context.';
     $('emptyAction').textContent = signedIn ? 'Start with your website' : 'Sign in to Workground';
     $('emptyAction').href = signedIn ? '#websiteInput' : './?returnTo=context';
     buildWeb(); renderList();
@@ -277,9 +289,11 @@
   function scanCandidates(scraped, scanId, website) {
     const rows = []; const detected = scraped.detected || {};
     const add = (label, value) => {
-      const text = Array.isArray(value) ? value.filter(Boolean).join(', ') : clean(value);
-      if (text.trim().length > 2) rows.push(normalise({ id: scanId + '_' + rows.length, label, text,
-        source: 'website-scan', sourceUrl: website, scanId }, 'pending'));
+      for (const item of (Array.isArray(value) ? value : [value])) {
+        const text = clean(item).trim();
+        if (text.length > 2) rows.push(normalise({ id: scanId + '_' + rows.length, label, text,
+          source: 'website-scan', sourceUrl: website, scanId }, 'pending'));
+      }
     };
     add('Business name', scraped.businessName); add('Description', scraped.description);
     add('Services', detected.services || scraped.services); add('Service areas', scraped.areasServed || detected.areasServed);
@@ -298,10 +312,12 @@
       const data = await request('/api/rose-site-scan', { website, sourcePage: location.href });
       if (!data.scraped) throw new Error('No website facts were returned. Try again or add knowledge in Builder.');
       const rows = scanCandidates(data.scraped, clean(data.scanId || Date.now(), 120), website);
-      pending = rows.filter(fact => !approved.some(saved => saved.text === fact.text && saved.sourceUrl === fact.sourceUrl));
+      const known = new Set([...approved, ...pending].map(fact => fact.text.trim().toLowerCase() + '|' + fact.sourceUrl));
+      const fresh = rows.filter(fact => { const key = fact.text.trim().toLowerCase() + '|' + fact.sourceUrl; if (known.has(key)) return false; known.add(key); return true; });
+      pending.push(...fresh);
       lastSiteScan = {website, quality:Number(data.scraped.scanQuality||0),pages:Number(data.scraped.pagesScanned||0),missing:data.scraped.missingQuestions||data.scraped.detected?.missingQuestions||[]};
       $('websiteInput').value = website; saveSnapshot(); selected = null;
-      notify(pending.length ? pending.length + ' website suggestions are ready for your review.' : 'No new facts to review. You can add details in Builder.');
+      notify(fresh.length ? fresh.length + ' new website suggestions are ready for your review.' : 'No new facts found. You can add details in Builder.');
       render();
     } catch (error) { errorMessage(error); }
     finally { button.disabled = false; button.replaceChildren(document.createTextNode('Scan website ↗')); }
