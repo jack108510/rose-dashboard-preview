@@ -153,7 +153,9 @@
       const s=document.createElement('script');
       s.src='wildrose-widget-sandbox-draft-runtime-1.js?v=no-extra-floating-logo-1';
       s.dataset.apiBase='https://wildrose-widget.wildeautomations.com';
-      if(swiftDemo){s.dataset.previewReceptionist='swift-line-locating';s.dataset.website='https://swiftlocating.ca';s.dataset.businessName='Swift Line Locating';s.dataset.services='Underground utility line locating; mapping and documentation; construction site and pre-dig locates; electrical and gas line locating; locate reports; one-call management; project coordination; on-site service across Alberta.';}
+      let savedWebsite='';try{savedWebsite=JSON.parse(window.localStorage.getItem('roseClientSettings')||'{}').website||''}catch{}
+      const swiftBusiness=swiftDemo||/^https?:\/\/(?:www\.)?swiftlocating\.ca(?:\/|$)/i.test(savedWebsite);
+      if(swiftBusiness){s.dataset.previewReceptionist='swift-line-locating';s.dataset.website='https://swiftlocating.ca';s.dataset.businessName='Swift Line Locating';s.dataset.services='Underground utility line locating; mapping and documentation; construction site and pre-dig locates; electrical and gas line locating; locate reports; one-call management; project coordination; on-site service across Alberta.';}
       s.dataset.client='preview';
       s.dataset.businessId='preview';
       s.dataset.title='Rose';
