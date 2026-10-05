@@ -155,12 +155,12 @@
       s.dataset.apiBase='https://wildrose-widget.wildeautomations.com';
       let savedWebsite='';try{savedWebsite=JSON.parse(window.localStorage.getItem('roseClientSettings')||'{}').website||''}catch{}
       const swiftBusiness=swiftDemo||/^https?:\/\/(?:www\.)?swiftlocating\.ca(?:\/|$)/i.test(savedWebsite);
-      if(swiftBusiness){s.dataset.previewReceptionist='swift-line-locating';s.dataset.website='https://swiftlocating.ca';s.dataset.businessName='Swift Line Locating';s.dataset.services='Underground utility line locating; mapping and documentation; construction site and pre-dig locates; electrical and gas line locating; locate reports; one-call management; project coordination; on-site service across Alberta.';}
+      if(swiftBusiness){s.dataset.previewReceptionist='swift-line-locating';s.dataset.website='https://swiftlocating.ca';s.dataset.businessName='Swift Line Locating';s.dataset.services='Underground utility line locating; mapping and documentation; construction site and pre-dig locates; electrical and gas line locating; locate reports; one-call management; project coordination; on-site service across Alberta.';s.dataset.logo='https://swiftlocating.ca/assets/swift-locating/logo-transparent.png';s.dataset.subtitle="Swift Line Locating's AI front desk";s.dataset.fabSubtitle='Questions and locate requests';s.dataset.defaultView='chat';s.dataset.greeting="Hi! I'm Swift Site Scout, Swift Line Locating's AI receptionist. This is a demo, so nothing will be sent. I can answer questions and take you through a locate inquiry right here. What can I help you with?";s.dataset.placeholder='Ask about utility locates…';s.dataset.fallbackUrl='https://swiftlocating.ca/#contact';}
       s.dataset.client='preview';
       s.dataset.businessId='preview';
-      s.dataset.title='Rose';
+      s.dataset.title=swiftBusiness?'Swift Site Scout':'Rose';
       s.dataset.build='theme-controls-1';
-      s.dataset.accent='#ff5722';
+      s.dataset.accent=swiftBusiness?'#e8620a':'#ff5722';
       s.dataset.mount='#rose-workground-widget';
       s.dataset.inline='true';
       s.addEventListener('load',()=>{if(window.__rosePendingIdentity)window.__roseWorkgroundSetIdentity?.(window.__rosePendingIdentity)});document.currentScript.after(s);
@@ -181,9 +181,20 @@
     const state={name:'Rose',accent:'#ff5722',secondary:'#ffb49b',accentLabel:'Wildrose orange',description:'AI intake assistant',background:'#fffaf3',text:'#23130e',bubble:'rgba(255,255,255,.54)',button:'#ff5722',logoUrl:'logos/wildrose.png',logoPrompt:'Wildrose logo'};
     const chatHistory=JSON.parse(localStorage.getItem('roseCommandHistory')||'[]'),savedContext=JSON.parse(localStorage.getItem('roseSavedContext')||'[]');
     const settings={businessName:savedClientSettings.businessName||'Company name',website:savedClientSettings.website||'company.com',ownerName:savedClientSettings.ownerName||'Owner name',ownerEmail:savedClientSettings.ownerEmail||'owner@company.com',backupEmail:savedClientSettings.backupEmail||'',phone:savedClientSettings.phone||'',knowledge:hasAccountSession?JSON.parse(localStorage.getItem('rosePreviewKnowledge')||'[]'):[],apiKeys:hasAccountSession?JSON.parse(localStorage.getItem('rosePreviewApiKeys')||'[]'):[]};
+    if(swiftDemo||/^https?:\/\/(?:www\.)?swiftlocating\.ca(?:\/|$)/i.test(settings.website)){
+      state.name='Swift Site Scout';
+      state.accent='#e8620a';
+      state.secondary='#f8cdb1';
+      state.accentLabel='Swift Line orange';
+      state.description="Swift Line Locating's AI front desk";
+      state.background='#fffaf3';
+      state.text='#18120f';
+      state.bubble='rgba(255,255,255,.54)';
+      state.button='#e8620a';
+      state.logoUrl='https://swiftlocating.ca/assets/swift-locating/logo-transparent.png';
+      state.logoPrompt='Swift Line Locating logo';
+    }
     if(swiftDemo){
-      state.name='Swift receptionist';
-      state.description='Swift Line Locating demo assistant';
       settings.businessName='Swift Line Locating';
       settings.website='https://swiftlocating.ca';
       settings.ownerEmail='';
