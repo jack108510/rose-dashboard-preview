@@ -2,6 +2,7 @@
   const script = document.currentScript;
   const cfg = {
     apiBase: script?.dataset.apiBase || "",
+    voiceId: "",
     title: script?.dataset.title || "Rose",
     businessName: script?.dataset.businessName || script?.dataset.company || "Wildrose Automations",
     accent: script?.dataset.accent || "#ff5722",
@@ -105,6 +106,7 @@
     cfg.businessName = config.settings?.businessName || cfg.businessName;
     cfg.website = config.settings?.website || cfg.website;
     cfg.ownerEmail = config.settings?.ownerEmail || cfg.ownerEmail;
+    cfg.voiceId = config.settings?.voiceId || "";
     root.style.setProperty("--accent", a.brandPrimary || cfg.accent);
     root.style.setProperty("--accent-soft", a.brandAccent || "color-mix(in srgb,var(--accent) 32%,white)");
     root.style.setProperty("--rose-bg", a.backgroundColor || "#fffaf3");
@@ -224,7 +226,7 @@
   }
   async function ensureChat() {
     if (chatId) return chatId;
-    const data = await api("/api/chat/start", { page: location.href, businessId: cfg.businessId, ownerEmail: cfg.ownerEmail, businessName: cfg.businessName, website: cfg.website, businessContext: cfg.businessContext, services: cfg.services, title: cfg.title, assistantName: cfg.title, greetingMessage: cfg.greeting, previewMode: cfg.inline || !cfg.loadPublished });
+    const data = await api("/api/chat/start", { page: location.href, businessId: cfg.businessId, ownerEmail: cfg.ownerEmail, businessName: cfg.businessName, website: cfg.website, businessContext: cfg.businessContext, services: cfg.services, title: cfg.title, assistantName: cfg.title, greetingMessage: cfg.greeting, voiceId: cfg.voiceId, previewMode: cfg.inline || !cfg.loadPublished });
     chatId = data.chatId;
     return chatId;
   }
