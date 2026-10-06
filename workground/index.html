@@ -488,7 +488,7 @@ function connectCardLabel(kind){return kind==='crm'?'CRM / lead destination':kin
       }catch(error){chip.textContent='Usage unavailable';chip.title=error.message||'Could not load voice usage.';chip.setAttribute('aria-label',chip.title);window.__roseVoiceUsage={label:'Unavailable',detail:'Could not load minutes for this account.'};const l=document.getElementById('accountMinutes'),d=document.getElementById('accountMinutesDetail');if(l)l.textContent=window.__roseVoiceUsage.label;if(d)d.textContent=window.__roseVoiceUsage.detail}
     }
     const hydrateRoseAccountWithUsage=hydrateRoseAccount;
-    hydrateRoseAccount=async function(...args){const connected=await hydrateRoseAccountWithUsage.apply(this,args);if(connected){await refreshRoseVoiceMinutes();maybeOpenFirstRun()}return connected};
+    hydrateRoseAccount=async function(...args){const connected=await hydrateRoseAccountWithUsage.apply(this,args);if(connected){await refreshRoseVoiceMinutes();await refreshBackendConnections();maybeOpenFirstRun()}return connected};
     window.addEventListener('focus',()=>{if(accountValidated)refreshRoseVoiceMinutes()});
   </script>
 </body>
