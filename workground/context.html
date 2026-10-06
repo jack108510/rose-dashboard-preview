@@ -18,31 +18,32 @@
   </header>
   <main>
     <section class="heading">
-      <div><p class="eyebrow">BUSINESS KNOWLEDGE</p><h1>Your context,<br><em>connected.</em></h1><p class="intro">Explore what Rose learned from your website and Builder conversations. Review new facts before publishing them.</p></div>
-      <form id="scanForm" class="scan-form"><label for="websiteInput">Business website</label><div><input id="websiteInput" type="url" placeholder="https://yourbusiness.com" autocomplete="url" required><button class="primary" id="scanButton" type="submit">Scan website <span aria-hidden="true">↗</span></button></div><p id="scanHint">Website suggestions need your approval before Rose can use them.</p></form>
+      <div class="heading-copy"><p class="eyebrow">ROSE KNOWLEDGE</p><h1>Your business,<br><em>in context.</em></h1><p class="intro">A clear view of what Rose knows, where each fact came from, and what still needs your approval.</p></div>
+      <form id="scanForm" class="scan-form"><label for="websiteInput">Scan your business website</label><div><input id="websiteInput" type="url" placeholder="https://yourbusiness.com" autocomplete="url" required><button class="primary" id="scanButton" type="submit">Scan website <span aria-hidden="true">↗</span></button></div><p id="scanHint">New suggestions stay private until you review them.</p></form>
     </section>
     <div id="notice" class="notice" role="status" hidden></div>
+    <div class="overview" aria-label="Knowledge summary"><div class="overview-item"><span class="overview-icon approved-icon" aria-hidden="true">✓</span><span><b id="approvedCount">0</b><small>Approved facts</small></span></div><div class="overview-item"><span class="overview-icon pending-icon" aria-hidden="true">○</span><span><b id="pendingCount">0</b><small>Needs review</small></span></div><div class="overview-item"><span class="overview-icon source-icon" aria-hidden="true">↗</span><span><b id="sourceCount">0</b><small>Source pages</small></span></div></div>
     <section class="workspace" aria-label="Business context">
       <div class="graph-panel">
-        <div class="graph-top"><div><span class="sync-dot" aria-hidden="true"></span><span id="businessLabel">Website context</span></div><span id="syncLabel">Connecting…</span></div>
+        <div class="graph-top"><div class="graph-title"><span class="graph-icon" aria-hidden="true">✳</span><span><strong>Knowledge map</strong><small id="businessLabel">Website context</small></span></div><span class="sync-status"><span class="sync-dot" aria-hidden="true"></span><span id="syncLabel">Connecting…</span></span></div>
         <div class="graph" id="graph" aria-label="Interactive web of business context. Use the fact list to explore with a keyboard.">
           <div class="world" id="world"><svg id="edges" width="1100" height="800" aria-hidden="true"></svg><div id="nodes"></div></div>
           <div class="empty" id="emptyState" hidden><span class="empty-mark" aria-hidden="true">✳</span><h2>A little context goes a long way.</h2><p id="emptyText">Sign in to see your business knowledge, or scan your website to build its context web.</p><a id="emptyAction" class="primary" href="./?returnTo=context">Sign in to Workground</a></div>
           <div class="graph-legend"><span><i class="approved-dot"></i>Approved</span><span><i class="pending-dot"></i>Needs review</span><span><i class="source-dot"></i>Source page</span></div>
           <div class="graph-controls"><button id="zoomOut" aria-label="Zoom out" type="button">−</button><button id="fit" type="button">Fit web</button><button id="zoomIn" aria-label="Zoom in" type="button">+</button></div>
         </div>
-        <div class="graph-bottom"><p>Drag to explore · select a fact to see its source</p><div><span><b id="approvedCount">0</b> approved</span><span><b id="pendingCount">0</b> to review</span><span><b id="sourceCount">0</b> source pages</span></div></div>
+        <div class="graph-bottom"><p>Drag to explore · select a point to inspect its source and status</p><span>Context grows with every approved fact</span></div>
       </div>
       <aside class="inspector">
-        <div class="inspector-head"><p class="eyebrow">EXPLORE YOUR CONTEXT</p><button id="refresh" type="button" aria-label="Refresh context">↻</button></div>
+        <div class="inspector-head"><div><p class="eyebrow">YOUR KNOWLEDGE</p><h2>Explore facts</h2></div><button id="refresh" type="button" aria-label="Refresh context" title="Refresh context">↻</button></div>
         <div class="filters" role="group" aria-label="Filter facts"><button data-filter="all" class="active" type="button" aria-pressed="true">All facts</button><button data-filter="approved" type="button" aria-pressed="false">Approved</button><button data-filter="pending" type="button" aria-pressed="false">Needs review</button></div>
         <label class="search-label" for="search">Find a fact</label><input class="search" id="search" type="search" placeholder="Services, hours, locations…">
         <section class="detail" id="detail" aria-live="polite"><p class="detail-placeholder">Select a point in the web, or choose a fact below.</p></section>
-        <div class="list-heading"><span id="listCount">0 facts</span><span>YOUR KNOWLEDGE</span></div>
+        <div class="list-heading"><span>Facts in this view</span><span id="listCount">0 facts</span></div>
         <div class="facts" id="facts"></div>
       </aside>
     </section>
-    <p class="footnote">This web grows as your website scans and Builder conversations add facts. Only approved knowledge is available to the published Rose widget.</p>
+    <p class="footnote">Website scans and Builder conversations add context here. Publish from Builder when the approved facts are ready for your live assistant.</p>
   </main>
   <script src="context.js"></script>
 </body>
