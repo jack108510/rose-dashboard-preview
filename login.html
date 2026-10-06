@@ -37,7 +37,7 @@
       </form>
       <form class="signup" id="signupForm" novalidate>
         <h2>Create your Rose account</h2>
-        <p class="intro">Use the email you entered at checkout, then create a password to set up Rose in Workground.</p>
+        <p class="intro">Use the email you entered on Rose’s checkout form, then create a password to set up Workground.</p>
         <p class="checkout-status" id="checkoutStatus" role="status" aria-live="polite" hidden></p>
         <div class="field"><label for="signupEmail">Checkout email</label><input id="signupEmail" type="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" required></div>
         <div class="field"><label for="signupPassword">Create password</label><input id="signupPassword" type="password" autocomplete="new-password" minlength="8" required></div>
@@ -99,7 +99,7 @@
           emailInput.value=email;passwordInput.value=password;
           document.body.classList.add('show-login');
           form.requestSubmit();
-        }catch(error){message.textContent=error.message||'Could not create your account';signupButton.disabled=false;signupButton.textContent='Create account and open Workground'}
+        }catch(error){message.textContent=error.message==='checkout lead not found'?'We could not find a Rose setup request for that email. Contact Wildrose if you paid using a direct link.':(error.message||'Could not create your account');signupButton.disabled=false;signupButton.textContent='Create account and open Workground'}
     });
     document.getElementById('revealPassword').addEventListener('click',event=>{const showing=passwordInput.type==='text';passwordInput.type=showing?'password':'text';event.currentTarget.textContent=showing?'Show':'Hide';event.currentTarget.setAttribute('aria-label',showing?'Show password':'Hide password')});
     form.addEventListener('submit',async event=>{
