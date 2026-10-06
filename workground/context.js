@@ -163,7 +163,6 @@
       button.type = 'button'; button.className = 'web-node ' + node.kind + (node.fact ? ' ' + node.fact.status : '');
       button.dataset.node = node.id; button.style.left = node.x + 'px'; button.style.top = node.y + 'px';
       button.setAttribute('aria-label', node.fact ? node.fact.status + ' fact: ' + node.fact.text : node.label);
-      button.title = node.fact?.text || node.label;
       const orb = document.createElement('span'); orb.className = 'orb'; orb.textContent = node.mark || ''; orb.setAttribute('aria-hidden', 'true');
       const label = document.createElement('b'); label.textContent = clean(node.label, 110);
       button.append(orb, label);
