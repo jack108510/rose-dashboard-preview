@@ -32,7 +32,7 @@
   function normalise(note, status) {
     const text = clean(note.text || note.content);
     const label = clean(note.label, 120);
-    const category = (/service areas/i.test(label) ? groups.find(group => group.id === 'areas') : null) || groups.find(group => group.id !== 'other' && group.words.test(label || text)) || groups[groups.length - 1];
+    const category = (/service areas/i.test(label) ? groups.find(group => group.id === 'areas') : null) || groups.find(group => group.id !== 'other' && group.words.test(label + ' ' + text)) || groups[groups.length - 1];
     return { id: status + ':' + clean(note.id || text, 140), originalId: clean(note.id, 140), text, label,
       status, group: category.id, sourceUrl: safeUrl(note.sourceUrl), source: clean(note.source, 80),
       scanId: clean(note.scanId, 120), createdAt: clean(note.reviewedAt || note.createdAt, 60) };
@@ -201,9 +201,9 @@
   function element(tag, className, text) {
     const el = document.createElement(tag); if (className) el.className = className; if (text) el.textContent = text; return el;
   }
-  function sourceInfo(container, url, source) {
+  function sourceInfo(container, url, source, label = '') {
     const box = element('div', 'source-info');
-    box.appendChild(element('span', '', url ? 'Source page' : source === 'owner-chat' ? 'Suggested from your Builder conversation' : source === 'owner' ? 'Added by the business owner' : 'Source not recorded'));
+    box.appendChild(element('span', '', url ? 'Source page' : source === 'owner-chat' ? 'Suggested from your Builder conversation' : source === 'document' ? 'Uploaded document: ' + (label || 'document') : source === 'owner' ? 'Added by the business owner' : 'Source not recorded'));
     if (url) { const anchor = element('a', '', sourceLabel(url)); anchor.href = url; anchor.target = '_blank'; anchor.rel = 'noopener noreferrer'; box.appendChild(anchor); }
     container.appendChild(box);
   }
@@ -221,7 +221,7 @@
     if (fact.status === 'pending') {
       editor = element('textarea'); editor.value = fact.text; editor.setAttribute('aria-label', 'Edit context fact before approval'); detail.appendChild(editor);
     } else detail.appendChild(element('p', 'fact-text', fact.text));
-    sourceInfo(detail, fact.sourceUrl, fact.source);
+    sourceInfo(detail, fact.sourceUrl, fact.source, fact.label);
     if (fact.status === 'pending') {
       detail.appendChild(element('p', 'detail-placeholder', 'This suggestion is not published. Check it before approving.'));
       const actions = element('div', 'detail-actions');
@@ -233,7 +233,7 @@
         if (text.length < 3) { notify('Add a little more detail before approving this fact.'); return; }
         approve.disabled = discard.disabled = true; approve.textContent = 'Saving…';
         try {
-          const data = await request('/api/rose-account-knowledge', { action: 'add', text, source: fact.source === 'owner-chat' ? 'owner-chat' : 'website-scan', sourceUrl: fact.sourceUrl, scanId: fact.scanId });
+          const data = await request('/api/rose-account-knowledge', { action: 'add', text, source: fact.source === 'document' ? 'document' : fact.source === 'owner-chat' ? 'owner-chat' : 'website-scan', sourceUrl: fact.sourceUrl, scanId: fact.scanId });
           if (!data.note?.id) throw new Error('The approved fact could not be saved. Please try again.');
           approved.push(normalise(data.note, 'approved')); pending = pending.filter(item => item.id !== fact.id);
           selected = 'approved:' + data.note.id; saveSnapshot(); notify('Fact approved. Publish from Builder when your context is ready.'); render();
