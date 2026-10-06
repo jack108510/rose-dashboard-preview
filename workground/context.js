@@ -108,11 +108,11 @@
     const all = facts();
     const populated = groups.filter(group => all.some(fact => fact.group === group.id));
     const largestGroup = Math.max(0, ...populated.map(group => all.filter(fact => fact.group === group.id).length));
-    const factRadius = largestGroup ? 145 + Math.floor((largestGroup - 1) / 8) * 125 : 0;
-    const categoryRadius = populated.length > 1 ? Math.max(280, factRadius * 2 + 80) : 250;
+    const factRadius = largestGroup ? 124 + Math.floor((largestGroup - 1) / 8) * 96 : 0;
+    const categoryRadius = populated.length > 1 ? Math.max(250, factRadius + 110) : 220;
     const sourceUrls = [...new Set(all.map(fact => fact.sourceUrl).filter(Boolean))];
-    const sourceRadius = categoryRadius + factRadius + (sourceUrls.length ? 120 : 0);
-    const extent = Math.max(400, sourceRadius + 150);
+    const sourceRadius = categoryRadius + factRadius + (sourceUrls.length ? 65 : 0);
+    const extent = Math.max(430, sourceRadius + 95);
     worldWidth = worldHeight = Math.ceil(extent * 2);
     const center = extent;
     const world = $('world'); world.style.width = worldWidth + 'px'; world.style.height = worldHeight + 'px';
@@ -128,7 +128,7 @@
       groupFacts.forEach((fact, index) => {
         const ring = Math.floor(index / 8), inRing = Math.min(8, groupFacts.length - ring * 8);
         const arc = angle + (index % 8) * Math.PI * 2 / inRing;
-        const radius = 145 + ring * 125;
+        const radius = 124 + ring * 96;
         const node = { id: fact.id, kind: 'fact', fact, group: group.id,
           label: fact.label || fact.text, x: category.x + Math.cos(arc) * radius,
           y: category.y + Math.sin(arc) * radius };
@@ -156,7 +156,7 @@
         const flow = path.cloneNode(); flow.classList.add('flow'); svg.appendChild(flow);
       }
     });
-    document.querySelector('.graph-bottom p').textContent = 'Drag to explore · every fact and source has a point';
+    document.querySelector('.graph-bottom p').textContent = 'Drag to explore · select a point to inspect its source and status';
     $('nodes').replaceChildren();
     nodes.forEach(node => {
       const button = document.createElement('button');
@@ -167,6 +167,7 @@
       const orb = document.createElement('span'); orb.className = 'orb'; orb.textContent = node.mark || ''; orb.setAttribute('aria-hidden', 'true');
       const label = document.createElement('b'); label.textContent = clean(node.label, 110);
       button.append(orb, label);
+      if (node.kind === 'fact') { const status = document.createElement('small'); status.textContent = node.fact.status === 'approved' ? 'Approved' : 'Needs review'; button.append(status); }
       if (node.kind === 'category') { const count = document.createElement('small'); count.textContent = all.filter(fact => fact.group === node.group).length + ' facts'; button.append(count); }
       button.addEventListener('click', () => selectNode(node));
       $('nodes').appendChild(button);
