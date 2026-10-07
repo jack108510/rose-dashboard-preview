@@ -11,7 +11,7 @@
     .layout{width:min(980px,100%);min-height:580px;display:grid;grid-template-columns:1.05fr .95fr;border:1px solid rgba(25,19,15,.1);border-radius:30px;overflow:hidden;background:rgba(255,250,243,.76);box-shadow:0 32px 100px rgba(54,35,20,.13)}
     .story{padding:clamp(30px,6vw,64px);display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(145deg,rgba(255,255,255,.58),rgba(255,240,228,.65))}.brand{display:flex;align-items:center;gap:12px;font-size:18px;font-weight:780;letter-spacing:-.04em}.brand img{width:42px;height:42px;border-radius:13px;background:white;box-shadow:0 0 0 1px rgba(255,87,34,.14),0 8px 22px rgba(255,87,34,.12)}.eyebrow{margin:0 0 16px;color:#a34823;font-size:11px;font-weight:850;letter-spacing:.16em;text-transform:uppercase}.story-copy{max-width:410px}.story h1{margin:0;font-family:ui-serif,Georgia,"Times New Roman",serif;font-size:clamp(46px,6.5vw,76px);font-weight:500;line-height:.92;letter-spacing:-.065em}.story-copy p{max-width:360px;margin:21px 0 0;color:#746a61;font-size:16px;line-height:1.6}.story-foot{color:#92877d;font-size:12px}
     .panel{padding:clamp(30px,5vw,56px);display:flex;align-items:center;background:rgba(255,253,249,.74)}form{width:100%;max-width:370px;margin:auto;display:grid;gap:17px}.panel h2{margin:0;font-size:29px;letter-spacing:-.055em}.intro{margin:-9px 0 2px;color:var(--muted);font-size:14px;line-height:1.5}.field{display:grid;gap:7px}.field label{color:#655a51;font-size:12px;font-weight:760}.field input{width:100%;height:48px;border:1px solid rgba(25,19,15,.15);border-radius:13px;background:white;color:var(--ink);padding:0 14px;font:inherit;outline:none;transition:border-color .16s,box-shadow .16s}.field input:focus{border-color:rgba(255,87,34,.68);box-shadow:0 0 0 4px rgba(255,87,34,.1)}.password-wrap{position:relative}.password-wrap input{padding-right:76px}.reveal{position:absolute;right:8px;top:7px;height:34px;padding:0 9px;border:0;border-radius:9px;background:#f7f1e9;color:#655a51;font-size:12px;font-weight:700;cursor:pointer}.submit{height:48px;border:0;border-radius:999px;background:#19130f;color:#fff;font-size:14px;font-weight:780;box-shadow:0 12px 24px rgba(25,19,15,.14);cursor:pointer;transition:transform .16s,opacity .16s}.submit:hover{transform:translateY(-1px)}.submit:disabled{opacity:.65;cursor:wait}.message{min-height:18px;margin:-7px 0 0;color:#b3261e;font-size:13px;line-height:1.4}.message:empty{display:none}.help{margin:0;color:#897f76;text-align:center;font-size:12px;line-height:1.55}.help a,.demo a{color:#a34823;font-weight:750;text-decoration:none}.help a:hover,.demo a:hover{text-decoration:underline}.divider{height:1px;background:var(--line);margin:1px 0}.demo{padding:13px 14px;border:1px solid rgba(255,87,34,.15);border-radius:14px;background:#fff5ed;color:#6d5548;font-size:12px;line-height:1.5}.demo b{display:block;margin-bottom:3px;color:#3e2a20}.demo a{display:inline-block;margin-top:5px}
-    .signup{display:none}.signup-mode .signup{display:grid}.signup-mode .login{display:none}.signup-mode.show-login .signup{display:none}.signup-mode.show-login .login{display:grid}.switch-mode{padding:0;border:0;background:none;color:#a34823;font:inherit;font-weight:750;cursor:pointer}.checkout-status{color:#655a51;font-size:13px;line-height:1.5}.checkout-status.error{color:#b3261e}.signup .message{margin:0}
+    .signup{display:none}.signup-mode .signup{display:grid}.signup-mode .login{display:none}.signup-mode.show-login .signup{display:none}.signup-mode.show-login .login{display:grid}.signup-mode:not(.has-invite) .signup-password{display:none}.switch-mode{padding:0;border:0;background:none;color:#a34823;font:inherit;font-weight:750;cursor:pointer}.checkout-status{color:#655a51;font-size:13px;line-height:1.5}.checkout-status.error{color:#b3261e}.signup .message{margin:0}
     @media(max-width:720px){body{padding:12px}.layout{min-height:0;grid-template-columns:1fr;border-radius:23px}.story{min-height:220px;padding:25px 26px 27px;gap:35px}.brand img{width:36px;height:36px}.story h1{font-size:48px}.story-copy p{margin-top:12px;font-size:14px}.story-foot{display:none}.panel{padding:29px 25px 32px}.panel h2{font-size:27px}}
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
   </style>
@@ -37,12 +37,12 @@
       </form>
       <form class="signup" id="signupForm" novalidate>
         <h2>Create your Rose account</h2>
-        <p class="intro">Use the email you entered on Rose’s checkout form, then create a password to set up Workground.</p>
+        <p class="intro">Use your checkout email to get a secure setup link after your payment is verified.</p>
         <p class="checkout-status" id="checkoutStatus" role="status" aria-live="polite" hidden></p>
         <div class="field"><label for="signupEmail">Checkout email</label><input id="signupEmail" type="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" required></div>
-        <div class="field"><label for="signupPassword">Create password</label><input id="signupPassword" type="password" autocomplete="new-password" minlength="8" required></div>
-        <div class="field"><label for="signupConfirm">Confirm password</label><input id="signupConfirm" type="password" autocomplete="new-password" minlength="8" required></div>
-        <button class="submit" id="signupButton" type="submit" disabled>Create account and open Workground</button>
+        <div class="field signup-password"><label for="signupPassword">Create password</label><input id="signupPassword" type="password" autocomplete="new-password" minlength="8"></div>
+        <div class="field signup-password"><label for="signupConfirm">Confirm password</label><input id="signupConfirm" type="password" autocomplete="new-password" minlength="8"></div>
+        <button class="submit" id="signupButton" type="submit">Email me a setup link</button>
         <p class="message" id="signupMessage" role="alert" aria-live="polite"></p>
         <p class="help">Already have an account? <button class="switch-mode" id="showLogin" type="button">Sign in</button> · <a href="mailto:invites@wildroseautomations.ca?subject=Rose%20Workground%20access">Need help?</a></p>
       </form>
@@ -54,33 +54,32 @@
     const params=new URLSearchParams(location.search);
     const next=params.get('next')==='workground/context.html'?'workground/context.html':'workground/';
     const checkoutLeadId=params.get('lead')||params.get('id')||'';
+    const signupToken=params.get('invite')||'';
     const checkoutReturn=params.get('checkout')==='return'&&checkoutLeadId;
     const signupButton=document.getElementById('signupButton');
     const status=document.getElementById('checkoutStatus');
     document.getElementById('showSignup').addEventListener('click',()=>{document.body.classList.add('signup-mode');document.body.classList.remove('show-login')});
     document.getElementById('showLogin').addEventListener('click',()=>document.body.classList.add('show-login'));
-    if(checkoutReturn){
+    if(checkoutReturn||params.get('signup')==='1'||signupToken){
       document.body.classList.add('signup-mode');
       const checkoutEmail=params.get('email')||'';
       document.getElementById('signupEmail').value=checkoutEmail;
       emailInput.value=checkoutEmail;
       status.hidden=false;
-      status.textContent='Checking your payment…';
+      status.textContent=signupToken?'Payment verified. Create a password to open Workground.':'Enter the email used at checkout to request your secure setup link.';
+      if(signupToken){document.body.classList.add('has-invite');signupButton.textContent='Create account and open Workground'}
       async function checkPayment(attempt=0){
         try{
           const response=await fetch(`${API}/api/rose-checkout/success?lead=${encodeURIComponent(checkoutLeadId)}`);
           const result=await response.json().catch(()=>({}));
           if(!response.ok)throw new Error(result.error||'Could not check payment');
-          if(result.paid){status.textContent='Payment confirmed. Create your account below.';signupButton.disabled=false;return}
-          status.textContent='Square returned you to Workground. Waiting for payment confirmation…';
+          if(result.paid){status.textContent='Payment confirmed. Request your secure setup link below.';return}
+          status.textContent='Payment is still being confirmed. Request a setup link and Wildrose will review it.';
         }catch(error){status.textContent=error.message||'Payment check is temporarily unavailable.';status.classList.add('error')}
         if(attempt<11)setTimeout(()=>checkPayment(attempt+1),5000);
         else status.textContent='Payment confirmation is taking longer than expected. Please contact Wildrose if this continues.';
       }
-      checkPayment();
-    }else{
-      signupButton.disabled=false;
-      if(params.get('signup')==='1')document.body.classList.add('signup-mode');
+      if(checkoutReturn&&!signupToken)checkPayment();
     }
     document.getElementById('signupForm').addEventListener('submit',async event=>{
         event.preventDefault();
@@ -89,17 +88,21 @@
         const confirm=document.getElementById('signupConfirm').value;
         const message=document.getElementById('signupMessage');
         message.textContent='';
-        if(!email||password.length<8||password!==confirm){message.textContent='Enter your checkout email and matching passwords of at least 8 characters.';return}
-        signupButton.disabled=true;signupButton.textContent='Creating account…';
+        if(!email){message.textContent='Enter your checkout email.';return}
+        if(signupToken&&(password.length<8||password!==confirm)){message.textContent='Enter matching passwords of at least 8 characters.';return}
+        signupButton.disabled=true;signupButton.textContent=signupToken?'Creating account…':'Requesting setup link…';
         try{
-          const response=await fetch(`${API}/api/rose-account-password`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({checkoutLeadId,email,password,sourcePage:location.href})});
+          const endpoint=signupToken?'/api/rose-account-password':'/api/rose-account/invite';
+          const payload=signupToken?{checkoutLeadId,email,password,signupToken,sourcePage:location.origin+location.pathname}:{checkoutLeadId,email,transactionId:params.get('transactionId')||'',orderId:params.get('orderId')||''};
+          const response=await fetch(`${API}${endpoint}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
           const result=await response.json().catch(()=>({}));
           if(!response.ok)throw new Error(result.error||'Could not create your account');
+          if(!signupToken){status.textContent=result.message||'Check your checkout email for a secure setup link.';message.textContent='';signupButton.disabled=false;signupButton.textContent='Email me a setup link';return}
           document.getElementById('signupPassword').value='';document.getElementById('signupConfirm').value='';
           emailInput.value=email;passwordInput.value=password;
           document.body.classList.add('show-login');
           form.requestSubmit();
-        }catch(error){message.textContent=error.message==='checkout lead not found'?'We could not find a Rose setup request for that email. Contact Wildrose if you paid using a direct link.':(error.message||'Could not create your account');signupButton.disabled=false;signupButton.textContent='Create account and open Workground'}
+        }catch(error){message.textContent=error.message||'Could not complete setup';signupButton.disabled=false;signupButton.textContent=signupToken?'Create account and open Workground':'Email me a setup link'}
     });
     document.getElementById('revealPassword').addEventListener('click',event=>{const showing=passwordInput.type==='text';passwordInput.type=showing?'password':'text';event.currentTarget.textContent=showing?'Show':'Hide';event.currentTarget.setAttribute('aria-label',showing?'Show password':'Hide password')});
     form.addEventListener('submit',async event=>{
@@ -115,7 +118,7 @@
         location.replace(next);
       }catch(error){message.textContent=error.message||'Could not connect to Rose. Check your connection and try again.';submitButton.disabled=false;submitButton.textContent='Sign in'}
     });
-    if(!checkoutReturn&&params.get('signup')!=='1'&&(localStorage.getItem('wildroseDashboardToken')||localStorage.getItem('roseDashboardToken')))location.replace(next);
+    if(!checkoutReturn&&params.get('signup')!=='1'&&!signupToken&&(localStorage.getItem('wildroseDashboardToken')||localStorage.getItem('roseDashboardToken')))location.replace(next);
   </script>
 </body>
 </html>
