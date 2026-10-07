@@ -7,7 +7,8 @@
   <title>Context web · Rose Workground</title>
   <link rel="stylesheet" href="context.css">
   <script>
-    (()=>{if(!localStorage.getItem('wildroseDashboardToken')&&!localStorage.getItem('roseDashboardToken'))location.replace('../login.html?next=workground%2Fcontext.html')})();
+    document.documentElement.style.visibility='hidden';
+    (async()=>{const token=localStorage.getItem('wildroseDashboardToken')||localStorage.getItem('roseDashboardToken')||'';if(!token){location.replace('./?returnTo=context');return}try{const response=await fetch('https://wildrose-widget.wildeautomations.com/api/rose-account-dashboard',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify({token})});if(!response.ok)throw new Error('Account not found');document.documentElement.style.visibility='visible'}catch{location.replace('./?returnTo=context')}})();
   </script>
 </head>
 <body>
