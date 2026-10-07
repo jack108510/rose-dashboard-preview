@@ -19,7 +19,7 @@
     .auth-card input{width:100%;height:46px;padding:0 13px;border:1px solid rgba(25,19,15,.14);border-radius:13px;background:white;color:#19130f}
     .auth-card .account-submit{height:46px;margin-top:10px;border:0;border-radius:999px;background:#19130f;color:white;font-weight:780}
     .auth-card .account-error{min-height:20px;color:#a53220;font-size:13px}
-      .widget-preview-switch{position:absolute;z-index:3;top:18px;left:50%;transform:translateX(-50%);display:flex;gap:4px;padding:4px;border:1px solid rgba(25,19,15,.1);border-radius:999px;background:rgba(255,250,243,.82);backdrop-filter:blur(14px);box-shadow:0 8px 22px rgba(54,35,20,.08)}.widget-preview-switch[hidden]{display:none!important}.widget-preview-switch button{height:30px;padding:0 13px;border:0;border-radius:999px;background:transparent;color:#746a61;font:700 12px Inter,system-ui;cursor:pointer}.widget-preview-switch button[aria-pressed="true"]{background:#19130f;color:#fff;box-shadow:0 4px 12px rgba(25,19,15,.14)}.widget-preview-switch button:focus-visible{outline:2px solid #e97850;outline-offset:2px}@media(max-width:700px){.widget-preview-switch{top:10px}}
+      .widget-slot .wr-ai.contained .wr-panel{width:min(382px,calc(100vw - 24px));height:min(578px,calc(100vh - 24px))}.widget-preview-switch{position:absolute;z-index:3;top:18px;left:50%;transform:translateX(-50%);display:flex;gap:4px;padding:4px;border:1px solid rgba(25,19,15,.1);border-radius:999px;background:rgba(255,250,243,.82);backdrop-filter:blur(14px);box-shadow:0 8px 22px rgba(54,35,20,.08)}.widget-preview-switch[hidden]{display:none!important}.widget-preview-switch button{height:30px;padding:0 13px;border:0;border-radius:999px;background:transparent;color:#746a61;font:700 12px Inter,system-ui;cursor:pointer}.widget-preview-switch button[aria-pressed="true"]{background:#19130f;color:#fff;box-shadow:0 4px 12px rgba(25,19,15,.14)}.widget-preview-switch button:focus-visible{outline:2px solid #e97850;outline-offset:2px}@media(max-width:700px){.widget-preview-switch{top:10px}}
 </style>
   <style>
     :root{--paper:#f6f0e8;--surface:#fbf7f0;--ink:#19130f;--muted:#746a61;--line:rgba(25,19,15,.12);--line-strong:rgba(25,19,15,.22);--accent:#ff5722;--shadow:0 28px 90px rgba(54,35,20,.12)}
@@ -187,8 +187,8 @@ if(swiftBusiness){s.dataset.previewReceptionist='swift-line-locating';s.dataset.
       s.dataset.build='theme-controls-1';
       s.dataset.accent=swiftBusiness?'#e8620a':'#ff5722';
       s.dataset.mount='#rose-workground-widget';
-      s.dataset.inline='true';
-      s.addEventListener('load',()=>{if(window.__rosePendingIdentity)window.__roseWorkgroundSetIdentity?.(window.__rosePendingIdentity)});document.currentScript.after(s);
+      s.dataset.contained='true';
+      s.addEventListener('load',()=>{if(window.__rosePendingIdentity)window.__roseWorkgroundSetIdentity?.(window.__rosePendingIdentity);if(swiftBusiness)setTimeout(()=>document.querySelector('#rose-workground-widget .wr-fab')?.click(),60)});document.currentScript.after(s);
     })();
   </script>
   <script>
