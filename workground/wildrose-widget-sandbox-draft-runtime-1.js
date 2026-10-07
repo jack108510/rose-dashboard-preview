@@ -98,16 +98,21 @@
   function applyPublishedConfig(config) {
     if (!config) return;
     const a = config.appearance || {};
-    cfg.title = a.assistantName || cfg.title;
-    cfg.subtitle = a.greetingMessage || cfg.subtitle;
-    cfg.greeting = a.greetingMessage || cfg.greeting;
-    cfg.accent = a.brandPrimary || cfg.accent;
-    cfg.businessContext = (config.context || []).map(n => n.text).filter(Boolean).join("\n").slice(0, 3600) || cfg.businessContext;
-    cfg.businessName = config.settings?.businessName || cfg.businessName;
-    cfg.website = config.settings?.website || cfg.website;
+    const widget = config.widget || {};
+    cfg.title = a.assistantName || widget.title || cfg.title;
+    cfg.subtitle = a.greetingMessage || widget.subtitle || cfg.subtitle;
+    cfg.greeting = widget.greeting || a.widgetGreeting || a.greetingMessage || cfg.greeting;
+    cfg.accent = a.brandPrimary || widget.accent || cfg.accent;
+    cfg.logo = a.avatarUrl || widget.logo || cfg.logo;
+    cfg.placeholder = widget.placeholder || cfg.placeholder;
+    cfg.fallbackUrl = widget.fallbackUrl || cfg.fallbackUrl;
+    cfg.services = widget.services || cfg.services;
+    cfg.businessContext = widget.businessContext || (config.context || []).map(n => n.text).filter(Boolean).join("\n").slice(0, 3600) || cfg.businessContext;
+    cfg.businessName = config.settings?.businessName || widget.businessName || cfg.businessName;
+    cfg.website = config.settings?.website || widget.website || cfg.website;
     cfg.ownerEmail = config.settings?.ownerEmail || cfg.ownerEmail;
     cfg.voiceId = config.settings?.voiceId || "";
-    root.style.setProperty("--accent", a.brandPrimary || cfg.accent);
+    root.style.setProperty("--accent", a.brandPrimary || widget.accent || cfg.accent);
     root.style.setProperty("--accent-soft", a.brandAccent || "color-mix(in srgb,var(--accent) 32%,white)");
     root.style.setProperty("--rose-bg", a.backgroundColor || "#fffaf3");
     root.style.setProperty("--rose-text", a.textColor || "#18120f");
@@ -117,8 +122,9 @@
     root.style.setProperty("--sphere-b", a.brandAccent || a.brandPrimary || cfg.accent);
     $$(".wr-title h3").forEach(el => el.textContent = cfg.title);
     $$(".wr-title small").forEach(el => el.textContent = cfg.subtitle);
+    $(".wr-avatar img")?.setAttribute("src", cfg.logo);
     const greet = $(".wr-msg.bot"); if (greet) greet.textContent = cfg.greeting;
-    if (input) input.placeholder = `Ask ${cfg.title}…`;
+    if (input) input.placeholder = cfg.placeholder || `Ask ${cfg.title}…`;
   }
   if (cfg.inline || cfg.mount === "#rose-workground-widget") window.__roseWorkgroundSetIdentity = identity => {
     cfg.businessId = identity.businessId || "preview";
