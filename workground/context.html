@@ -24,19 +24,29 @@
     </div>
     <div id="notice" class="notice" role="status" hidden></div>
     <details class="scan-panel" id="scanPanel"><summary>Scan a website <span aria-hidden="true">↗</span></summary><form id="scanForm" class="scan-form"><label for="websiteInput">Business website</label><div class="scan-inputs"><input id="websiteInput" type="url" placeholder="https://yourbusiness.com" autocomplete="url" required><button class="primary" id="scanButton" type="submit">Scan website</button></div><p id="scanHint">New facts stay private until you review and approve them.</p></form></details>
+    <section class="web-stage" aria-label="Interactive business context web">
+      <div class="web-head"><div><p class="web-kicker"><span aria-hidden="true"></span> ROSE KNOWLEDGE</p><h2>The web</h2><p>Explore the facts and sources behind Rose’s answers.</p></div><div class="web-meta"><span id="webNodeCount">0 connections</span><button id="fitWeb" type="button">Fit web</button></div></div>
+      <div class="web-layout">
+        <div class="graph" id="graph" aria-label="Interactive web of business facts and sources. Drag to move, scroll to zoom, or select a node.">
+          <div class="world" id="world"><svg id="edges" aria-hidden="true"></svg><div id="nodes"></div></div>
+          <div class="graph-empty" id="graphEmpty" hidden><strong>Rose’s web starts here.</strong><span>Scan your website or tell Builder about your business to give it something to connect.</span></div>
+          <div class="graph-controls"><button id="zoomOut" type="button" aria-label="Zoom out">−</button><button id="zoomIn" type="button" aria-label="Zoom in">+</button></div>
+        </div>
+        <aside class="inspector" aria-label="Fact details"><p class="overline">SELECTED CONTEXT</p><section class="detail" id="detail" aria-live="polite"><p class="detail-placeholder">Choose a point in the web or a fact below to see its source and review actions.</p></section></aside>
+      </div>
+      <p class="web-foot"><span>● Approved</span><span>◌ Needs review</span><span>↗ Source</span><span class="desktop-hint">Drag to explore · scroll to zoom</span><span class="mobile-hint">Drag to explore · use + / − to zoom</span></p>
+    </section>
     <section class="knowledge" aria-label="Business knowledge">
       <div class="knowledge-head"><div><p class="overline" id="businessLabel">Website context</p><h2>What Rose knows</h2></div><div class="overview" aria-label="Knowledge summary"><span><b id="approvedCount">0</b> approved</span><span><b id="pendingCount">0</b> to review</span><span><b id="sourceCount">0</b> sources</span></div></div>
-      <div class="workspace">
-        <div class="library">
-          <div class="library-tools"><div class="filters" role="group" aria-label="Filter facts"><button data-filter="all" class="active" type="button" aria-pressed="true">All</button><button data-filter="pending" type="button" aria-pressed="false">Needs review</button><button data-filter="approved" type="button" aria-pressed="false">Approved</button></div><label class="search-label" for="search">Search facts</label><input class="search" id="search" type="search" placeholder="Search facts and sources…"></div>
-          <div class="list-heading"><span>Facts</span><span id="listCount">0 facts</span></div>
-          <div class="facts" id="facts"></div>
-          <div class="library-footer">Approved facts are saved to Rose knowledge. Publish from Builder to make changes live.</div>
-        </div>
-        <aside class="inspector" aria-label="Fact details"><p class="overline">FACT DETAILS</p><section class="detail" id="detail" aria-live="polite"><p class="detail-placeholder">Choose a fact to see its full text, source, and review actions.</p></section></aside>
+      <div class="library">
+        <div class="library-tools"><div class="filters" role="group" aria-label="Filter facts"><button data-filter="all" class="active" type="button" aria-pressed="true">All</button><button data-filter="pending" type="button" aria-pressed="false">Needs review</button><button data-filter="approved" type="button" aria-pressed="false">Approved</button></div><label class="search-label" for="search">Search facts</label><input class="search" id="search" type="search" placeholder="Search facts and sources…"></div>
+        <div class="list-heading"><span>Facts</span><span id="listCount">0 facts</span></div>
+        <div class="facts" id="facts"></div>
+        <div class="library-footer">Approved facts are saved to Rose knowledge. Publish from Builder to make changes live.</div>
       </div>
     </section>
   </main>
+  <script src="context-map.js"></script>
   <script src="context.js"></script>
 </body>
 </html>

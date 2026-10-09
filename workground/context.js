@@ -12,7 +12,16 @@
     { id: 'other', name: 'Other facts', words: /.*/ },
   ];
   let account = {}, approved = [], pending = [], selected = null, filter = 'all', query = '';
-  let lastSiteScan = null, currentSession = '', loading = false;
+  let lastSiteScan = null, currentSession = '', loading = false, explicitSelection = false;
+  const web = new window.ContextMap(node => {
+    explicitSelection = true;
+    filter = 'all'; query = ''; $('search').value = '';
+    document.querySelectorAll('[data-filter]').forEach(button => { const active = button.dataset.filter === 'all'; button.classList.toggle('active', active); button.setAttribute('aria-pressed', String(active)); });
+    const match = node.fact || facts().find(fact => node.kind === 'category' ? fact.group === node.group : node.kind === 'source' ? fact.sourceUrl === node.url : true);
+    selected = match?.id || null;
+    renderList();
+    if (matchMedia('(max-width:700px)').matches) $('detail').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth',block:'start'});
+  });
   const token = () => localStorage.getItem('wildroseDashboardToken') || localStorage.getItem('roseDashboardToken') || '';
   const clean = (value, max = 2400) => String(value || '').slice(0, max);
   function safeUrl(value) {
@@ -144,6 +153,7 @@
     const rows = facts().filter(visible);
     if (!rows.some(fact => fact.id === selected)) selected = rows[0]?.id || null;
     const current = rows.find(fact => fact.id === selected);
+    web.select(explicitSelection ? selected : null);
     if (current) showFact(current);
     else $('detail').replaceChildren(element('p', 'detail-placeholder', facts().length ? 'No facts match this view.' : 'Scan a website or tell Builder about your business to add knowledge.'));
     $('listCount').textContent = rows.length + (rows.length === 1 ? ' fact' : ' facts');
@@ -159,7 +169,7 @@
       const copy = element('div'); copy.appendChild(element('b', '', fact.text));
       copy.appendChild(element('small', '', groups.find(group => group.id === fact.group).name + ' · ' + (fact.status === 'approved' ? 'Approved' : 'Needs review')));
       row.append(dot, copy); row.addEventListener('click', () => {
-        selected = fact.id; renderList();
+        explicitSelection = true; selected = fact.id; renderList();
         if (matchMedia('(max-width:700px)').matches) $('detail').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth',block:'start'});
       }); list.appendChild(row);
     });
@@ -171,6 +181,7 @@
     $('syncLabel').textContent = signedIn && currentSession ? 'Account synced' : 'Sign in to connect';
     $('approvedCount').textContent = approved.length; $('pendingCount').textContent = pending.length;
     $('sourceCount').textContent = new Set(facts().map(fact => fact.sourceUrl).filter(Boolean)).size;
+    web.update(facts(), groups, account.businessName);
     renderList();
   }
   function scanCandidates(scraped, scanId, website) {
