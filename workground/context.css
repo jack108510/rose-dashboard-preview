@@ -89,32 +89,3 @@ main{max-width:1440px;padding:35px clamp(18px,3.5vw,54px) 24px}.heading{align-it
 .sync-status,.graph-legend,.graph-controls{background:#fffaf3;border-color:var(--line);box-shadow:none}.filters{background:#f3ede5;border-color:var(--line)}.filters button.active{border-color:var(--line);box-shadow:none}.fact-row{border-color:#ece3d9;background:#fffdf9}.fact-row:hover,.fact-row.selected{background:#faf1e8;border-color:#dcbca9}.inspector-head h2{color:var(--ink)}.empty{background:#fbf7f0f5}.empty h2{color:var(--ink)}.footnote{color:#8a8077}
 @media(max-width:900px){.top{grid-template-columns:auto minmax(0,1fr) auto;gap:12px}.top nav{gap:15px}.heading{align-items:start}.scan-form{border-left:0;padding:0}}
 @media(max-width:650px){.top{height:94px;min-height:94px;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"brand account" "nav nav";gap:0 12px;padding:0 13px}.brand{grid-area:brand;height:52px}.brand span{display:none}.account{grid-area:account}.top nav{grid-area:nav;justify-self:stretch;width:100%;height:42px;justify-content:flex-start;gap:20px;overflow-x:auto;scrollbar-width:none;white-space:nowrap}.top nav::-webkit-scrollbar{display:none}.top nav a{height:42px;flex:none;padding:0 1px;font-size:12px}.heading{gap:17px}.heading h1{font-size:32px}.scan-form{padding:0}.overview-item{padding:10px 8px}.overview-item:not(:last-child){border-right:1px solid var(--line)}.overview-icon{width:27px;height:27px}.overview-item b{font-size:16px}}
-
-/* The map is the work surface, not a dashboard card. */
-main{max-width:1500px;padding-top:42px}
-.heading{align-items:end;margin-bottom:32px}
-.heading h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(40px,4.7vw,58px);font-weight:700;line-height:1.05;letter-spacing:-.055em;margin-bottom:10px}
-.heading .eyebrow{display:none}.intro{max-width:490px}
-.scan-form{border:0;padding:0;width:min(440px,100%)}
-.scan-form label{font-size:12px;font-weight:600;color:var(--muted)}
-.scan-form input{background:transparent;border-radius:10px}
-.scan-form p{margin-bottom:0}
-.overview{display:flex;align-items:center;gap:0;border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);border-radius:0;background:transparent;margin:0 0 22px}
-.overview-item{flex:0 1 auto;gap:6px;border:0!important;background:transparent;padding:12px 22px 12px 0;margin-right:20px}
-.overview-icon{display:none}.overview-item>span:last-child{display:flex;align-items:baseline;gap:6px}
-.overview-item b{font-size:14px;font-weight:700;letter-spacing:0}.overview-item small{font-size:11px;font-weight:500}
-.workspace{grid-template-columns:minmax(0,1fr) 315px;gap:0;align-items:stretch}
-.graph-panel{border:0;border-radius:0;background:transparent;box-shadow:none}
-.graph-top{min-height:56px;padding:8px 18px 8px 0;border-bottom:1px solid var(--line);background:transparent}
-.graph-icon{display:none}.graph-title strong{font-size:13px}.graph-title small{font-size:10px}
-.graph{height:clamp(520px,64vh,680px);background-color:#faf6f0;background-image:radial-gradient(#cfbfae66 .65px,transparent .65px);background-size:24px 24px}
-.graph:after{box-shadow:none}.graph-bottom{background:transparent;border-top:1px solid var(--line);padding:12px 2px}
-.inspector{border:0;border-left:1px solid var(--line);border-radius:0;background:transparent;box-shadow:none;padding:10px 0 16px 22px}
-.inspector-head h2{font-size:16px}.inspector-head button{border:0;background:transparent}
-.filters{border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;padding:0 0 10px;margin:18px 0 14px}
-.filters button.active{background:#eee6dc;border:0;box-shadow:none}
-.fact-row{background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:10px 4px}
-.fact-row:hover,.fact-row.selected{background:#f2ebe2;border-color:var(--line)}
-@media(min-width:901px){.inspector{height:calc(clamp(520px,64vh,680px) + 106px)}}
-@media(max-width:900px){.workspace{display:block}.graph{height:560px}.inspector{height:auto;border:0;border-top:1px solid var(--line);padding:22px 0}.heading{align-items:start}}
-@media(max-width:650px){main{padding-top:30px}.heading{gap:23px;margin-bottom:24px}.heading h1{font-size:43px}.overview{justify-content:space-between}.overview-item{padding:10px 0;margin:0;gap:3px}.overview-item>span:last-child{display:grid;gap:1px}.overview-item b{font-size:15px}.overview-item small{font-size:9px}.graph{height:480px}.graph-top{padding:8px 3px}.graph-bottom{padding:10px 2px}.inspector{padding:20px 0}}
