@@ -37,12 +37,12 @@
       </form>
       <form class="signup" id="signupForm" novalidate>
         <h2>Create your Rose account</h2>
-        <p class="intro">Use your checkout email to get a secure setup link after your payment is verified.</p>
+        <p class="intro">Use your checkout email to get a secure account link. Once payment is verified, you can configure Rose in Workground.</p>
         <p class="checkout-status" id="checkoutStatus" role="status" aria-live="polite" hidden></p>
         <div class="field"><label for="signupEmail">Checkout email</label><input id="signupEmail" type="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" required></div>
         <div class="field signup-password"><label for="signupPassword">Create password</label><input id="signupPassword" type="password" autocomplete="new-password" minlength="8"></div>
         <div class="field signup-password"><label for="signupConfirm">Confirm password</label><input id="signupConfirm" type="password" autocomplete="new-password" minlength="8"></div>
-        <button class="submit" id="signupButton" type="submit">Email me a setup link</button>
+        <button class="submit" id="signupButton" type="submit">Email my account link</button>
         <p class="message" id="signupMessage" role="alert" aria-live="polite"></p>
         <p class="help">Already have an account? <button class="switch-mode" id="showLogin" type="button">Sign in</button> · <a href="mailto:invites@wildroseautomations.ca?subject=Rose%20Workground%20access">Need help?</a></p>
       </form>
@@ -66,15 +66,15 @@
       document.getElementById('signupEmail').value=checkoutEmail;
       emailInput.value=checkoutEmail;
       status.hidden=false;
-      status.textContent=signupToken?'Payment verified. Create a password to open Workground.':'Enter the email used at checkout to request your secure setup link.';
+      status.textContent=signupToken?'Payment verified. Create a password to open Workground.':'Enter the email used at checkout. If payment is still being verified, your account link will follow after Wildrose confirms it.';
       if(signupToken){document.body.classList.add('has-invite');signupButton.textContent='Create account and open Workground'}
       async function checkPayment(attempt=0){
         try{
           const response=await fetch(`${API}/api/rose-checkout/success?lead=${encodeURIComponent(checkoutLeadId)}`);
           const result=await response.json().catch(()=>({}));
           if(!response.ok)throw new Error(result.error||'Could not check payment');
-          if(result.paid){status.textContent='Payment confirmed. Request your secure setup link below.';return}
-          status.textContent='Payment is still being confirmed. Request a setup link and Wildrose will review it.';
+          if(result.paid){status.textContent='Payment confirmed. Request your secure account link below.';return}
+          status.textContent='Payment is still being confirmed. Wildrose must verify it before your account link is sent.';
         }catch(error){status.textContent=error.message||'Payment check is temporarily unavailable.';status.classList.add('error')}
         if(attempt<11)setTimeout(()=>checkPayment(attempt+1),5000);
         else status.textContent='Payment confirmation is taking longer than expected. Please contact Wildrose if this continues.';
@@ -97,12 +97,12 @@
           const response=await fetch(`${API}${endpoint}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
           const result=await response.json().catch(()=>({}));
           if(!response.ok)throw new Error(result.error||'Could not create your account');
-          if(!signupToken){status.textContent=result.message||'Check your checkout email for a secure setup link.';message.textContent='';signupButton.disabled=false;signupButton.textContent='Email me a setup link';return}
+          if(!signupToken){status.textContent=result.message||'If payment is verified, check your checkout email for a secure account link.';message.textContent='';signupButton.disabled=false;signupButton.textContent='Email my account link';return}
           document.getElementById('signupPassword').value='';document.getElementById('signupConfirm').value='';
           emailInput.value=email;passwordInput.value=password;
           document.body.classList.add('show-login');
           form.requestSubmit();
-        }catch(error){message.textContent=error.message||'Could not complete setup';signupButton.disabled=false;signupButton.textContent=signupToken?'Create account and open Workground':'Email me a setup link'}
+        }catch(error){message.textContent=error.message||'Could not complete setup';signupButton.disabled=false;signupButton.textContent=signupToken?'Create account and open Workground':'Email my account link'}
     });
     document.getElementById('revealPassword').addEventListener('click',event=>{const showing=passwordInput.type==='text';passwordInput.type=showing?'password':'text';event.currentTarget.textContent=showing?'Show':'Hide';event.currentTarget.setAttribute('aria-label',showing?'Show password':'Hide password')});
     form.addEventListener('submit',async event=>{
