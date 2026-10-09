@@ -14,12 +14,12 @@
 <body>
   <header class="top">
     <a class="brand" href="./"><img src="logos/wildrose.png" alt="">Rose <span>Workground</span></a>
-    <nav aria-label="Workground pages"><a href="./">Builder</a><a class="active" href="context.html" aria-current="page">Context web</a></nav>
+    <nav aria-label="Workground pages"><a href="./">Builder</a><a href="./?section=Workflows">Workflows</a><a href="./?section=Settings">Settings</a><a class="active" href="context.html" aria-current="page">Context web</a></nav>
     <button class="account" id="accountButton" type="button">Sign in</button>
   </header>
   <main>
     <section class="heading">
-      <div class="heading-copy"><p class="eyebrow">ROSE KNOWLEDGE</p><h1>Your business,<br><em>in context.</em></h1><p class="intro">A clear view of what Rose knows, where each fact came from, and what still needs your approval.</p></div>
+      <div class="heading-copy"><p class="eyebrow">ROSE KNOWLEDGE</p><h1>Context web</h1><p class="intro">The facts Rose knows about your business, where they came from, and what still needs your approval.</p></div>
       <form id="scanForm" class="scan-form"><label for="websiteInput">Scan your business website</label><div><input id="websiteInput" type="url" placeholder="https://yourbusiness.com" autocomplete="url" required><button class="primary" id="scanButton" type="submit">Scan website <span aria-hidden="true">↗</span></button></div><p id="scanHint">New suggestions stay private until you review them.</p></form>
     </section>
     <div id="notice" class="notice" role="status" hidden></div>
