@@ -37,7 +37,7 @@
       <div class="brand">Rose Workground</div>
       <div class="story-copy"><h1>Your business.<br>Your voice.<br><em>Your Rose.</em></h1><p>Shape how Rose speaks, answers questions, and connects with your customers. All from one workspace.</p></div><div class="rose-benefits" aria-label="What you can do in Workground"><div class="rose-benefit"><span class="rose-benefit-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4m4-8v12m4-15v18m4-13v8m4-6v4"/></svg></span><span><b>Train your voice</b><small>Make Rose sound like your business.</small></span></div><div class="rose-benefit"><span class="rose-benefit-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v12H9l-5 4V5Z"/><path d="M8 9h8m-8 4h5"/></svg></span><span><b>Review conversations</b><small>See what your customers are asking.</small></span></div><div class="rose-benefit"><span class="rose-benefit-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19v-5h3v5H5Zm6 0V9h3v10h-3Zm6 0V5h3v14h-3Z"/></svg></span><span><b>Drive more business</b><small>Turn conversations into results.</small></span></div></div>
     </section>
-    <section class="panel" aria-labelledby="formTitle">
+    <section class="panel" aria-label="Account access">
       <form class="login" id="loginForm" novalidate>
         <p class="form-eyebrow">Rose Workground</p>
         <h2 id="formTitle">Welcome to<br>your Workground.</h2>
@@ -61,6 +61,18 @@
         <p class="message" id="signupMessage" role="alert" aria-live="polite"></p>
         <p class="help">Already have an account? <button class="switch-mode" id="showLogin" type="button">Sign in</button> · <a href="mailto:invites@wildroseautomations.ca?subject=Rose%20Workground%20access">Need help?</a></p>
       </form>
+      <section class="invite-sent" id="inviteSent" role="status" aria-live="polite" aria-labelledby="inviteSentTitle">
+        <span class="invite-mark" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><rect x="6" y="12" width="36" height="25" rx="5" stroke="currentColor" stroke-width="1.8"/><path d="m8 16 16 12 16-12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <p class="invite-kicker">Account setup</p>
+        <h2 id="inviteSentTitle">Check your email.</h2>
+        <p class="invite-description">If your checkout is confirmed, we’ll send a secure link to set your password.</p>
+        <p class="invite-email" id="inviteSentEmail"></p>
+        <div class="invite-next"><span class="invite-next-number">01</span><span><b>Open the link</b><small>It will take you back here to create your password.</small></span></div>
+        <div class="invite-next"><span class="invite-next-number">02</span><span><b>Enter your Workground</b><small>We’ll sign you in as soon as your password is set.</small></span></div>
+        <p class="invite-fine">Just paid? It can take a few minutes to confirm your checkout. Check spam if the email doesn’t arrive.</p>
+        <button class="invite-edit" id="editSignupEmail" type="button">Use a different email <span aria-hidden="true">↗</span></button>
+        <p class="help">Already have an account? <button class="switch-mode" id="sentShowLogin" type="button">Sign in</button> · <a href="mailto:invites@wildroseautomations.ca?subject=Rose%20Workground%20access">Need help?</a></p>
+      </section>
     </section>
   </main>
   <script>
@@ -73,8 +85,10 @@
     const checkoutReturn=params.get('checkout')==='return'&&checkoutLeadId;
     const signupButton=document.getElementById('signupButton');
     const status=document.getElementById('checkoutStatus');
-    document.getElementById('showSignup').addEventListener('click',()=>{document.body.classList.add('signup-mode');document.body.classList.remove('show-login')});
+    document.getElementById('showSignup').addEventListener('click',()=>{document.body.classList.add('signup-mode');document.body.classList.remove('show-login','link-sent')});
     document.getElementById('showLogin').addEventListener('click',()=>document.body.classList.add('show-login'));
+    document.getElementById('sentShowLogin').addEventListener('click',()=>document.body.classList.add('show-login'));
+    document.getElementById('editSignupEmail').addEventListener('click',()=>{document.body.classList.remove('link-sent');document.getElementById('signupEmail').focus()});
     if(checkoutReturn||params.get('signup')==='1'||signupToken){
       document.body.classList.add('signup-mode');
       const checkoutEmail=params.get('email')||'';
@@ -100,7 +114,7 @@
           const response=await fetch(`${API}${endpoint}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
           const result=await response.json().catch(()=>({}));
           if(!response.ok)throw new Error(result.error||'Could not create your account');
-          if(!signupToken){status.hidden=false;status.textContent=result.message||'If payment is verified, check your checkout email for a secure account link.';message.textContent='';signupButton.disabled=false;signupButton.textContent='Send my account link';return}
+          if(!signupToken){document.getElementById('inviteSentEmail').textContent=email;document.body.classList.add('link-sent');signupButton.disabled=false;signupButton.textContent='Send my account link';return}
           document.getElementById('signupPassword').value='';document.getElementById('signupConfirm').value='';
           emailInput.value=email;passwordInput.value=password;
           document.body.classList.add('show-login');

@@ -109,6 +109,25 @@ body:has(.layout),
 .auth-card-foot { justify-content: flex-start; }
 .help { font-size: 13px; }
 .help .switch-mode { font-size: inherit; }
+.field input:-webkit-autofill { -webkit-text-fill-color: #211813; -webkit-box-shadow: 0 0 0 1000px #fffaf6 inset; box-shadow: 0 0 0 1000px #fffaf6 inset; }
+
+.invite-sent { display: none; width: 100%; max-width: 405px; margin: auto; }
+.signup-mode.link-sent .signup { display: none; }
+.signup-mode.link-sent:not(.show-login) .invite-sent { display: grid; align-content: center; }
+.invite-mark { display: grid; place-items: center; width: 62px; height: 62px; margin-bottom: 25px; border: 1px solid #f5c2aa; border-radius: 17px; background: #fff0e7; color: #df5928; }
+.invite-mark svg { width: 36px; height: 36px; }
+.invite-kicker { margin: 0 0 9px; color: #c34e24; font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+.invite-description { margin: 17px 0 12px; color: #6d665f; font-size: 15px; line-height: 1.55; }
+.invite-email { width: fit-content; max-width: 100%; margin: 0 0 30px; padding: 10px 14px; overflow-wrap: anywhere; border: 1px solid #e7d9ce; border-radius: 8px; background: #f9f2ec; color: #2d231e; font-size: 14px; font-weight: 700; }
+.invite-next { display: grid; grid-template-columns: 30px 1fr; gap: 11px; padding: 16px 0; border-top: 1px solid #e9ded5; }
+.invite-next-number { padding-top: 2px; color: #e2602f; font-size: 12px; font-weight: 800; letter-spacing: .06em; }
+.invite-next b { display: block; color: #30241f; font-size: 14px; }
+.invite-next small { display: block; margin-top: 4px; color: #786d65; font-size: 13px; line-height: 1.45; }
+.invite-fine { margin: 13px 0 0; color: #796e66; font-size: 12px; line-height: 1.5; }
+.invite-edit { width: 100%; height: 49px; margin-top: 25px; border: 1px solid #dbc9bc; border-radius: 9px; background: transparent; color: #493329; font-size: 13px; font-weight: 750; }
+.invite-edit:hover { border-color: #d36e45; color: #b34721; }
+.invite-edit span { margin-left: 5px; }
+.invite-sent .help { margin-top: 21px; }
 
 @media (max-width: 900px) {
   .layout,
