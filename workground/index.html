@@ -7,18 +7,17 @@
   <title>Rose Workground</title>
   <style>
     body:not(.account-validated)>.shell,body:not(.account-validated)>.toast{display:none!important}
-    .auth-gate{display:none;min-height:100vh;place-items:center;padding:28px;background:radial-gradient(circle at 20% 15%,rgba(255,87,34,.1),transparent 30%),#f6f0e8;color:#19130f;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    .auth-gate{display:none;min-height:100dvh;place-items:center;padding:clamp(12px,2.5vw,32px);overflow:auto;background:#f1efe9;color:#243129;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
     body:not(.account-validated)>.auth-gate{display:grid}
-    .auth-card{width:min(440px,100%);padding:34px;border:1px solid rgba(25,19,15,.12);border-radius:28px;background:rgba(255,250,243,.92);box-shadow:0 28px 90px rgba(54,35,20,.13)}
-    .auth-brand{display:flex;align-items:center;gap:12px;margin-bottom:30px;font-size:17px;font-weight:800;letter-spacing:-.03em}
-    .auth-brand img{width:42px;height:42px;object-fit:contain;border-radius:13px;background:white;padding:5px;box-shadow:0 0 0 1px rgba(255,87,34,.18)}
-    .auth-card h1{margin:0;font:600 36px/1 ui-serif,Georgia,serif;letter-spacing:-.05em}
-    .auth-card>p{margin:10px 0 24px;color:#746a61;line-height:1.5}
-    .auth-card form{display:grid;gap:9px}
-    .auth-card label{font-size:12px;font-weight:750;color:#645a51;margin-top:5px}
-    .auth-card input{width:100%;height:46px;padding:0 13px;border:1px solid rgba(25,19,15,.14);border-radius:13px;background:white;color:#19130f}
-    .auth-card .account-submit{height:46px;margin-top:10px;border:0;border-radius:999px;background:#19130f;color:white;font-weight:780}
-    .auth-card .account-error{min-height:20px;color:#a53220;font-size:13px}
+    .auth-experience{width:min(1090px,100%);min-height:min(720px,calc(100dvh - 64px));display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1fr);overflow:hidden;border:1px solid #d5d8cf;border-radius:20px;background:#fffefa;box-shadow:0 22px 70px rgba(28,39,32,.09)}
+    .auth-story{min-width:0;display:flex;flex-direction:column;justify-content:space-between;gap:26px;padding:clamp(32px,5vw,62px);background:#24332e;color:#f7f4e9}
+    .auth-brand{display:flex;align-items:center;gap:11px;font-size:14px;font-weight:740;letter-spacing:-.025em}.auth-brand img{width:34px;height:34px;object-fit:contain;border-radius:9px;background:#fffefa;padding:4px}.auth-brand small{margin-left:4px;padding-left:12px;border-left:1px solid rgba(255,255,255,.28);color:#c5d0c5;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+    .auth-story-copy{max-width:425px}.auth-eyebrow,.auth-form-eyebrow{margin:0 0 15px;color:#e8a58a;font-size:11px;font-weight:750;letter-spacing:.15em;text-transform:uppercase}.auth-story-copy h2{margin:0;font:400 clamp(44px,5vw,62px)/1.04 ui-serif,Georgia,serif;letter-spacing:-.055em}.auth-story-copy>p:last-child{max-width:350px;margin:19px 0 0;color:#cbd7cd;font-size:14px;line-height:1.65}
+    .auth-conversation{max-width:355px;display:grid;gap:10px;padding-top:20px;border-top:1px solid rgba(255,255,255,.2)}.auth-conversation-label{color:#b6cab9;font-size:10px;font-weight:730;letter-spacing:.13em;text-transform:uppercase}.auth-conversation-bubble{width:fit-content;max-width:100%;padding:11px 14px;border:1px solid rgba(255,255,255,.15);border-radius:12px 12px 12px 3px;background:rgba(255,255,255,.1);color:#f5f4eb;font-size:13px;line-height:1.45}.auth-conversation-bubble.reply{margin-left:25px;border-color:#c9d8c9;border-radius:12px 12px 3px 12px;background:#e7eee5;color:#2c4433}.auth-conversation-bubble b{display:block;margin-bottom:3px;color:#71826f;font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+    .auth-card{min-width:0;display:flex;flex-direction:column;justify-content:center;padding:clamp(32px,6vw,78px)}.auth-card-inner{width:100%;max-width:385px;margin:auto}.auth-form-eyebrow{margin-bottom:11px;color:#aa593d}.auth-card h1{margin:0;font:400 clamp(36px,3.5vw,45px)/1.08 ui-serif,Georgia,serif;letter-spacing:-.055em}.auth-card-inner>p:not(.auth-form-eyebrow){margin:12px 0 34px;color:#68736a;font-size:14px;line-height:1.6}
+    .auth-card form{display:grid;gap:9px}.auth-card label{margin-top:7px;color:#36443a;font-size:13px;font-weight:670}.auth-card input{width:100%;height:51px;padding:0 15px;border:1px solid #cbd0c7;border-radius:10px;background:#fff;color:#243129;font-size:14px;outline:none}.auth-card input:focus{border-color:#8eab95;box-shadow:0 0 0 3px rgba(84,126,94,.12)}.auth-password-wrap{position:relative}.auth-password-wrap input{padding-right:78px}.auth-reveal{position:absolute;right:7px;top:7px;height:37px;padding:0 11px;border:0;border-radius:7px;background:#f0f2ec;color:#3d5143;font-size:12px;font-weight:680;cursor:pointer}
+    .auth-card .account-submit{height:51px;margin-top:13px;border:0;border-radius:10px;background:#263831;color:#fff;font-size:14px;font-weight:710;cursor:pointer}.auth-card .account-submit:hover{background:#385044}.auth-card .account-submit:disabled{opacity:.65;cursor:wait}.auth-card .account-error{min-height:0;color:#a83a30;font-size:13px;line-height:1.45}.auth-card .account-error:empty{display:none}.auth-card-foot{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:26px;padding-top:24px;border-top:1px solid #dedfd7;color:#697168;font-size:12px}.auth-card-foot a{color:#a65036;font-weight:700;text-decoration:none}.auth-card-foot a:hover{text-decoration:underline}.auth-gate button:focus-visible,.auth-gate a:focus-visible{outline:3px solid #e89370;outline-offset:3px}
+    @media(max-width:760px){.auth-gate{padding:0;background:#fffefa}.auth-experience{min-height:100dvh;display:flex;flex-direction:column;border:0;border-radius:0;box-shadow:none}.auth-story{padding:27px 25px 25px;gap:26px}.auth-story-copy h2{max-width:385px;font-size:32px}.auth-story-copy>p:last-child,.auth-conversation{display:none}.auth-eyebrow{margin-bottom:8px;font-size:10px}.auth-card{flex:1;justify-content:flex-start;padding:40px 25px 55px}.auth-card h1{font-size:36px}.auth-card-inner>p:not(.auth-form-eyebrow){margin-bottom:25px}}
       .widget-slot .wr-ai.contained{right:22px;bottom:22px}.widget-slot .wr-ai.contained .wr-panel{width:min(382px,calc(100vw - 24px));height:min(578px,calc(100vh - 24px))}#rose-workground-widget .wr-ai .wr-title h3,#rose-workground-widget .wr-ai .wr-title small,#rose-workground-widget .wr-ai .wr-status,#rose-workground-widget .wr-ai .wr-note,#rose-workground-widget .wr-ai .wr-start-voice,#rose-workground-widget .wr-ai .wr-tab,#rose-workground-widget .wr-ai .wr-msg.bot{cursor:text}.widget-preview-switch{position:absolute;z-index:3;top:18px;left:50%;transform:translateX(-50%);display:flex;gap:4px;padding:4px;border:1px solid rgba(25,19,15,.1);border-radius:999px;background:rgba(255,250,243,.82);backdrop-filter:blur(14px);box-shadow:0 8px 22px rgba(54,35,20,.08)}.widget-preview-switch[hidden]{display:none!important}.widget-preview-switch button{height:30px;padding:0 13px;border:0;border-radius:999px;background:transparent;color:#746a61;font:700 12px Inter,system-ui;cursor:pointer}.widget-preview-switch button[aria-pressed="true"]{background:#19130f;color:#fff;box-shadow:0 4px 12px rgba(25,19,15,.14)}.widget-preview-switch button:focus-visible{outline:2px solid #e97850;outline-offset:2px}@media(max-width:700px){.widget-preview-switch{top:10px}}
 </style>
   <style>
@@ -247,17 +246,23 @@
   </main>
   <div class="toast" id="toast">Preview updated</div>
   <main class="auth-gate" id="authGate">
-    <section class="auth-card" aria-labelledby="authTitle">
-      <div class="auth-brand"><img src="logos/wildrose.png" alt=""><span>Rose Workground</span></div>
-      <h1 id="authTitle">Sign in</h1>
-      <p>Sign in to open your account and manage your Rose workspace.</p>
-      <form id="accountLoginForm">
-        <label for="accountEmail">Email</label><input id="accountEmail" type="email" autocomplete="username" required>
-        <label for="accountPassword">Password</label><input id="accountPassword" type="password" autocomplete="current-password" required>
-        <button class="account-submit" id="accountSubmit" type="submit">Sign in</button>
-        <div class="account-error" id="accountError" role="alert" aria-live="polite"></div>
-      </form>
-    </section>
+    <div class="auth-experience">
+      <section class="auth-story" aria-label="About Rose Workground">
+        <div class="auth-brand"><img src="logos/wildrose.png" alt=""><span>Rose</span><small>Workground</small></div>
+        <div class="auth-story-copy"><p class="auth-eyebrow">Your workspace</p><h2>Give every answer your voice.</h2><p>Set the details, try a conversation, and hear how Rose will greet your next customer.</p></div>
+        <div class="auth-conversation" aria-hidden="true"><span class="auth-conversation-label">A conversation, shaped by you</span><div class="auth-conversation-bubble">“Can you help me get started?”</div><div class="auth-conversation-bubble reply"><b>Rose</b>“Of course. Tell me a little about what you need.”</div></div>
+      </section>
+      <section class="auth-card" aria-labelledby="authTitle"><div class="auth-card-inner">
+        <p class="auth-form-eyebrow">Rose Workground</p><h1 id="authTitle">Welcome back.</h1><p>Sign in to pick up where you left off.</p>
+        <form id="accountLoginForm">
+          <label for="accountEmail">Email</label><input id="accountEmail" type="email" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false" required>
+          <label for="accountPassword">Password</label><div class="auth-password-wrap"><input id="accountPassword" type="password" autocomplete="current-password" required><button class="auth-reveal" id="accountReveal" type="button" aria-label="Show password">Show</button></div>
+          <button class="account-submit" id="accountSubmit" type="submit">Sign in to Workground</button>
+          <div class="account-error" id="accountError" role="alert" aria-live="polite"></div>
+        </form>
+        <div class="auth-card-foot">First visit? <a href="../login.html?signup=1">Get your setup link</a></div>
+      </div></section>
+    </div>
   </main>
   <script>
     (function(){
@@ -638,10 +643,11 @@ function connectCardLabel(kind){return kind==='crm'?'CRM / lead destination':kin
     function wireAccountDialog(){
       document.getElementById('siteStatusPill').addEventListener('click',()=>accountInstallState().connected?showSection('Settings'):openFirstRunGuide());
       document.getElementById('accountTop').addEventListener('click',()=>{if(accountValidated){localStorage.removeItem('wildroseDashboardToken');localStorage.removeItem('roseDashboardToken');clearAccountCache();location.reload()}else openAccountDialog()});
+      document.getElementById('accountReveal').addEventListener('click',()=>{const input=document.getElementById('accountPassword'),button=document.getElementById('accountReveal'),visible=input.type==='password';input.type=visible?'text':'password';button.textContent=visible?'Hide':'Show';button.setAttribute('aria-label',visible?'Hide password':'Show password')});
       document.getElementById('accountLoginForm').addEventListener('submit',async e=>{
         e.preventDefault();const button=document.getElementById('accountSubmit'),error=document.getElementById('accountError');button.disabled=true;button.textContent='Signing in…';error.textContent='';
         try{const email=document.getElementById('accountEmail').value.trim();const r=await fetch('https://wildrose-widget.wildeautomations.com/api/rose-account-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:document.getElementById('accountPassword').value})});const j=await r.json().catch(()=>({}));if(!r.ok||!j.token)throw new Error(j.error||'Could not sign in');const previous=JSON.parse(localStorage.getItem('roseClientSettings')||'{}').ownerEmail?.toLowerCase();const next=(j.account?.email||email).toLowerCase();if(previous&&previous!==next)clearAccountCache();localStorage.setItem('wildroseDashboardToken',j.token);localStorage.removeItem('roseDashboardToken');document.getElementById('accountPassword').value='';location.reload()}
-        catch(err){error.textContent=err.message||'Could not sign in';button.disabled=false;button.textContent='Sign in'}
+        catch(err){error.textContent=err.message||'Could not sign in';button.disabled=false;button.textContent='Sign in to Workground'}
       });
     }
     async function contextSessionId(token){const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(token));return Array.from(new Uint8Array(bytes),b=>b.toString(16).padStart(2,'0')).join('')}
