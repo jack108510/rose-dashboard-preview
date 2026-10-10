@@ -89,6 +89,37 @@
     const status=document.getElementById('checkoutStatus');
     const paymentState=document.getElementById('paymentState');
     let checkoutVerified=false;
+    async function verifyInvite(){
+      if(!signupToken)return;
+      signupButton.disabled=true;
+      signupButton.textContent='Checking your link…';
+      status.hidden=false;
+      status.textContent='Checking your secure account link…';
+      try{
+        const response=await fetch(`${API}/api/rose-account/invite-status`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({checkoutLeadId,signupToken})});
+        if(!response.ok)throw new Error('Could not check your link right now. Please try again.');
+        const result=await response.json();
+        if(!result.valid)throw new Error('This link has expired or was already used. Request a new link using your checkout email.');
+        document.getElementById('signupEmail').value=result.email;
+        document.getElementById('signupEmail').readOnly=true;
+        emailInput.value=result.email;
+        status.textContent='✓ Checkout confirmed. Create your password to open Workground.';
+        signupButton.disabled=false;
+        signupButton.textContent='Create account and open Workground';
+      }catch(error){
+        status.textContent=error.message;
+        const fresh=new URL(location.pathname,location.origin);
+        fresh.searchParams.set('signup','1');
+        if(checkoutLeadId)fresh.searchParams.set('lead',checkoutLeadId);
+        const email=document.getElementById('signupEmail').value.trim();
+        if(email)fresh.searchParams.set('email',email);
+        const link=document.createElement('a');
+        link.href=fresh.href;
+        link.textContent=' Request a new link';
+        status.append(link);
+        signupButton.textContent='Link unavailable';
+      }
+    }
     async function checkCheckout(retries=0){
       if(!checkoutLeadId||signupToken)return false;
       paymentState.hidden=false;
@@ -119,8 +150,8 @@
       document.getElementById('signupEmail').value=checkoutEmail;
       emailInput.value=checkoutEmail;
       status.hidden=!signupToken;
-      status.textContent=signupToken?'Payment verified. Choose a password to open Workground.':'';
-      if(signupToken){document.body.classList.add('has-invite');signupButton.textContent='Create account and open Workground'}
+      status.textContent='';
+      if(signupToken){document.body.classList.add('has-invite');verifyInvite()}
       else if(checkoutReturn)checkCheckout(2);
       else if(!checkoutLeadId){paymentState.hidden=false;paymentState.className='payment-state pending';paymentState.textContent='This page is not linked to a checkout. Use the Workground link in your purchase email to see payment confirmation here.'}
     }
