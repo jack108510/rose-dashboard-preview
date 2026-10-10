@@ -71,7 +71,7 @@
         <p class="invite-email" id="inviteSentEmail"></p>
         <div class="invite-next"><span class="invite-next-number">01</span><span><b>Open the link</b><small>It will take you back here to create your password.</small></span></div>
         <div class="invite-next"><span class="invite-next-number">02</span><span><b>Enter your Workground</b><small>We’ll sign you in as soon as your password is set.</small></span></div>
-        <p class="invite-fine">Just paid? It can take a few minutes to confirm your checkout. Check spam if the email doesn’t arrive.</p>
+        <p class="invite-fine" id="inviteFine">Just paid? It can take a few minutes to confirm your checkout. Check spam if the email doesn’t arrive.</p>
         <button class="invite-edit" id="editSignupEmail" type="button">Use a different email <span aria-hidden="true">↗</span></button>
         <p class="help">Already have an account? <button class="switch-mode" id="sentShowLogin" type="button">Sign in</button> · <a href="mailto:invites@wildroseautomations.ca?subject=Rose%20Workground%20access">Need help?</a></p>
       </section>
@@ -144,6 +144,7 @@
             if(checkoutLeadId&&!checkoutVerified){message.textContent='Your checkout is still being confirmed. Please check again in a few minutes.';signupButton.disabled=false;signupButton.textContent='Check checkout again';return}
             document.getElementById('inviteSentEmail').textContent=email;
             document.getElementById('inviteVerified').hidden=!checkoutVerified;
+            document.getElementById('inviteFine').textContent=checkoutVerified?'Check spam if the email doesn’t arrive.':'Just paid? It can take a few minutes to confirm your checkout. Check spam if the email doesn’t arrive.';
             document.getElementById('inviteDescription').textContent=checkoutVerified?'Your checkout is confirmed. Your secure account link has been requested for:':'If your checkout is confirmed, we’ll send a secure link to set your password.';
             document.body.classList.add('link-sent');signupButton.disabled=false;signupButton.textContent='Send my account link';return
           }
