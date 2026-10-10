@@ -58,13 +58,7 @@ body:has(.layout),
 .story > *,
 .auth-story > * { position: relative; z-index: 1; }
 .brand,
-.auth-brand { color: #ff783b; font-size: 13px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
-.brand .brand-icon,
-.auth-brand .auth-brand-icon { width: 44px; height: 44px; border: 1px solid rgba(255, 142, 84, .22); border-radius: 11px; background: #fff9f2; box-shadow: 0 7px 20px rgba(0, 0, 0, .12); }
-.brand .brand-icon img,
-.auth-brand .auth-brand-icon img { width: 52px; height: 52px; }
-.brand small,
-.auth-brand small { display: none; }
+.auth-brand { min-height: 44px; display: flex; align-items: center; color: #ff783b; font-size: 15px; font-weight: 800; letter-spacing: .16em; line-height: 1; text-transform: uppercase; }
 .story-copy,
 .auth-story-copy { margin: clamp(42px, 6vh, 76px) 0 0; max-width: 560px; }
 .eyebrow,
