@@ -60,9 +60,9 @@ body:has(.layout),
 .brand,
 .auth-brand { color: #ff783b; font-size: 13px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
 .brand .brand-icon,
-.auth-brand .auth-brand-icon { width: 36px; height: 36px; border-radius: 9px; }
+.auth-brand .auth-brand-icon { width: 44px; height: 44px; border: 1px solid rgba(255, 142, 84, .22); border-radius: 11px; background: #fff9f2; box-shadow: 0 7px 20px rgba(0, 0, 0, .12); }
 .brand .brand-icon img,
-.auth-brand .auth-brand-icon img { width: 53px; height: 53px; }
+.auth-brand .auth-brand-icon img { width: 52px; height: 52px; }
 .brand small,
 .auth-brand small { display: none; }
 .story-copy,
@@ -107,14 +107,14 @@ body:has(.layout),
 .submit:hover,
 .auth-card .account-submit:hover { background: #e74e1d; }
 .help,
-.demo,
 .auth-card-foot { color: #796f67; }
 .help a,
-.demo a,
 .switch-mode,
 .auth-card-foot a { color: #cf4e22; }
 .divider { background: #e7dcd2; }
 .auth-card-foot { justify-content: flex-start; }
+.help { font-size: 13px; }
+.help .switch-mode { font-size: inherit; }
 
 @media (max-width: 900px) {
   .layout,
