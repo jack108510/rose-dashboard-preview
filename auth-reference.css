@@ -123,7 +123,9 @@ body:has(.layout),
 .invite-verified { width: fit-content; margin: 0 0 15px; padding: 8px 11px; border: 1px solid #c9dfce; border-radius: 999px; background: #edf7ee; color: #315e3c; font-size: 12px; font-weight: 750; }
 .invite-description { margin: 17px 0 12px; color: #6d665f; font-size: 15px; line-height: 1.55; }
 .invite-email { width: fit-content; max-width: 100%; margin: 0 0 30px; padding: 10px 14px; overflow-wrap: anywhere; border: 1px solid #e7d9ce; border-radius: 8px; background: #f9f2ec; color: #2d231e; font-size: 14px; font-weight: 700; }
+.signup-mode.link-sent.unlinked .invite-email { margin-bottom: 10px; }
 .invite-next { display: grid; grid-template-columns: 30px 1fr; gap: 11px; padding: 16px 0; border-top: 1px solid #e9ded5; }
+.invite-next[hidden] { display: none; }
 .invite-next-number { padding-top: 2px; color: #e2602f; font-size: 12px; font-weight: 800; letter-spacing: .06em; }
 .invite-next b { display: block; color: #30241f; font-size: 14px; }
 .invite-next small { display: block; margin-top: 4px; color: #786d65; font-size: 13px; line-height: 1.45; }
