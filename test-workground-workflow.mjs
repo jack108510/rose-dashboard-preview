@@ -87,3 +87,17 @@ test("editing a field or branch updates the saved workflow definition and invali
   assert.equal(workflow.planSteps.at(-1).when, "all_leads");
   assert.equal(workflow.nodes.at(-1).when, "all_leads");
 });
+
+test("connected destination choices appear beside manual setup fields", () => {
+  const start = source.indexOf("function workflowDestinationChoices(");
+  const end = source.indexOf("const workflowSaveQueue", start);
+  assert.ok(start >= 0 && end > start);
+  vm.runInContext(source.slice(start, end) + "\nthis.setupFields = workflowSetupFields;", context);
+  const workflow = context.convert(draft);
+  workflow.destinationOptions = { slack: { status: "ready", options: [{ value: "C123", label: "#sales" }] } };
+  context.isConnected = slug => slug === "slack";
+  const html = context.setupFields(workflow);
+  assert.match(html, /value="C123" label="#sales"/);
+  assert.match(html, /data-workflow-discover/);
+  assert.match(html, /data-workflow-config="channel"/);
+});
