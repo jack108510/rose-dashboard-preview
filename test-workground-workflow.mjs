@@ -56,4 +56,34 @@ test("Workground renders all steps, the branch, and the field map", () => {
   assert.match(details, /5 steps/);
   assert.match(details, /email → email/);
   assert.match(details, /Urgent quote requests only/);
+  assert.match(details, /data-workflow-rule="slack"/);
+  assert.match(details, /data-workflow-field-map="hubspot"/);
+  assert.match(flow, /wf-step-branch/);
+});
+
+test("Workground shows the values each app would receive in a dry run", () => {
+  const workflow = context.convert(draft);
+  workflow.lastTestPreview = { ok: true, scenarios: [{ label: "Urgent Slack branch", status: "dry_run", lead: { projectType: "quote", urgency: "urgent" }, steps: [{ provider: "slack", status: "dry_run", toolSlug: "SLACK_CHAT_POST_MESSAGE", arguments: { channel: "sales", markdown_text: "Sample lead" }, schema: { requiredFields: ["channel"] } }] }] };
+  const details = context.details(workflow);
+  assert.match(details, /Test preview/);
+  assert.match(details, /Sample lead/);
+  assert.match(details, /Required fields: channel/);
+});
+
+test("editing a field or branch updates the saved workflow definition and invalidates its test", () => {
+  const listeners = {};
+  const card = { className: "", dataset: {}, innerHTML: "", addEventListener: (type, fn) => { listeners[type] = fn; }, querySelector: () => null };
+  Object.assign(context, { document: { createElement: () => card }, workflowCardHtml: () => "", workflowNotes: new Map(), scheduleDraftSave: () => {}, scheduleWorkflowConfigSave: () => {}, refreshWorkflowCards: () => {} });
+  vm.runInContext(`${section("buildWorkflowCard", "uniqueWorkflows")}\nthis.buildCard = buildWorkflowCard;`, context);
+  const workflow = context.convert(draft);
+  workflow.testEvents = [{ ok: true }];
+  context.buildCard(workflow);
+  const emit = (selector, value, data) => listeners.change({ target: { closest: query => query === selector ? { value, dataset: data } : null } });
+  emit("[data-workflow-field-map]", "service", { workflowFieldMap: "gmail", workflowTarget: "projectType" });
+  assert.equal(workflow.fieldMapping.gmail.projectType, "service");
+  assert.equal(workflow.testEvents.length, 0);
+  emit("[data-workflow-rule]", "all_leads", { workflowRule: "slack" });
+  assert.equal(workflow.stepRules.slack, "all_leads");
+  assert.equal(workflow.planSteps.at(-1).when, "all_leads");
+  assert.equal(workflow.nodes.at(-1).when, "all_leads");
 });
