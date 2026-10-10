@@ -100,7 +100,7 @@
         const result=await response.json();
         checkoutVerified=result.checkoutVerified===true;
         paymentState.className=`payment-state ${checkoutVerified?'verified':'pending'}`;
-        paymentState.textContent=checkoutVerified?'✓ Checkout confirmed with Square':'Your checkout is still being confirmed. This can take a few minutes.';
+        paymentState.textContent=checkoutVerified?'✓ Checkout confirmed':'Your checkout is still being confirmed. This can take a few minutes.';
         if(!checkoutVerified&&retries>0)setTimeout(()=>checkCheckout(retries-1),3000);
         return checkoutVerified;
       }catch{
