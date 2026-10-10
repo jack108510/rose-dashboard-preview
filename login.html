@@ -29,21 +29,22 @@
     button:focus-visible,a:focus-visible,input:focus-visible{outline-color:#f28a5a}
     @media(max-width:760px){.layout{width:100%;min-height:100dvh}.story{min-height:190px;padding:24px 25px 22px}.story-copy{margin:19px 0 0}.story h1{font-size:30px}.panel{padding:34px 25px 48px}.form-eyebrow{display:none}form{gap:15px;margin:0 auto}}
   </style>
+  <link rel="stylesheet" href="auth-reference.css">
 </head>
 <body>
   <main class="layout">
     <section class="story" aria-label="Rose Workground">
-      <div class="brand"><span class="brand-icon"><img src="logos/wildrose.png" alt=""></span><span>Rose</span><small>Workground</small></div>
-      <div class="story-copy"><p class="eyebrow">Your workspace</p><h1>Make Rose<br>sound like<br>your business.</h1><p>Set your greeting, review answers, and decide where customer enquiries go.</p></div>
+      <div class="brand"><span class="brand-icon"><img src="logos/wildrose.png" alt=""></span><span>Rose Workground</span></div>
+      <div class="story-copy"><h1>Your business.<br>Your voice.<br><em>Your Rose.</em></h1><p>Shape how Rose speaks, answers questions, and connects with your customers. All from one workspace.</p></div><div class="rose-benefits" aria-label="What you can do in Workground"><div class="rose-benefit"><span class="rose-benefit-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4m4-8v12m4-15v18m4-13v8m4-6v4"/></svg></span><span><b>Train your voice</b><small>Make Rose sound like your business.</small></span></div><div class="rose-benefit"><span class="rose-benefit-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v12H9l-5 4V5Z"/><path d="M8 9h8m-8 4h5"/></svg></span><span><b>Review conversations</b><small>See what your customers are asking.</small></span></div><div class="rose-benefit"><span class="rose-benefit-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19v-5h3v5H5Zm6 0V9h3v10h-3Zm6 0V5h3v14h-3Z"/></svg></span><span><b>Drive more business</b><small>Turn conversations into results.</small></span></div></div>
     </section>
     <section class="panel" aria-labelledby="formTitle">
       <form class="login" id="loginForm" novalidate>
         <p class="form-eyebrow">Rose Workground</p>
-        <h2 id="formTitle">Welcome back.</h2>
-        <p class="intro">Sign in to pick up where you left off.</p>
-        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false" required></div>
-        <div class="field"><label for="password">Password</label><div class="password-wrap"><input id="password" name="password" type="password" autocomplete="current-password" required><button class="reveal" id="revealPassword" type="button" aria-label="Show password">Show</button></div></div>
-        <button class="submit" id="submitButton" type="submit">Sign in to Workground</button>
+        <h2 id="formTitle">Welcome to<br>your Workground.</h2>
+        <p class="intro">Sign in to continue managing your AI assistant, conversations, and settings.</p>
+        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false" placeholder="you@yourbusiness.com" required></div>
+        <div class="field"><label for="password">Password</label><div class="password-wrap"><input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required><button class="reveal" id="revealPassword" type="button" aria-label="Show password">Show</button></div></div>
+        <button class="submit" id="submitButton" type="submit">Sign in to Workground&nbsp; →</button>
         <p class="message" id="message" role="alert" aria-live="polite"></p>
         <div class="divider" aria-hidden="true"></div>
         <p class="help">Paid for Rose? <button class="switch-mode" id="showSignup" type="button">Get your setup link</button></p>
@@ -131,7 +132,7 @@
         localStorage.setItem('wildroseDashboardToken',result.token);localStorage.removeItem('roseDashboardToken');
         localStorage.setItem('roseClientSettings',JSON.stringify({businessName:result.customer?.businessName||'',website:result.customer?.website||'',ownerEmail:result.account?.email||emailInput.value.trim()}));
         location.replace(next);
-      }catch(error){message.textContent=error.message||'Could not connect to Rose. Check your connection and try again.';submitButton.disabled=false;submitButton.textContent='Sign in to Workground'}
+      }catch(error){message.textContent=error.message||'Could not connect to Rose. Check your connection and try again.';submitButton.disabled=false;submitButton.textContent='Sign in to Workground  →'}
     });
     if(!checkoutReturn&&params.get('signup')!=='1'&&!signupToken&&(localStorage.getItem('wildroseDashboardToken')||localStorage.getItem('roseDashboardToken')))location.replace(next);
   </script>
