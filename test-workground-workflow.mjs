@@ -114,5 +114,6 @@ test("confirmed booking draft shows its event and distinct phone fields", () => 
   assert.match(setup, /data-workflow-config="ownerPhone"/);
   assert.match(setup, /data-workflow-config="fromNumber"/);
   assert.match(setup, /x-rose-booking-key/);
+  assert.match(setup, /Check booking event/);
   assert.doesNotMatch(setup, /Send lead summaries to/);
 });
