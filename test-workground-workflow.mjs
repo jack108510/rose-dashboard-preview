@@ -101,3 +101,18 @@ test("connected destination choices appear beside manual setup fields", () => {
   assert.match(html, /data-workflow-discover/);
   assert.match(html, /data-workflow-config="channel"/);
 });
+
+test("confirmed booking draft shows its event and distinct phone fields", () => {
+  const bookingDraft = { ...draft, title: "Calendly booking confirmation", triggerType: "confirmed_booking", sourceTool: "calendly", requiredTools: ["gmail", "twilio"], stepRules: { gmail: "all_leads", twilio: "all_leads" }, setupFields: [{ id: "ownerPhone", label: "Your alert number" }, { id: "fromNumber", label: "Twilio sender" }], steps: [{ id: "capture", label: "Confirmed booking", tool: "Rose", action: "Accept booking" }, { id: "prepare", label: "Prepare booking", tool: "Rose", action: "Check booking" }, { id: "send_gmail", label: "Email customer", tool: "gmail", action: "Send confirmation" }, { id: "send_twilio", label: "Text owner", tool: "twilio", action: "Send SMS" }] };
+  const workflow = context.convert(bookingDraft);
+  workflow.bookingWebhookSecret = "test-key";
+  assert.equal(workflow.triggerType, "confirmed_booking");
+  assert.equal(workflow.sourceTool, "calendly");
+  assert.equal(workflow.nodes[0].name, "Confirmed booking");
+  assert.match(workflow.summary.whatHappens, /confirms a booking/);
+  const setup = context.setupFields(workflow);
+  assert.match(setup, /data-workflow-config="ownerPhone"/);
+  assert.match(setup, /data-workflow-config="fromNumber"/);
+  assert.match(setup, /x-rose-booking-key/);
+  assert.doesNotMatch(setup, /Send lead summaries to/);
+});
