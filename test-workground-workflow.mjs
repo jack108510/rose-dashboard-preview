@@ -112,8 +112,39 @@ test("confirmed booking draft shows its event and distinct phone fields", () => 
   assert.match(workflow.summary.whatHappens, /confirms a booking/);
   const setup = context.setupFields(workflow);
   assert.match(setup, /data-workflow-config="ownerPhone"/);
-  assert.match(setup, /data-workflow-config="fromNumber"/);
+  assert.doesNotMatch(setup, /data-workflow-config="fromNumber"/);
+  assert.match(setup, /Instructions for your booking app or web person/);
+  assert.doesNotMatch(setup, /Urgent words/);
   assert.match(setup, /x-rose-booking-key/);
   assert.match(setup, /Check booking event/);
   assert.doesNotMatch(setup, /Send lead summaries to/);
+});
+
+test("owner setup asks for real details and shows a clear path to launch", () => {
+  vm.runInContext(`${section("workflowOwnerSetupItems", "firstWorkflowQuestion")}${section("workflowGuideHtml", "workflowCardHtml")}\nthis.ownerItems=workflowOwnerSetupItems;this.guide=workflowGuideHtml;`, context);
+  const workflow = { triggerType: "confirmed_booking", active: false, puzzleComplete: true, testEvents: [], setup: [{ id: "ownerPhone", blocking: true, status: "done" }, { id: "booking_event_verified", blocking: true, status: "required" }, { id: "oauth_twilio", blocking: true, status: "required" }] };
+  context.allWorkflowToolsConnected = () => true;
+  assert.deepEqual(Array.from(context.ownerItems(workflow), item => item.id), ["ownerPhone"]);
+  const before = context.guide(workflow);
+  assert.match(before, /Connect tools/);
+  assert.match(before, /Confirm booking source/);
+  assert.match(before, /Run safe test/);
+  assert.match(before, /class="current"[^>]*><span>3<\/span>Confirm booking source/);
+  workflow.bookingSourceVerifiedAt = "2026-10-11T00:00:00Z";
+  assert.match(context.guide(workflow), /class="current"[^>]*><span>4<\/span>Run safe test/);
+});
+
+test("workflow card gives one next action before it is ready to turn on", () => {
+  Object.assign(context, { workflowStatus: () => ({ tone: "warn", label: "Connect Gmail", next: "Connect Gmail to send lead updates." }), workflowReadyToPublish: () => false, workflowSetupFields: () => "", workflowFlowHtml: () => "<div>flow</div>", workflowPlanHtml: () => "", workflowRunHtml: () => "", workflowToolLogo: () => "", workflowDisplayTitle: workflow => workflow.title, workflowNotes: new Map(), allWorkflowToolsConnected: () => false });
+  vm.runInContext(`${section("workflowGuideHtml", "workflowKey")}\nthis.cardHtml=workflowCardHtml;`, context);
+  const workflow = { id: "lead-email", title: "New lead email", provider: "gmail", requiredTools: ["gmail"], setup: [], testEvents: [], puzzleComplete: false, active: false };
+  const draft = context.cardHtml(workflow);
+  assert.match(draft, /Connect Gmail/);
+  assert.match(draft, /Run safe test/);
+  assert.doesNotMatch(draft, /data-workflow-activate/);
+  context.workflowReadyToPublish = () => true;
+  context.allWorkflowToolsConnected = () => true;
+  const ready = context.cardHtml({ ...workflow, puzzleComplete: true, testEvents: [{ ok: true, mode: "runtime_dry_run" }] });
+  assert.match(ready, /Turn on workflow/);
+  assert.match(ready, /data-workflow-activate/);
 });
