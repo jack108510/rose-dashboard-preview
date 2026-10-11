@@ -103,9 +103,9 @@ test("connected destination choices appear beside manual setup fields", () => {
 });
 
 test("a discovered app draft keeps its executable action and owner setup field", () => {
-  const custom = context.convert({ title: "Airtable lead capture", ownerRequest: "Save every lead to Airtable", requiredTools: ["airtable"], stepRules: { airtable: "all_leads" }, actions: { airtable: { toolSlug: "AIRTABLE_CREATE_RECORD", fields: { name: { source: "lead.name" }, base_id: { source: "config.baseId" } } } }, setupFields: [{ id: "baseId", label: "Airtable base ID" }], steps: [{ id: "capture", label: "Capture lead", tool: "Rose", action: "Capture" }, { id: "prepare", label: "Prepare contact", tool: "Rose", action: "Prepare" }, { id: "save", label: "Save in Airtable", tool: "airtable", action: "Create record" }] });
-  assert.equal(custom.actions.airtable.toolSlug, "AIRTABLE_CREATE_RECORD");
-  assert.match(context.setupFields(custom), /data-workflow-config="baseId"/);
+  const custom = context.convert({ title: "Trello lead capture", ownerRequest: "Save every lead to Trello", requiredTools: ["trello"], stepRules: { trello: "all_leads" }, actions: { trello: { toolSlug: "TRELLO_ADD_CARDS", fields: { name: { source: "lead.name" }, idList: { source: "config.listId" } } } }, setupFields: [{ id: "listId", label: "Trello list ID" }], steps: [{ id: "capture", label: "Capture lead", tool: "Rose", action: "Capture" }, { id: "prepare", label: "Prepare contact", tool: "Rose", action: "Prepare" }, { id: "save", label: "Save in Trello", tool: "trello", action: "Create card" }] });
+  assert.equal(custom.actions.trello.toolSlug, "TRELLO_ADD_CARDS");
+  assert.match(context.setupFields(custom), /data-workflow-config="listId"/);
 });
 
 test("confirmed booking draft shows its event and distinct phone fields", () => {
