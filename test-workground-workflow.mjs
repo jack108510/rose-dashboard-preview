@@ -102,6 +102,12 @@ test("connected destination choices appear beside manual setup fields", () => {
   assert.match(html, /data-workflow-config="channel"/);
 });
 
+test("a discovered app draft keeps its executable action and owner setup field", () => {
+  const custom = context.convert({ title: "Trello lead capture", ownerRequest: "Save every lead to Trello", requiredTools: ["trello"], stepRules: { trello: "all_leads" }, actions: { trello: { toolSlug: "TRELLO_ADD_CARDS", fields: { name: { source: "lead.name" }, idList: { source: "config.listId" } } } }, setupFields: [{ id: "listId", label: "Trello list ID" }], steps: [{ id: "capture", label: "Capture lead", tool: "Rose", action: "Capture" }, { id: "prepare", label: "Prepare contact", tool: "Rose", action: "Prepare" }, { id: "save", label: "Save in Trello", tool: "trello", action: "Create card" }] });
+  assert.equal(custom.actions.trello.toolSlug, "TRELLO_ADD_CARDS");
+  assert.match(context.setupFields(custom), /data-workflow-config="listId"/);
+});
+
 test("confirmed booking draft shows its event and distinct phone fields", () => {
   const bookingDraft = { ...draft, title: "Calendly booking confirmation", triggerType: "confirmed_booking", sourceTool: "calendly", requiredTools: ["gmail", "twilio"], stepRules: { gmail: "all_leads", twilio: "all_leads" }, setupFields: [{ id: "ownerPhone", label: "Your alert number" }, { id: "fromNumber", label: "Twilio sender" }], steps: [{ id: "capture", label: "Confirmed booking", tool: "Rose", action: "Accept booking" }, { id: "prepare", label: "Prepare booking", tool: "Rose", action: "Check booking" }, { id: "send_gmail", label: "Email customer", tool: "gmail", action: "Send confirmation" }, { id: "send_twilio", label: "Text owner", tool: "twilio", action: "Send SMS" }] };
   const workflow = context.convert(bookingDraft);
