@@ -103,9 +103,13 @@ test("connected destination choices appear beside manual setup fields", () => {
 });
 
 test("a discovered app draft keeps its executable action and owner setup field", () => {
-  const custom = context.convert({ title: "Trello lead capture", ownerRequest: "Save every lead to Trello", requiredTools: ["trello"], stepRules: { trello: "all_leads" }, actions: { trello: { toolSlug: "TRELLO_ADD_CARDS", fields: { name: { source: "lead.name" }, idList: { source: "config.listId" } } } }, setupFields: [{ id: "listId", label: "Trello list ID" }], steps: [{ id: "capture", label: "Capture lead", tool: "Rose", action: "Capture" }, { id: "prepare", label: "Prepare contact", tool: "Rose", action: "Prepare" }, { id: "save", label: "Save in Trello", tool: "trello", action: "Create card" }] });
+  const custom = context.convert({ title: "Trello lead capture", ownerRequest: "Save every lead to Trello", requiredTools: ["trello"], stepRules: { trello: "all_leads" }, actions: { trello: { toolSlug: "TRELLO_ADD_CARDS", fields: { name: { source: "lead.name" }, idList: { source: "config.idList" } } } }, setupFields: [{ id: "idList", label: "Which Trello list should receive these?" }], steps: [{ id: "capture", label: "Capture lead", tool: "Rose", action: "Capture" }, { id: "prepare", label: "Prepare contact", tool: "Rose", action: "Prepare" }, { id: "save", label: "Save in Trello", tool: "trello", action: "Create card" }] });
   assert.equal(custom.actions.trello.toolSlug, "TRELLO_ADD_CARDS");
-  assert.match(context.setupFields(custom), /data-workflow-config="listId"/);
+  assert.match(context.setupFields(custom), /data-workflow-config="idList"/);
+  custom.destinationOptions={trello:{status:'ready',options:[{value:'list-123',label:'Sales board / New leads'}]}};
+  const choices=context.setupFields(custom);
+  assert.match(choices, /<select data-workflow-config="idList"/);
+  assert.match(choices, /Sales board \/ New leads/);
 });
 
 test("confirmed booking draft shows its event and distinct phone fields", () => {

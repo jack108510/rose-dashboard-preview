@@ -38,4 +38,7 @@ test('setup answers accept natural fields and let connection requests through',(
   assert.equal(check({},'Use #new-leads',{id:'channel'}).value,'new-leads');
   assert.equal(check({},'Send it to me',{id:'recipientEmail'}).value,'owner@example.test');
   assert.equal(check({},'Use this sheet: https://docs.google.com/spreadsheets/d/abc123DEF456ghi789JKL/edit',{id:'spreadsheetId'}).value,'abc123DEF456ghi789JKL');
+  const trello={destinationOptions:{trello:{options:[{value:'list-123',label:'Sales board / New leads'}]}}};
+  assert.equal(check(trello,'New leads',{id:'idList'}).value,'list-123');
+  assert.equal(check(trello,'Some other list',{id:'idList'}).state,'invalid');
 });
