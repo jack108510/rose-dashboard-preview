@@ -156,6 +156,8 @@ test("SMS and Slack workflows accept pasted copy or an AI draft", () => {
 test("copy editor appears only when a discovered action sends a message", () => {
   const workflow = { id: "mapped-mail", requiredTools: ["gmail"], actions: { gmail: { toolSlug: "GMAIL_SEND_EMAIL", fields: { recipient_email: { source: "lead.email" }, subject: { value: "Original" }, body: { value: "Original" } } } }, config: {} };
   assert.match(context.setupFields(workflow), /data-workflow-ai="email"/);
+  assert.match(context.setupFields(workflow), /value="Original"/);
+  assert.match(context.setupFields(workflow), />Original<\/textarea>/);
   assert.doesNotMatch(context.setupFields({ ...workflow, actions: { gmail: { toolSlug: "GMAIL_SEARCH_EMAILS", fields: { query: { value: "hello" } } } } }), /data-workflow-ai="email"/);
 });
 
