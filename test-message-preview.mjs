@@ -8,7 +8,7 @@ const start=source.indexOf('function messagePreviewFromResponse(');
 const end=source.indexOf('    function renderMessagePreview(',start);
 assert.ok(start>=0&&end>start);
 const context={};
-vm.runInNewContext(`${source.slice(start,end)}\nthis.preview=messagePreviewFromResponse`,context);
+vm.runInNewContext(`${source.slice(start,end)}\nthis.preview=messagePreviewFromResponse;this.fromHistory=messagePreviewFromHistory;this.toHistory=messagePreviewHistory`,context);
 
 test('structured email copy becomes a draft preview without losing template fields',()=>{
   const result=context.preview({reply:'Here is a draft.',emailDraft:{subject:'Thanks for your purchase',body:'Dear {{customer_first_name}},\nThank you for choosing us.'}});
@@ -31,4 +31,17 @@ test('old plain-text email drafts still become previews',()=>{
 
 test('ordinary builder answers do not become message previews',()=>{
   assert.equal(context.preview({reply:'Connect Square first, then choose Gmail or Outlook.'}),null);
+});
+
+test('saved conversation restores edited email and text previews',()=>{
+  for(const draft of [
+    {kind:'email',to:'buyer@example.test',subject:'Thank you.',body:'Hi {{customer_first_name}},\nThanks for your purchase.'},
+    {kind:'sms',to:'+15551234567',body:'New booking for {{customer_name}}.'},
+  ]){
+    const restored=context.fromHistory(`Here is the draft.\n${context.toHistory(draft)}`);
+    assert.equal(restored.kind,draft.kind);
+    assert.equal(restored.to,draft.to);
+    assert.equal(restored.body,draft.body);
+    if(draft.kind==='email')assert.equal(restored.subject,draft.subject);
+  }
 });
