@@ -1072,7 +1072,7 @@ function connectCardLabel(kind){return kind==='crm'?'CRM / lead destination':kin
       const intro=(title,description)=>{const header=document.createElement('div');header.className='account-settings-intro';const heading=document.createElement('h2');heading.textContent=title;const body=document.createElement('p');body.textContent=description;header.append(heading,body);return header};
       const oldInviteActions=site.querySelector('.account-connect-actions');if(oldInviteActions)oldInviteActions.remove();
       site.querySelector('.install-explainer')?.remove();
-      const progress=site.querySelector('.account-lifecycle');if(progress){const wrapper=document.createElement('details');wrapper.className='settings-progress';const title=document.createElement('summary');title.textContent='View setup progress';wrapper.append(title,progress);site.append(wrapper)}
+      site.querySelector('.account-lifecycle')?.remove();
       if(!accountInstallState().connected){const heading=site.querySelector('.account-site-top h2'),description=site.querySelector('.account-site-top p');if(heading)heading.textContent='Rose is not connected yet';if(description)description.textContent='Choose an installation method below, then check your live website.'}
       wireWebsiteChange(site);
       const installChoices=document.createElement('div');installChoices.innerHTML=installChoicesHtml();
@@ -1080,14 +1080,14 @@ function connectCardLabel(kind){return kind==='crm'?'CRM / lead destination':kin
       site.querySelector('.account-site-top')?.after(statusCard.firstElementChild);
       panels.website.append(intro('Website','Your site connection and setup in one place.'),site);
       if(accountInstallState().connected){const manage=document.createElement('details');manage.className='settings-manage-install';const heading=document.createElement('summary');heading.textContent='Manage installation';manage.append(heading,installChoices.firstElementChild);panels.website.append(manage)}else panels.website.append(installChoices.firstElementChild);
-      panels.website.append(release);
-      const builder=document.createElement('div');builder.className='account-builder-link';builder.innerHTML='<span>Want to change how Rose talks or works?</span><button type="button" data-open-builder>Open builder →</button>';panels.website.append(builder);
+      const builder=document.createElement('div');builder.className='account-builder-link';builder.innerHTML='<span>Want to change how Rose talks or works?</span><button type="button" data-open-builder>Open builder →</button>';
       const knowledgeBody=document.createElement('div');knowledgeBody.className='account-knowledge-panel';const inner=knowledge.querySelector('.account-inner-panel');while(inner?.firstChild)knowledgeBody.append(inner.firstChild);knowledge.remove();panels.knowledge.append(intro('Business knowledge','Review website and document suggestions before Rose uses them.'),knowledgeBody);
       const details=[...secondary.querySelectorAll(':scope > .account-details')];
       const takeDetail=title=>{const item=details.find(detail=>detail.querySelector('summary')?.textContent.trim()===title);if(item)item.remove();return item};
       const profile=takeDetail('Business and agent profile'),voice=takeDetail('Voice'),security=takeDetail('Account security'),api=takeDetail('API access');
       if(profile){profile.open=true;panels.profile.append(profile)}
       if(voice)panels.profile.append(voice);
+      panels.profile.append(release,builder);
       panels.profile.prepend(intro('Rose profile','Set the name, greeting, contact details, and voice Rose uses.'));
       panels.account.append(intro('Account & billing','Your sign-in, plan, usage, and billing help.'),summary);
       if(security)panels.account.append(security);
