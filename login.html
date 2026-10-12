@@ -160,6 +160,10 @@
     }
     document.getElementById('showSignup').addEventListener('click',()=>{document.body.classList.add('signup-mode');document.body.classList.remove('show-login','link-sent')});
     document.getElementById('showReset').addEventListener('click',()=>{resetEmail.value=emailInput.value.trim();document.body.classList.add('reset-mode');resetEmail.focus()});
+    if(params.get('forgot')==='1'){
+      resetEmail.value=params.get('email')||'';
+      document.body.classList.add('reset-mode');
+    }
     document.getElementById('resetShowLogin').addEventListener('click',()=>{document.body.classList.remove('reset-mode','has-reset-token');resetEmail.readOnly=false;history.replaceState(null,'',location.pathname);emailInput.focus()});
     if(resetToken){
       resetEmail.value=params.get('email')||'';
@@ -257,7 +261,7 @@
         location.replace(next);
       }catch(error){message.textContent=error.message||'Could not connect to Rose. Check your connection and try again.';submitButton.disabled=false;submitButton.textContent='Sign in to Workground  →'}
     });
-    if(!checkoutReturn&&params.get('signup')!=='1'&&!signupToken&&!resetToken&&(localStorage.getItem('wildroseDashboardToken')||localStorage.getItem('roseDashboardToken')))location.replace(next);
+    if(!checkoutReturn&&params.get('signup')!=='1'&&params.get('forgot')!=='1'&&!signupToken&&!resetToken&&(localStorage.getItem('wildroseDashboardToken')||localStorage.getItem('roseDashboardToken')))location.replace(next);
   </script>
 </body>
 </html>
