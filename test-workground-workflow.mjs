@@ -83,6 +83,23 @@ test("email and text preview controls open themed samples with escaped copy", ()
   assert.match(sms, /Your booking is confirmed/);
 });
 
+test("Builder shows a source-tool workflow plan with its trigger blocker", () => {
+  const start = source.indexOf('function addToolEventPlanCard(');
+  const end = source.indexOf('    async function runRoseLlm(', start);
+  assert.ok(start > 0 && end > start);
+  const cards = [];
+  const messages = { querySelectorAll: () => cards, appendChild: card => cards.push(card), style: {}, scrollHeight: 100, scrollTop: 0 };
+  const planContext = { messages, document: { createElement: () => ({ dataset: {}, innerHTML: "", scrollIntoView: () => {} }) }, esc: value => String(value || "").replace(/&/g, "&amp;").replace(/</g, "&lt;") };
+  vm.runInNewContext(source.slice(start, end) + '\nthis.addPlan = addToolEventPlanCard;', planContext);
+  planContext.addPlan({ sourceTool: 'square', sourceName: 'Square', event: 'a customer pays <today>', destinationLabel: 'Email the customer' });
+  assert.equal(cards.length, 1);
+  assert.match(cards[0].innerHTML, /Square → Email the customer/);
+  assert.match(cards[0].innerHTML, /Trigger integration needed/);
+  assert.match(cards[0].innerHTML, /&lt;today>/);
+  planContext.addPlan({ sourceTool: 'square', sourceName: 'Square', event: 'a customer pays <today>', destinationLabel: 'Email the customer' });
+  assert.equal(cards.length, 1);
+});
+
 test("editing a field or branch updates the saved workflow definition and invalidates its test", () => {
   const listeners = {};
   const card = { className: "", dataset: {}, innerHTML: "", addEventListener: (type, fn) => { listeners[type] = fn; }, querySelector: () => null };
