@@ -924,7 +924,7 @@ function connectCardLabel(kind){return kind==='crm'?'CRM / lead destination':kin
     document.addEventListener('visibilitychange',()=>{if(!document.hidden&&Date.now()-lastAccountInstallCheckAt>=ACCOUNT_INSTALL_CHECK_INTERVAL_MS)pollAccountInstallStatus()});
     async function hydrateRoseAccount(){
       const token=roseAccountToken();const accountTop=document.getElementById('accountTop');
-      if(!token){draftChip.textContent='Sign in required';accountTop.textContent='Sign in';return false}
+      if(!token){draftChip.textContent=swiftDemo?'Demo preview':'Sign in required';accountTop.textContent='Sign in';return false}
       try{
         const r=await fetch('https://wildrose-widget.wildeautomations.com/api/rose-account-dashboard',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify({token})});
         const j=await r.json().catch(()=>({}));
