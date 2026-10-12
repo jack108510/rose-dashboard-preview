@@ -11,7 +11,7 @@ function extract(name){
   assert.ok(end>start,`${name} has a following function`);
   return source.slice(start,end);
 }
-const functions=['builderQuestion','trackBackendSetupQuestion','workflowSetupAnswerCheck'].map(extract).join('\n');
+const functions=['builderQuestion','trackBackendSetupQuestion','workflowSetupAnswerCheck','askWorkflowSetupQuestion','askNextWorkflowSetupQuestion'].map(extract).join('\n');
 
 test('a backend setup question stays attached to its workflow',()=>{
   const workflow={id:'workflow-1',active:false,puzzleComplete:false,askedFirstQuestion:false};
@@ -45,4 +45,25 @@ test('setup answers accept natural fields and let connection requests through',(
   assert.equal(check(notion,'Customer leads',{id:'parent_id'}).value,'page-123');
   const monday={destinationOptions:{monday:{options:[{value:'board-123',label:'Sales leads'}]}}};
   assert.equal(check(monday,'Sales leads',{id:'board_id'}).value,'board-123');
+});
+
+test('workflow setup asks each question once and moves to the next unasked workflow',()=>{
+  const first={id:'first',provider:'gmail',active:false,puzzleComplete:false,askedFirstQuestion:false};
+  const second={id:'second',provider:'slack',active:false,puzzleComplete:false,askedFirstQuestion:false};
+  const prompts=[],history=[];
+  const context={
+    workflows:[first,second],pendingWorkflowAnswerId:'',accountValidated:true,chatHistory:history,
+    localStorage:{setItem:()=>{}},toolMeta:provider=>({name:provider}),
+    firstWorkflowQuestion:wf=>`Setup for ${wf.id}?`,
+    add:(_role,question)=>{prompts.push(question);return {closest:()=>({dataset:{}})}},
+    saveCommandMemory:()=>{},setTimeout:callback=>callback(),
+  };
+  vm.runInNewContext(`${functions}\nthis.api={askWorkflowSetupQuestion,askNextWorkflowSetupQuestion}`,context);
+  context.api.askWorkflowSetupQuestion(first);
+  context.api.askWorkflowSetupQuestion(first);
+  context.api.askNextWorkflowSetupQuestion('first');
+  context.api.askNextWorkflowSetupQuestion('first');
+  assert.deepEqual(prompts,['Setup for first?','Setup for second?']);
+  assert.deepEqual(history.map(turn=>turn.content),prompts);
+  assert.equal(context.pendingWorkflowAnswerId,'second');
 });
