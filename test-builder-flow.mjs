@@ -31,7 +31,7 @@ test('a backend setup question stays attached to its workflow',()=>{
 });
 
 test('setup answers accept natural fields and let connection requests through',()=>{
-  const context={normalizedCommand:value=>String(value).toLowerCase(),settings:{ownerEmail:'owner@example.test'}};
+  const context={normalizedCommand:value=>String(value).toLowerCase(),settings:{ownerEmail:'owner@example.test'},toolMeta:value=>({name:String(value).replace(/^./,char=>char.toUpperCase())})};
   vm.runInNewContext(`${functions}\nthis.api={workflowSetupAnswerCheck}`,context);
   const check=context.api.workflowSetupAnswerCheck;
   assert.equal(check({},'Connect Slack',{id:'channel'}).state,'unrelated');
@@ -41,4 +41,8 @@ test('setup answers accept natural fields and let connection requests through',(
   const trello={destinationOptions:{trello:{options:[{value:'list-123',label:'Sales board / New leads'}]}}};
   assert.equal(check(trello,'New leads',{id:'idList'}).value,'list-123');
   assert.equal(check(trello,'Some other list',{id:'idList'}).state,'invalid');
+  const notion={destinationOptions:{notion:{options:[{value:'page-123',label:'Customer leads'}]}}};
+  assert.equal(check(notion,'Customer leads',{id:'parent_id'}).value,'page-123');
+  const monday={destinationOptions:{monday:{options:[{value:'board-123',label:'Sales leads'}]}}};
+  assert.equal(check(monday,'Sales leads',{id:'board_id'}).value,'board-123');
 });
