@@ -120,6 +120,9 @@ test("email-only booking shows an editable confirmation without an SMS field", (
   assert.match(html, /Customer confirmation email draft/);
   assert.match(html, /data-workflow-config="customerSubject"/);
   assert.match(html, /data-workflow-config="customerBody"/);
+  assert.match(html, /data-workflow-config="emailDeliveryMode"/);
+  assert.match(html, /Hold each email for my review/);
+  assert.match(html, /Send automatically/);
   assert.doesNotMatch(html, /data-workflow-config="ownerPhone"/);
 });
 
