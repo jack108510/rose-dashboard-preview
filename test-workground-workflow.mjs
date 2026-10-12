@@ -156,6 +156,17 @@ test("nested tool bindings expose each owner setup value", () => {
   assert.match(html, /data-workflow-config="projectId"/);
 });
 
+test("Airtable setup lists the connected base, table, and mapped columns", () => {
+  const custom = context.convert({ title: "Airtable lead records", ownerRequest: "Save every website lead in Airtable", requiredTools: ["airtable"], stepRules: {}, actions: { airtable: { toolSlug: "AIRTABLE_CREATE_RECORD", fields: { baseId: { source: "config.baseId" }, tableIdOrName: { source: "config.tableIdOrName" }, fields: { object: { fldName123: { source: "lead.name" } } } } } }, setupFields: [{ id: "baseId", label: "Choose Airtable base" }, { id: "tableIdOrName", label: "Choose table" }], steps: [{ id: "capture", label: "Capture lead", tool: "Rose" }, { id: "prepare", label: "Prepare lead", tool: "Rose" }, { id: "save", label: "Save record", tool: "airtable" }] });
+  custom.destinationOptions = { airtable: { options: [{ value: "app123", label: "Sales" }] }, airtableTables: { options: [{ value: "tbl123", label: "Leads" }] }, airtableFields: { options: [{ id: "fldName123", name: "Customer name", type: "singleLineText" }] } };
+  const html = context.setupFields(custom);
+  assert.match(html, /data-workflow-destination="airtable-base"/);
+  assert.match(html, /data-workflow-destination="airtable-table"/);
+  assert.match(html, /Customer name/);
+  assert.match(html, /value="app123"/);
+  assert.match(html, /value="tbl123"/);
+});
+
 test("ordered actions keep their output mapping and ask only for owner choices", () => {
   const custom = context.convert({ title: "Trello card and comment", ownerRequest: "Create a Trello card and comment on it for every new lead", requiredTools: ["trello"], stepRules: {}, actionSteps: [
     { id: "card", provider: "trello", toolSlug: "TRELLO_ADD_CARDS", fields: { name: { source: "lead.name" }, idList: { source: "config.listId" } } },
