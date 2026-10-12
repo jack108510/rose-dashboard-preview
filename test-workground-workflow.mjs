@@ -119,6 +119,17 @@ test("nested tool bindings expose each owner setup value", () => {
   assert.match(html, /data-workflow-config="projectId"/);
 });
 
+test("ordered actions keep their output mapping and ask only for owner choices", () => {
+  const custom = context.convert({ title: "Trello card and comment", ownerRequest: "Create a Trello card and comment on it for every new lead", requiredTools: ["trello"], stepRules: {}, actionSteps: [
+    { id: "card", provider: "trello", toolSlug: "TRELLO_ADD_CARDS", fields: { name: { source: "lead.name" }, idList: { source: "config.listId" } } },
+    { id: "comment", provider: "trello", toolSlug: "TRELLO_ADD_CARDS_ACTIONS_COMMENTS_BY_ID_CARD", fields: { text: { source: "lead.summary" }, idCard: { source: "steps.card.data.id" } } },
+  ], setupFields: [{ id: "listId", label: "Choose a list" }], steps: [{ id: "capture", label: "Capture lead", tool: "Rose" }, { id: "prepare", label: "Prepare lead", tool: "Rose" }, { id: "card", label: "Create card", tool: "trello" }, { id: "comment", label: "Comment on card", tool: "trello" }] });
+  assert.deepEqual(Array.from(custom.actionSteps, step => step.id), ["card", "comment"]);
+  const html = context.setupFields(custom);
+  assert.match(html, /data-workflow-config="listId"/);
+  assert.doesNotMatch(html, /data-workflow-config="idCard"/);
+});
+
 test("Notion pages and Monday boards are selected by name", () => {
   for (const item of [
     { provider: "notion", slug: "NOTION_CREATE_NOTION_PAGE", key: "parent_id", label: "Customer leads", value: "page-123" },
