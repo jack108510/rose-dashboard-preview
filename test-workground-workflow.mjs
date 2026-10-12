@@ -102,6 +102,27 @@ test("connected destination choices appear beside manual setup fields", () => {
   assert.match(html, /data-workflow-config="channel"/);
 });
 
+test("email-only booking shows an editable confirmation without an SMS field", () => {
+  const workflow = context.convert({
+    title: "Meeting confirmation", ownerRequest: "Send meeting confirmations",
+    triggerType: "confirmed_booking", sourceTool: "calendly", requiredTools: ["gmail"],
+    stepRules: { gmail: "all_leads" }, initialConfig: {
+      customerSubject: "See you, {{customer_first_name}}",
+      customerBody: "Your meeting is confirmed for {{booking_start}}.",
+    },
+    steps: [
+      { id: "capture", label: "Confirmed booking", tool: "Rose", action: "Accept booking" },
+      { id: "prepare", label: "Prepare", tool: "Rose", action: "Prepare email" },
+      { id: "send_gmail", label: "Send email", tool: "gmail", action: "Send confirmation" },
+    ],
+  });
+  const html = context.setupFields(workflow);
+  assert.match(html, /Customer confirmation email draft/);
+  assert.match(html, /data-workflow-config="customerSubject"/);
+  assert.match(html, /data-workflow-config="customerBody"/);
+  assert.doesNotMatch(html, /data-workflow-config="ownerPhone"/);
+});
+
 test("a discovered app draft keeps its executable action and owner setup field", () => {
   const custom = context.convert({ title: "Trello lead capture", ownerRequest: "Save every lead to Trello", requiredTools: ["trello"], stepRules: { trello: "all_leads" }, actions: { trello: { toolSlug: "TRELLO_ADD_CARDS", fields: { name: { source: "lead.name" }, idList: { source: "config.idList" } } } }, setupFields: [{ id: "idList", label: "Which Trello list should receive these?" }], steps: [{ id: "capture", label: "Capture lead", tool: "Rose", action: "Capture" }, { id: "prepare", label: "Prepare contact", tool: "Rose", action: "Prepare" }, { id: "save", label: "Save in Trello", tool: "trello", action: "Create card" }] });
   assert.equal(custom.actions.trello.toolSlug, "TRELLO_ADD_CARDS");
