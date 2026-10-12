@@ -112,6 +112,13 @@ test("a discovered app draft keeps its executable action and owner setup field",
   assert.match(choices, /Sales board \/ New leads/);
 });
 
+test("nested tool bindings expose each owner setup value", () => {
+  const custom = context.convert({ title: "Asana lead task", requiredTools: ["asana"], stepRules: { asana: "all_leads" }, actions: { asana: { toolSlug: "ASANA_CREATE_A_TASK", fields: { data: { object: { name: { source: "lead.name" }, workspace: { source: "config.workspaceId" }, projects: { array: [{ source: "config.projectId" }] } } } } } }, setupFields: [{ id: "workspaceId", label: "Asana workspace" }, { id: "projectId", label: "Asana project" }], steps: [{ id: "capture", label: "Capture lead", tool: "Rose" }, { id: "send", label: "Create task", tool: "asana" }] });
+  const html = context.setupFields(custom);
+  assert.match(html, /data-workflow-config="workspaceId"/);
+  assert.match(html, /data-workflow-config="projectId"/);
+});
+
 test("Notion pages and Monday boards are selected by name", () => {
   for (const item of [
     { provider: "notion", slug: "NOTION_CREATE_NOTION_PAGE", key: "parent_id", label: "Customer leads", value: "page-123" },
