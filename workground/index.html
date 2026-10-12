@@ -279,6 +279,57 @@
     @media(max-width:700px){.setup-checklist-grid{grid-template-columns:1fr}}
     @media(max-width:700px){.app.page-mode .thread{padding:22px 16px 38px}.account-page-head{align-items:start}.account-settings{gap:13px}.account-site-card{padding:17px}.account-page-head h1{font-size:28px}}
   </style>
+  <style id="account-settings-simplified">
+    .account-settings{width:min(1120px,100%);gap:24px;padding:26px 24px 64px}
+    .account-page-head{align-items:center;padding:0 0 20px;border-bottom:1px solid var(--line)}
+    .account-page-head h1{font-size:30px;margin:0 0 5px;letter-spacing:-.045em}
+    .account-page-head .fb-kicker{display:none}
+    .account-page-head p{font-size:13px;color:#71675e}
+    .account-head-actions .ghost{border:0;background:transparent;color:#71675e;text-decoration:underline;text-underline-offset:3px}
+    .account-settings-layout{display:grid;grid-template-columns:210px minmax(0,1fr);gap:42px;align-items:start}
+    .account-settings-nav{position:sticky;top:24px;display:grid;align-content:start;gap:3px;padding:0;border:0;overflow:visible}
+    .account-settings-nav-label{padding:0 12px 11px;color:#8a8077;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+    .account-settings-nav button{width:100%;min-height:40px;padding:10px 12px;border-radius:9px;text-align:left;color:#584d45;font-size:13px;font-weight:620}
+    .account-settings-nav button:hover{background:#f2ece4;color:#251d18}
+    .account-settings-nav button[aria-pressed="true"]{background:#eee7de;color:#211912;box-shadow:inset 3px 0 #da5c32;font-weight:800}
+    .account-settings-content{min-width:0}
+    .account-settings-panel{gap:18px;align-content:start}
+    .account-settings-intro{padding:0 0 6px}
+    .account-settings-intro h2{font-size:24px;margin:0 0 5px}
+    .account-settings-intro p{font-size:13px;line-height:1.5}
+    .account-site-card,.install-choice-card,.account-card,.account-billing-card,.account-knowledge-panel,.account-details,.account-release-card,.account-builder-link{box-shadow:none;border:1px solid #e9e2d9;border-radius:13px;background:#fffdf9}
+    .account-site-card{padding:18px 20px;gap:12px}
+    .account-site-top{align-items:center}
+    .account-site-top h2{font-size:17px;margin:4px 0}
+    .account-site-top p{font-size:12px}
+    .account-site-card .fb-kicker{font-size:10px}
+    .account-site-card .account-lifecycle{margin-top:4px}
+    .account-site-card .account-billing-actions{margin-top:2px}
+    .account-site-card .account-billing-actions a,.account-site-card .account-billing-actions button{font-size:12px}
+    .settings-progress{border-top:1px solid #eee7df;padding-top:10px}
+    .settings-progress>summary{width:max-content;cursor:pointer;color:#67594e;font-size:12px;font-weight:700}
+    .settings-progress>div{margin-top:12px}
+    .install-choice-card{padding:22px;gap:20px}
+    .install-choice-head h3{font-size:18px}
+    .install-choice-head p{font-size:12px}
+    .install-platform-select{max-width:430px;gap:7px;font-size:12px}
+    .install-choice-tabs{gap:0;border-bottom:1px solid #e8dfd5}
+    .install-choice-tabs button{min-height:42px;padding:9px 13px;border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;color:#756960;font-size:13px}
+    .install-choice-tabs button[aria-pressed="true"]{border-color:#c34b24;background:transparent;box-shadow:none;color:#2b211b}
+    .install-choice-body{gap:15px}
+    .install-choice-body h4{font-size:15px}
+    .install-steps{gap:7px}
+    .account-settings-panel .account-details>summary{padding:15px 18px}
+    .account-settings-panel .account-details[open]>summary{background:#fffaf5}
+    .account-settings-panel .fb-profile-grid{gap:14px}
+    .account-settings-panel .fb-profile-field label{font-size:12px}
+    .account-summary-grid{gap:12px}
+    .account-card,.account-billing-card{min-height:0;padding:18px}
+    .account-release-card{padding:16px 18px}
+    .account-builder-link{padding:13px 16px}
+    @media(max-width:820px){.account-settings{padding:20px 18px 48px}.account-settings-layout{grid-template-columns:1fr;gap:22px}.account-settings-nav{position:static;display:flex;gap:4px;overflow-x:auto;padding-bottom:8px;border-bottom:1px solid var(--line)}.account-settings-nav-label{display:none}.account-settings-nav button{width:auto;min-width:max-content;padding:9px 12px}.account-settings-nav button[aria-pressed="true"]{box-shadow:inset 0 -2px #da5c32}}
+    @media(max-width:500px){.account-settings{padding:18px 12px 42px}.account-page-head{align-items:flex-start;gap:8px}.account-page-head h1{font-size:27px}.account-head-actions .ghost{padding:7px}.account-site-card,.install-choice-card{padding:17px}.install-choice-tabs{grid-template-columns:1fr 1fr}.install-choice-tabs button{text-align:center;font-size:12px}.account-site-top{align-items:flex-start}.install-badge{font-size:10px}}
+  </style>
   <link rel="stylesheet" href="../auth-reference.css">
 </head>
 <body>
@@ -933,11 +984,15 @@ function connectCardLabel(kind){return kind==='crm'?'CRM / lead destination':kin
       const knowledge=[...page.querySelectorAll('.account-details')].find(item=>item.querySelector('summary')?.textContent.trim()==='Rose knowledge and documents');
       if(!site||!release||!summary||!secondary||!knowledge)return;
       const nav=document.createElement('nav');nav.className='account-settings-nav';nav.setAttribute('aria-label','Settings sections');
-      const panels={};for(const [key,label] of [['website','Website'],['profile','Profile & voice'],['knowledge','Knowledge'],['account','Account & billing'],['advanced','Advanced']]){const button=document.createElement('button');button.type='button';button.textContent=label;button.dataset.settingsTab=key;button.setAttribute('aria-pressed',String(key===activeSettingsTab));nav.append(button);const panel=document.createElement('section');panel.className='account-settings-panel';panel.dataset.settingsPanel=key;panel.hidden=key!==activeSettingsTab;panels[key]=panel}
+      const navLabel=document.createElement('span');navLabel.className='account-settings-nav-label';navLabel.textContent='Settings';nav.append(navLabel);
+      const panels={};for(const [key,label] of [['website','Website'],['profile','Rose profile'],['knowledge','Knowledge'],['account','Account & billing'],['advanced','Developer']]){const button=document.createElement('button');button.type='button';button.textContent=label;button.dataset.settingsTab=key;button.setAttribute('aria-pressed',String(key===activeSettingsTab));nav.append(button);const panel=document.createElement('section');panel.className='account-settings-panel';panel.dataset.settingsPanel=key;panel.hidden=key!==activeSettingsTab;panels[key]=panel}
       const intro=(title,description)=>{const header=document.createElement('div');header.className='account-settings-intro';const heading=document.createElement('h2');heading.textContent=title;const body=document.createElement('p');body.textContent=description;header.append(heading,body);return header};
       const oldInviteActions=site.querySelector('.account-connect-actions');if(oldInviteActions)oldInviteActions.remove();
+      site.querySelector('.install-explainer')?.remove();
+      const progress=site.querySelector('.account-lifecycle');if(progress){const wrapper=document.createElement('details');wrapper.className='settings-progress';const title=document.createElement('summary');title.textContent='View setup progress';wrapper.append(title,progress);site.append(wrapper)}
+      if(!accountInstallState().connected){const heading=site.querySelector('.account-site-top h2'),description=site.querySelector('.account-site-top p');if(heading)heading.textContent='Rose is not connected yet';if(description)description.textContent='Choose an installation method below, then check your live website.'}
       const installChoices=document.createElement('div');installChoices.innerHTML=installChoicesHtml();
-      panels.website.append(intro('Website','Connection and published status from your Rose account.'),installChoices.firstElementChild,site,release);
+      panels.website.append(intro('Website','Install Rose and check your connection.'),site,installChoices.firstElementChild,release);
       const builder=document.createElement('div');builder.className='account-builder-link';builder.innerHTML='<span>Want to change how Rose talks or works?</span><button type="button" data-open-builder>Open builder →</button>';panels.website.append(builder);
       const knowledgeBody=document.createElement('div');knowledgeBody.className='account-knowledge-panel';const inner=knowledge.querySelector('.account-inner-panel');while(inner?.firstChild)knowledgeBody.append(inner.firstChild);knowledge.remove();panels.knowledge.append(intro('Business knowledge','Review website and document suggestions before Rose uses them.'),knowledgeBody);
       const details=[...secondary.querySelectorAll(':scope > .account-details')];
@@ -945,13 +1000,13 @@ function connectCardLabel(kind){return kind==='crm'?'CRM / lead destination':kin
       const profile=takeDetail('Business and agent profile'),voice=takeDetail('Voice'),security=takeDetail('Account security'),api=takeDetail('API access');
       if(profile){profile.open=true;panels.profile.append(profile)}
       if(voice)panels.profile.append(voice);
-      panels.profile.prepend(intro('Profile & voice','Edit how Rose introduces your business and sounds to visitors. Save a draft, then publish when ready.'));
+      panels.profile.prepend(intro('Rose profile','Set the name, greeting, contact details, and voice Rose uses.'));
       panels.account.append(intro('Account & billing','Your sign-in, plan, usage, and billing help.'),summary);
       if(security)panels.account.append(security);
-      panels.advanced.append(intro('Advanced','API keys for custom integrations.'));
+      panels.advanced.append(intro('Developer','API keys for custom integrations.'));
       if(api)panels.advanced.append(api);
       secondary.remove();
-      page.append(nav,panels.website,panels.profile,panels.knowledge,panels.account,panels.advanced);
+      const layout=document.createElement('div');layout.className='account-settings-layout';const content=document.createElement('div');content.className='account-settings-content';content.append(panels.website,panels.profile,panels.knowledge,panels.account,panels.advanced);layout.append(nav,content);page.append(layout);
       nav.addEventListener('click',event=>{const button=event.target.closest('[data-settings-tab]');if(!button)return;activeSettingsTab=button.dataset.settingsTab;for(const [key,panel] of Object.entries(panels))panel.hidden=key!==activeSettingsTab;nav.querySelectorAll('[data-settings-tab]').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));messages.scrollTop=0});
       wireInstallChoices();
       builder.querySelector('[data-open-builder]').addEventListener('click',()=>showSection('Appearance'));
