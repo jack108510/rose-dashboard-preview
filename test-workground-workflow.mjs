@@ -170,6 +170,22 @@ test("Airtable setup lists the connected base, table, and mapped columns", () =>
   assert.match(html, /value="tbl123"/);
 });
 
+test("workflow setup explains connected action purpose and inspected fields", () => {
+  const custom = context.convert({ title: "Monday lead items", ownerRequest: "Add website leads to Monday", requiredTools: ["monday"], stepRules: {}, actions: { monday: { toolSlug: "MONDAY_CREATE_ITEM", fields: { board_id: { source: "config.board_id" }, item_name: { source: "lead.name" } } } }, setupFields: [{ id: "board_id", label: "Choose board" }], steps: [{ id: "capture", label: "Capture lead", tool: "Rose" }, { id: "send", label: "Create item", tool: "monday" }] });
+  custom.destinationOptions = { monday: { options: [{ value: "12345", label: "Sales" }] }, mondayFields: { status: "ready", destination: "12345", options: [{ id: "text_name", name: "Customer", type: "text" }] }, actionCapabilities: { options: [{ provider: "monday", slug: "MONDAY_CREATE_ITEM", purpose: "Create an item on a selected board" }] } };
+  const html = context.setupFields(custom);
+  assert.match(html, /Create an item on a selected board/);
+  assert.match(html, /Rose found 1 field/);
+});
+
+test("Notion database workflows offer connected database choices", () => {
+  const custom = context.convert({ title: "Notion lead records", ownerRequest: "Save leads in Notion", requiredTools: ["notion"], stepRules: {}, actions: { notion: { toolSlug: "NOTION_INSERT_ROW_DATABASE", fields: { database_id: { source: "config.database_id" } } } }, setupFields: [{ id: "database_id", label: "Choose Notion database" }], steps: [{ id: "capture", label: "Capture lead", tool: "Rose" }, { id: "send", label: "Save record", tool: "notion" }] });
+  custom.destinationOptions = { notionDatabases: { options: [{ value: "db-123", label: "Leads" }] } };
+  const html = context.setupFields(custom);
+  assert.match(html, /data-workflow-destination="database"/);
+  assert.match(html, /value="db-123"/);
+});
+
 test("ordered actions keep their output mapping and ask only for owner choices", () => {
   const custom = context.convert({ title: "Trello card and comment", ownerRequest: "Create a Trello card and comment on it for every new lead", requiredTools: ["trello"], stepRules: {}, actionSteps: [
     { id: "card", provider: "trello", toolSlug: "TRELLO_ADD_CARDS", fields: { name: { source: "lead.name" }, idList: { source: "config.listId" } } },
