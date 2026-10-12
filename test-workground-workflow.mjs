@@ -112,6 +112,19 @@ test("a discovered app draft keeps its executable action and owner setup field",
   assert.match(choices, /Sales board \/ New leads/);
 });
 
+test("Notion pages and Monday boards are selected by name", () => {
+  for (const item of [
+    { provider: "notion", slug: "NOTION_CREATE_NOTION_PAGE", key: "parent_id", label: "Customer leads", value: "page-123" },
+    { provider: "monday", slug: "MONDAY_CREATE_ITEM", key: "board_id", label: "Sales leads", value: "board-123" },
+  ]) {
+    const workflow = context.convert({ title: item.provider, ownerRequest: "Save every lead", requiredTools: [item.provider], stepRules: { [item.provider]: "all_leads" }, actions: { [item.provider]: { toolSlug: item.slug, fields: { title: { source: "lead.name" }, [item.key]: { source: `config.${item.key}` } } } }, setupFields: [{ id: item.key, label: `Which ${item.provider} destination?` }], steps: [{ id: "capture", label: "Capture lead", tool: "Rose", action: "Capture" }, { id: "prepare", label: "Prepare lead", tool: "Rose", action: "Map fields" }, { id: "send", label: "Save lead", tool: item.provider, action: "Create destination item" }] });
+    workflow.destinationOptions = { [item.provider]: { status: "ready", options: [{ value: item.value, label: item.label }] } };
+    const html = context.setupFields(workflow);
+    assert.match(html, new RegExp(`<select data-workflow-config="${item.key}"`));
+    assert.match(html, new RegExp(item.label));
+  }
+});
+
 test("confirmed booking draft shows its event and distinct phone fields", () => {
   const bookingDraft = { ...draft, title: "Calendly booking confirmation", triggerType: "confirmed_booking", sourceTool: "calendly", requiredTools: ["gmail", "twilio"], stepRules: { gmail: "all_leads", twilio: "all_leads" }, setupFields: [{ id: "ownerPhone", label: "Your alert number" }, { id: "fromNumber", label: "Twilio sender" }], steps: [{ id: "capture", label: "Confirmed booking", tool: "Rose", action: "Accept booking" }, { id: "prepare", label: "Prepare booking", tool: "Rose", action: "Check booking" }, { id: "send_gmail", label: "Email customer", tool: "gmail", action: "Send confirmation" }, { id: "send_twilio", label: "Text owner", tool: "twilio", action: "Send SMS" }] };
   const workflow = context.convert(bookingDraft);
