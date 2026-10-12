@@ -123,6 +123,22 @@ test("email-only booking shows an editable confirmation without an SMS field", (
   assert.doesNotMatch(html, /data-workflow-config="ownerPhone"/);
 });
 
+test("lead email workflow exposes editable subject and body", () => {
+  const workflow = context.convert({
+    title: "Lead email", ownerRequest: "Email me every lead", requiredTools: ["gmail"],
+    stepRules: { gmail: "all_leads" },
+    steps: [
+      { id: "capture", label: "Capture", tool: "Rose", action: "Capture lead" },
+      { id: "prepare", label: "Prepare", tool: "Rose", action: "Prepare summary" },
+      { id: "send_gmail", label: "Email", tool: "gmail", action: "Send lead email" },
+    ],
+  });
+  const html = context.setupFields(workflow);
+  assert.match(html, /Lead email draft/);
+  assert.match(html, /data-workflow-config="subject"/);
+  assert.match(html, /data-workflow-config="body"/);
+});
+
 test("a discovered app draft keeps its executable action and owner setup field", () => {
   const custom = context.convert({ title: "Trello lead capture", ownerRequest: "Save every lead to Trello", requiredTools: ["trello"], stepRules: { trello: "all_leads" }, actions: { trello: { toolSlug: "TRELLO_ADD_CARDS", fields: { name: { source: "lead.name" }, idList: { source: "config.idList" } } } }, setupFields: [{ id: "idList", label: "Which Trello list should receive these?" }], steps: [{ id: "capture", label: "Capture lead", tool: "Rose", action: "Capture" }, { id: "prepare", label: "Prepare contact", tool: "Rose", action: "Prepare" }, { id: "save", label: "Save in Trello", tool: "trello", action: "Create card" }] });
   assert.equal(custom.actions.trello.toolSlug, "TRELLO_ADD_CARDS");
