@@ -97,7 +97,7 @@
     const params=new URLSearchParams(location.search);
     const resetToken=params.get('reset')||'';
     const resetEmail=document.getElementById('resetEmail'),resetMessage=document.getElementById('resetMessage'),resetButton=document.getElementById('resetButton');
-    const next=params.get('next')==='workground/context.html'?'workground/context.html':'workground/';
+    const next=['workground/context.html','workground/?install=self'].includes(params.get('next'))?params.get('next'):'workground/';
     const checkoutLeadId=params.get('lead')||params.get('id')||'';
     const signupToken=params.get('invite')||'';
     const checkoutReturn=params.get('checkout')==='return'&&checkoutLeadId;
