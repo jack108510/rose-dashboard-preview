@@ -123,6 +123,22 @@ test("email-only booking shows an editable confirmation without an SMS field", (
   assert.doesNotMatch(html, /data-workflow-config="ownerPhone"/);
 });
 
+test("lead email workflow exposes editable subject and body", () => {
+  const workflow = context.convert({
+    title: "Lead email", ownerRequest: "Email me every lead", requiredTools: ["gmail"],
+    stepRules: { gmail: "all_leads" },
+    steps: [
+      { id: "capture", label: "Capture", tool: "Rose", action: "Capture lead" },
+      { id: "prepare", label: "Prepare", tool: "Rose", action: "Prepare summary" },
+      { id: "send_gmail", label: "Email", tool: "gmail", action: "Send lead email" },
+    ],
+  });
+  const html = context.setupFields(workflow);
+  assert.match(html, /Lead email draft/);
+  assert.match(html, /data-workflow-config="subject"/);
+  assert.match(html, /data-workflow-config="body"/);
+});
+
 test("a discovered app draft keeps its executable action and owner setup field", () => {
   const custom = context.convert({ title: "Trello lead capture", ownerRequest: "Save every lead to Trello", requiredTools: ["trello"], stepRules: { trello: "all_leads" }, actions: { trello: { toolSlug: "TRELLO_ADD_CARDS", fields: { name: { source: "lead.name" }, idList: { source: "config.idList" } } } }, setupFields: [{ id: "idList", label: "Which Trello list should receive these?" }], steps: [{ id: "capture", label: "Capture lead", tool: "Rose", action: "Capture" }, { id: "prepare", label: "Prepare contact", tool: "Rose", action: "Prepare" }, { id: "save", label: "Save in Trello", tool: "trello", action: "Create card" }] });
   assert.equal(custom.actions.trello.toolSlug, "TRELLO_ADD_CARDS");
@@ -138,6 +154,17 @@ test("nested tool bindings expose each owner setup value", () => {
   const html = context.setupFields(custom);
   assert.match(html, /data-workflow-config="workspaceId"/);
   assert.match(html, /data-workflow-config="projectId"/);
+});
+
+test("Airtable setup lists the connected base, table, and mapped columns", () => {
+  const custom = context.convert({ title: "Airtable lead records", ownerRequest: "Save every website lead in Airtable", requiredTools: ["airtable"], stepRules: {}, actions: { airtable: { toolSlug: "AIRTABLE_CREATE_RECORD", fields: { baseId: { source: "config.baseId" }, tableIdOrName: { source: "config.tableIdOrName" }, fields: { object: { fldName123: { source: "lead.name" } } } } } }, setupFields: [{ id: "baseId", label: "Choose Airtable base" }, { id: "tableIdOrName", label: "Choose table" }], steps: [{ id: "capture", label: "Capture lead", tool: "Rose" }, { id: "prepare", label: "Prepare lead", tool: "Rose" }, { id: "save", label: "Save record", tool: "airtable" }] });
+  custom.destinationOptions = { airtable: { options: [{ value: "app123", label: "Sales" }] }, airtableTables: { options: [{ value: "tbl123", label: "Leads" }] }, airtableFields: { options: [{ id: "fldName123", name: "Customer name", type: "singleLineText" }] } };
+  const html = context.setupFields(custom);
+  assert.match(html, /data-workflow-destination="airtable-base"/);
+  assert.match(html, /data-workflow-destination="airtable-table"/);
+  assert.match(html, /Customer name/);
+  assert.match(html, /value="app123"/);
+  assert.match(html, /value="tbl123"/);
 });
 
 test("ordered actions keep their output mapping and ask only for owner choices", () => {
