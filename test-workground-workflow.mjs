@@ -70,6 +70,19 @@ test("Workground shows the values each app would receive in a dry run", () => {
   assert.match(details, /Required fields: channel/);
 });
 
+test("email and text preview controls open themed samples with escaped copy", () => {
+  assert.ok(source.includes('data-workflow-preview="${channel}"'));
+  const previewSource = source.slice(source.indexOf('function workflowMessagePreviewHtml('), source.indexOf('    async function openWorkflowMessagePreview('));
+  vm.runInContext(previewSource + "\nthis.previewHtml = workflowMessagePreviewHtml;", context);
+  const email = context.previewHtml({ channel: "email", provider: "gmail", to: "alex@example.com", subject: "Hello", body: "Hi <Alex>", sampleBooking: true });
+  assert.match(email, /wf-mail-window/);
+  assert.match(email, /Hi &lt;Alex>/);
+  assert.match(email, /Nothing was sent/);
+  const sms = context.previewHtml({ channel: "sms", to: "+15555550111", body: "Your booking is confirmed" });
+  assert.match(sms, /wf-phone-bubble/);
+  assert.match(sms, /Your booking is confirmed/);
+});
+
 test("editing a field or branch updates the saved workflow definition and invalidates its test", () => {
   const listeners = {};
   const card = { className: "", dataset: {}, innerHTML: "", addEventListener: (type, fn) => { listeners[type] = fn; }, querySelector: () => null };
