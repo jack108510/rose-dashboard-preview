@@ -69,3 +69,34 @@ test('Swift Line preview mode requires the explicit demo URL', () => {
   assert.match(source, /const swiftBusiness=swiftDemo;/);
   assert.doesNotMatch(source, /swiftDemo\|\|\/\^https\?:/);
 });
+
+test('install handoff uses the signed-in client code and stays in Settings', () => {
+  assert.doesNotMatch(source, /thank-you\.html/);
+  const installHelpers = [
+    functionSource('installPlatformSteps', 'inviteSteps'),
+    functionSource('inviteSteps', 'accountInviteReported'),
+    functionSource('installHandoffText', 'installChoicesHtml'),
+    functionSource('installChoicesHtml', 'wireInstallChoices'),
+  ].join('\n');
+  const context = {
+    installPlatformChoice: 'GitHub Pages',
+    activeInstallMethod: 'invite',
+    accountValidated: true,
+    roseAccountProfile: { customer: { provider: 'GitHub Pages' }, install: { snippet: '<script data-business-id="client-one"></script>', stages: [] } },
+    accountWebsiteUrl: () => 'https://client-one.example',
+    accountInstallState: () => ({ connected: false }),
+    accountInviteReported: () => false,
+    esc: value => String(value),
+  };
+  vm.createContext(context);
+  vm.runInContext(`${installHelpers}\nthis.renderInstall=installChoicesHtml;this.handoff=installHandoffText;`, context);
+  const html = context.renderInstall();
+  assert.match(html, /GitHub user jack108510/);
+  assert.match(html, /GitHub username/);
+  assert.doesNotMatch(html, /Invite email<\/span>/);
+  assert.match(html, /client-one\.example/);
+  assert.match(html, /Copy instructions for my web person/);
+  assert.doesNotMatch(html, /thank-you\.html|Full .*guide/);
+  assert.match(context.handoff('GitHub Pages'), /data-business-id="client-one"/);
+  assert.doesNotMatch(context.handoff('GitHub Pages'), /swiftlocating\.ca/);
+});
