@@ -117,7 +117,7 @@ test("email-only booking shows an editable confirmation without an SMS field", (
     ],
   });
   const html = context.setupFields(workflow);
-  assert.match(html, /Customer confirmation email draft/);
+  assert.match(html, /Customer confirmation email copy/);
   assert.match(html, /data-workflow-config="customerSubject"/);
   assert.match(html, /data-workflow-config="customerBody"/);
   assert.match(html, /data-workflow-config="emailDeliveryMode"/);
@@ -137,9 +137,28 @@ test("lead email workflow exposes editable subject and body", () => {
     ],
   });
   const html = context.setupFields(workflow);
-  assert.match(html, /Lead email draft/);
+  assert.match(html, /Lead email copy/);
   assert.match(html, /data-workflow-config="subject"/);
   assert.match(html, /data-workflow-config="body"/);
+  assert.match(html, /data-workflow-ai="email"/);
+});
+
+test("SMS and Slack workflows accept pasted copy or an AI draft", () => {
+  const workflow = { id: "booking-alert", title: "Booking alert", triggerType: "confirmed_booking", requiredTools: ["twilio", "slack"], config: { smsBody: "Booking {{booking_reference}}" } };
+  const html = context.setupFields(workflow);
+  assert.match(html, /data-workflow-config="smsBody"/);
+  assert.match(html, /Booking \{\{booking_reference\}\}/);
+  assert.match(html, /data-workflow-ai="sms"/);
+  assert.match(html, /data-workflow-config="slackBody"/);
+  assert.match(html, /data-workflow-ai="slack"/);
+});
+
+test("copy editor appears only when a discovered action sends a message", () => {
+  const workflow = { id: "mapped-mail", requiredTools: ["gmail"], actions: { gmail: { toolSlug: "GMAIL_SEND_EMAIL", fields: { recipient_email: { source: "lead.email" }, subject: { value: "Original" }, body: { value: "Original" } } } }, config: {} };
+  assert.match(context.setupFields(workflow), /data-workflow-ai="email"/);
+  assert.match(context.setupFields(workflow), /value="Original"/);
+  assert.match(context.setupFields(workflow), />Original<\/textarea>/);
+  assert.doesNotMatch(context.setupFields({ ...workflow, actions: { gmail: { toolSlug: "GMAIL_SEARCH_EMAILS", fields: { query: { value: "hello" } } } } }), /data-workflow-ai="email"/);
 });
 
 test("a discovered app draft keeps its executable action and owner setup field", () => {
