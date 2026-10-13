@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Review Inbox · Rose Workground</title>
+  <style>
+    :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#251d18;background:#f8f5f1}
+    *{box-sizing:border-box}body{margin:0}header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px clamp(20px,4vw,56px);border-bottom:1px solid #e8e0d8;background:#fff}header a{color:#251d18;text-decoration:none;font-weight:800}header span{color:#b34a24}main{width:min(920px,calc(100% - 40px));margin:42px auto 70px}.heading{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}.heading h1{font-size:clamp(32px,5vw,48px);line-height:1.05;letter-spacing:-.055em;margin:0}.heading p{color:#756b63;font-size:14px;line-height:1.5;max-width:600px}.heading button,.actions button{border:1px solid #d9cfc6;background:#fff;border-radius:10px;padding:10px 13px;color:#33271f;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer}.list{display:grid;gap:13px;margin-top:26px}.item{background:#fff;border:1px solid #e6ddd4;border-radius:16px;padding:20px;display:grid;gap:12px;box-shadow:0 8px 25px rgba(45,28,14,.035)}.item header{padding:0;border:0;background:none}.item h2{font-size:17px;margin:0;letter-spacing:-.025em}.item time,.meta{font-size:12px;color:#81756b}.request{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5;margin:0}.rose-reply{background:#f8f5f1;border-radius:10px;padding:11px 13px;color:#675c53;font-size:12px;line-height:1.45}.actions{display:flex;flex-wrap:wrap;gap:8px}.actions button:hover,.heading button:hover{border-color:#d56943}.actions button:disabled{opacity:.45;cursor:default}.empty{padding:28px;background:#fff;border:1px dashed #dccfc3;border-radius:15px;color:#756b63;line-height:1.5}@media(max-width:580px){.heading{display:block}.heading button{margin-top:8px}.item header{align-items:flex-start}}
+  </style>
+</head>
+<body>
+  <header><a href="index.html"><span>Rose</span> Workground</a><a href="index.html">Back to Workground</a></header>
+  <main>
+    <div class="heading"><div><h1>Review Inbox</h1><p>Requests visitors chose to send when Rose could not complete something. Reviewing a request does not change Rose's permissions or activate tools.</p></div><button id="refresh" type="button">Refresh</button></div>
+    <section class="list" id="list" aria-live="polite"><div class="empty">Loading requests…</div></section>
+  </main>
+  <script>
+    const endpoint='https://wildrose-widget.wildeautomations.com/api/rose-review-inbox';
+    const token=localStorage.getItem('wildroseDashboardToken')||localStorage.getItem('roseDashboardToken')||'';
+    const list=document.getElementById('list');
+    const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+    async function load(){
+      if(!token){list.innerHTML='<div class="empty">Sign in from Workground to view your business requests.</div>';return}
+      list.innerHTML='<div class="empty">Loading requests…</div>';
+      try{
+        const response=await fetch(endpoint,{headers:{Authorization:`Bearer ${token}`}});
+        const data=await response.json().catch(()=>({}));
+        if(!response.ok||!data.ok)throw new Error(data.error||'Could not load requests');
+        const items=data.items||[];
+        list.innerHTML=items.length?items.map(item=>`<article class="item" data-id="${escapeHtml(item.id)}"><header><h2>${escapeHtml(item.status==='setup_requested'?'Setup requested':item.status==='resolved'?'Resolved':'Needs review')}</h2><time>${escapeHtml(new Date(item.createdAt).toLocaleString())}</time></header><p class="request">${escapeHtml(item.request)}</p><div class="meta">Visitor-provided contact: ${escapeHtml([item.name,item.email].filter(Boolean).join(' · ')||'None')} · ${escapeHtml(item.page||'Website chat')}</div>${item.roseReply?`<div class="rose-reply">Rose said: ${escapeHtml(item.roseReply)}</div>`:''}<div class="actions"><button data-status="resolved" ${item.status==='resolved'?'disabled':''}>Mark resolved</button><button data-status="setup_requested" ${item.status==='setup_requested'?'disabled':''}>Ask Wildrose to set this up</button>${item.status==='resolved'?'<button data-status="open">Reopen</button>':''}</div></article>`).join(''):'<div class="empty">No requests yet. Visitors can send one through Rose’s “Ask the team to review a request” button.</div>';
+      }catch(error){list.innerHTML=`<div class="empty">${escapeHtml(error.message||'Could not load requests')}</div>`}
+    }
+    document.getElementById('refresh').addEventListener('click',load);
+    list.addEventListener('click',async event=>{
+      const button=event.target.closest('[data-status]');if(!button)return;
+      button.disabled=true;
+      try{
+        const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify({id:button.closest('[data-id]').dataset.id,status:button.dataset.status})});
+        const data=await response.json().catch(()=>({}));
+        if(!response.ok||!data.ok)throw new Error(data.error||'Could not update request');
+        await load();
+      }catch(error){button.disabled=false;alert(error.message||'Could not update request')}
+    });
+    load();
+  </script>
+</body>
+</html>
