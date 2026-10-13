@@ -100,6 +100,55 @@ test("Builder shows a source-tool workflow plan with its trigger blocker", () =>
   assert.equal(cards.length, 1);
 });
 
+test("Twilio connect explains the manual details after a loading state", async () => {
+  const start = source.indexOf('async function startComposioConnect(');
+  const end = source.indexOf('function showManualConnectorForm(', start);
+  assert.ok(start > 0 && end > start);
+  let finishLoading, explanation = "", formShown = false;
+  const card = { querySelector: () => formShown ? { querySelector: () => ({ focus: () => {} }) } : null };
+  const button = {
+    disabled: false, textContent: "Connect now", classList: { add: () => {}, remove: () => {} },
+    setAttribute: () => {}, removeAttribute: () => {}, closest: () => card,
+  };
+  const connectContext = {
+    accountValidated: true,
+    setTimeout: callback => { finishLoading = callback; },
+    showManualConnectorForm: (_meta, _card, message) => { formShown = true; explanation = message; },
+    fetch: () => { throw new Error("Twilio must not try Composio OAuth"); },
+  };
+  vm.runInNewContext(source.slice(start, end) + '\nthis.connect = startComposioConnect;', connectContext);
+  const pending = connectContext.connect({ slug: "twilio", name: "Twilio" }, button);
+  assert.equal(button.textContent, "Preparing setup…");
+  assert.equal(button.disabled, true);
+  assert.equal(formShown, false);
+  finishLoading();
+  await pending;
+  assert.equal(button.textContent, "Enter details");
+  assert.equal(button.disabled, false);
+  assert.match(explanation, /can’t open a Twilio sign-in/);
+  assert.match(explanation, /Account SID, Auth Token, and a sender number/);
+});
+
+test("Gmail-only request clears the old Twilio card without disconnecting an account", () => {
+  const start = source.indexOf('function clearUnchosenConnectionCards(');
+  const end = source.indexOf('function addConnectionCard(', start);
+  assert.ok(start > 0 && end > start);
+  const cards = ["twilio", "gmail"].map(slug => ({ dataset: { tool: slug }, removed: false, remove() { this.removed = true; } }));
+  const queue = ["Twilio", "Gmail"];
+  let saves = 0;
+  const clearContext = {
+    messages: { querySelectorAll: () => cards }, connectionQueue: queue,
+    toolMeta: value => ({ slug: String(value).toLowerCase() }), isConnected: () => false,
+    scheduleDraftSave: () => { saves++; },
+  };
+  vm.runInNewContext(source.slice(start, end) + '\nthis.clear = clearUnchosenConnectionCards;', clearContext);
+  clearContext.clear("Create just a gmail workflow");
+  assert.equal(cards[0].removed, true);
+  assert.equal(cards[1].removed, false);
+  assert.deepEqual(queue, ["Gmail"]);
+  assert.equal(saves, 1);
+});
+
 test("editing a field or branch updates the saved workflow definition and invalidates its test", () => {
   const listeners = {};
   const card = { className: "", dataset: {}, innerHTML: "", addEventListener: (type, fn) => { listeners[type] = fn; }, querySelector: () => null };
