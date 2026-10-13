@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rose on your website · Preview</title>
+  <style>
+    :root{font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#241c17;background:#f4ede6}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh}button,a{font:inherit}
+    .bar{display:flex;align-items:center;gap:18px;min-height:76px;padding:12px 24px;background:#fffaf5;border-bottom:1px solid #e8ddd3;box-shadow:0 3px 14px #3320150d}
+    .brand{display:flex;align-items:center;gap:10px;white-space:nowrap;font-size:14px;font-weight:850;letter-spacing:.07em;text-transform:uppercase;color:#df653b}.brand img{width:34px;height:34px;object-fit:contain}
+    .details{min-width:0;margin-right:auto}.details strong{display:block;font-size:15px}.details span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#796a60;font-size:12px;margin-top:2px}
+    .actions{display:flex;align-items:center;gap:9px;flex:none}.actions a{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 14px;border:1px solid #e2d4c8;border-radius:10px;background:#fff;color:#3b2d25;text-decoration:none;font-size:12px;font-weight:750}.actions a:hover{background:#f8efe8}
+    .notice{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 24px;background:#fff4e8;border-bottom:1px solid #f0ddc8;color:#674831;font-size:12px;line-height:1.45}.notice b{color:#9a4d28}
+    .stage{position:relative;height:calc(100vh - 120px);min-height:530px;background:#e8e3dd}.stage iframe{display:block;width:100%;height:100%;border:0;background:#fff}
+    .widget-layer{position:absolute;inset:0;pointer-events:none}.widget-layer .wr-ai{pointer-events:auto}
+    .empty{max-width:560px;margin:12vh auto;padding:30px;border:1px solid #e5d9ce;border-radius:18px;background:#fff;text-align:center}.empty h1{margin:0 0 9px;font-size:23px}.empty p{margin:0;color:#786a60;line-height:1.5}
+    @media(max-width:650px){.bar{flex-wrap:wrap;gap:10px;padding:12px 14px}.brand{font-size:12px}.details{order:3;flex-basis:100%}.actions{margin-left:auto}.actions a{min-height:34px;padding:0 10px;font-size:11px}.notice{padding:9px 14px}.stage{height:calc(100vh - 156px)}}
+  </style>
+</head>
+<body>
+  <header class="bar">
+    <div class="brand"><img src="logos/wildrose.png" alt="">Rose Workground</div>
+    <div class="details"><strong>Website preview</strong><span id="siteLabel">Preparing your website…</span></div>
+    <div class="actions"><a id="openSite" href="#" target="_blank" rel="noopener noreferrer" hidden>Open actual website ↗</a><a href="./?section=Settings">Back to Settings</a></div>
+  </header>
+  <div class="notice"><span><b>Preview only.</b> Rose is layered over the website here; nothing has been installed or published.</span><span id="frameHint">If your website blocks embedded views, open the actual website in a separate tab.</span></div>
+  <main class="stage" id="stage"></main>
+  <script>
+    (()=>{
+      const id=new URLSearchParams(location.search).get('preview')||'';
+      const key='roseSitePreview:'+id;
+      let payload=null;
+      if(/^[\w-]{20,80}$/.test(id)){try{payload=JSON.parse(localStorage.getItem(key)||'null');localStorage.removeItem(key)}catch{}}
+      let website;
+      try{website=new URL(payload?.website||'');if(!/^https?:$/.test(website.protocol)||website.username||website.password||Date.now()-payload.createdAt>300000)throw Error('Invalid preview')}catch{document.getElementById('stage').innerHTML='<div class="empty"><h1>Preview expired</h1><p>Return to Settings and choose Preview on my website again.</p></div>';return}
+      const stage=document.getElementById('stage');
+      document.getElementById('siteLabel').textContent=website.href;
+      const open=document.getElementById('openSite');open.href=website.href;open.hidden=false;
+      const frame=document.createElement('iframe');frame.title='Your website';frame.referrerPolicy='no-referrer';frame.sandbox=website.origin===location.origin?'allow-scripts allow-forms allow-popups':'allow-scripts allow-same-origin allow-forms allow-popups';frame.src=website.href;stage.appendChild(frame);
+      const layer=document.createElement('div');layer.id='rose-workground-widget';layer.className='widget-layer';stage.appendChild(layer);
+      const config=payload.config||{},appearance=config.appearance||{},identity=payload.identity||{};
+      const script=document.createElement('script');script.src='https://wildroseautomations.ca/wildrose-widget-sandbox.js?v=published-config-20261007-publishfix2';
+      script.dataset.apiBase='https://wildrose-widget.wildeautomations.com';script.dataset.loadPublished='false';script.dataset.mount='#rose-workground-widget';script.dataset.contained='true';
+      script.dataset.businessId=identity.businessId||'preview';script.dataset.businessName=identity.businessName||config.settings?.businessName||website.hostname;script.dataset.ownerEmail=identity.ownerEmail||'';script.dataset.website=website.href;
+      script.dataset.title=appearance.assistantName||'Rose';script.dataset.accent=appearance.brandPrimary||'#ff5722';
+      script.addEventListener('load',()=>{window.__roseWorkgroundSetIdentity?.(identity);window.__roseWorkgroundApplyConfig?.(config)});
+      script.addEventListener('error',()=>{document.getElementById('frameHint').textContent='Rose could not load. Return to Settings and try again.'});
+      document.body.appendChild(script);
+    })();
+  </script>
+</body>
+</html>

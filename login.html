@@ -69,7 +69,7 @@
       <form class="signup" id="signupForm" novalidate>
         <p class="form-eyebrow">First visit</p>
         <h2>Create your account.</h2>
-        <p class="intro">Use the email from checkout. We’ll verify your payment and send a secure link to set your password.</p>
+        <p class="intro">Use your checkout email. Once payment is confirmed, we’ll send a secure link to create your password.</p>
         <p class="payment-state" id="paymentState" role="status" aria-live="polite" hidden></p>
         <p class="checkout-status" id="checkoutStatus" role="status" aria-live="polite" hidden></p>
         <div class="field"><label for="signupEmail">Checkout email</label><input id="signupEmail" type="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" required></div>
@@ -84,11 +84,11 @@
         <p class="invite-kicker">Account setup</p>
         <p class="invite-verified" id="inviteVerified" hidden>✓ Checkout confirmed</p>
         <h2 id="inviteSentTitle">Check your email.</h2>
-        <p class="invite-description" id="inviteDescription">If your checkout is confirmed, we’ll send a secure link to set your password.</p>
+        <p class="invite-description" id="inviteDescription">Your secure account link has been sent to your checkout email.</p>
         <p class="invite-email" id="inviteSentEmail"></p>
         <div class="invite-next"><span class="invite-next-number">01</span><span><b>Open the link</b><small>It will take you back here to create your password.</small></span></div>
         <div class="invite-next"><span class="invite-next-number">02</span><span><b>Enter your Workground</b><small>We’ll sign you in as soon as your password is set.</small></span></div>
-        <p class="invite-fine" id="inviteFine">Just paid? It can take a few minutes to confirm your checkout. Check spam if the email doesn’t arrive.</p>
+        <p class="invite-fine" id="inviteFine">Check spam if you don't see the email. You can request another link here after a few minutes.</p>
         <button class="invite-edit" id="editSignupEmail" type="button">Change email</button>
         <p class="help">Already have an account? <button class="switch-mode" id="sentShowLogin" type="button">Sign in</button> · <a href="mailto:invites@wildroseautomations.ca?subject=Rose%20Workground%20access">Need help?</a></p>
       </section>
@@ -107,7 +107,17 @@
     const signupButton=document.getElementById('signupButton');
     const status=document.getElementById('checkoutStatus');
     const paymentState=document.getElementById('paymentState');
-    let checkoutVerified=false,mfaPending=false;
+    let checkoutVerified=false,mfaPending=false,autoInviteAttempted=false;
+    function showAccountEmailSent(email){
+      document.getElementById('inviteSentEmail').textContent=email;
+      document.getElementById('inviteVerified').hidden=false;
+      document.getElementById('inviteSentTitle').textContent='Check your email.';
+      document.getElementById('inviteDescription').textContent='Your checkout is confirmed. If this is your first Rose account, open the secure setup link requested for:';
+      document.getElementById('inviteFine').textContent="Check spam if you don't see it. Select Change email below to request another link after a few minutes.";
+      document.querySelectorAll('.invite-next').forEach(step=>{step.hidden=false});
+      document.body.classList.remove('unlinked');
+      document.body.classList.add('link-sent');
+    }
     async function verifyInvite(){
       if(!signupToken)return;
       signupButton.disabled=true;
@@ -153,6 +163,22 @@
         checkoutVerified=result.checkoutVerified===true;
         paymentState.className=`payment-state ${checkoutVerified?'verified':'pending'}`;
         paymentState.textContent=checkoutVerified?'✓ Checkout confirmed':'Your checkout is still being confirmed. This can take a few minutes.';
+        if(result.accountReady){
+          emailInput.value=document.getElementById('signupEmail').value.trim();
+          document.body.classList.add('show-login');
+          message.textContent='Your Workground account is ready. Sign in with your password.';
+        }else if(result.accountLinkSent){
+          showAccountEmailSent(document.getElementById('signupEmail').value.trim());
+        }else if(checkoutVerified&&!autoInviteAttempted){
+          autoInviteAttempted=true;
+          try{
+            const invite=await fetch(`${API}/api/rose-account/invite`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({checkoutLeadId,email:document.getElementById('signupEmail').value.trim()})});
+            if(!invite.ok)throw new Error('Could not request your setup link. Select Send my account link to try again.');
+            showAccountEmailSent(document.getElementById('signupEmail').value.trim());
+          }catch(error){
+            paymentState.textContent=`✓ Checkout confirmed. ${error.message}`;
+          }
+        }
         if(!checkoutVerified&&retries>0)setTimeout(()=>checkCheckout(retries-1),3000);
         return checkoutVerified;
       }catch{
@@ -214,7 +240,7 @@
       status.hidden=!signupToken;
       status.textContent='';
       if(signupToken){document.body.classList.add('has-invite');verifyInvite()}
-      else if(checkoutReturn)checkCheckout(2);
+      else if(checkoutLeadId)checkCheckout(2);
       else if(!checkoutLeadId){paymentState.hidden=false;paymentState.className='payment-state pending';paymentState.textContent='This page is not linked to a checkout. Use the Workground link in your purchase email to see payment confirmation here.'}
     }
     document.getElementById('signupForm').addEventListener('submit',async event=>{
