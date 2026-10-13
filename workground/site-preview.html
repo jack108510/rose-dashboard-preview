@@ -41,7 +41,7 @@
       const frame=document.createElement('iframe');frame.title='Your website';frame.referrerPolicy='no-referrer';frame.sandbox=website.origin===location.origin?'allow-scripts allow-forms allow-popups':'allow-scripts allow-same-origin allow-forms allow-popups';frame.src=website.href;stage.appendChild(frame);
       const layer=document.createElement('div');layer.id='rose-workground-widget';layer.className='widget-layer';stage.appendChild(layer);
       const config=payload.config||{},appearance=config.appearance||{},identity=payload.identity||{};
-      const script=document.createElement('script');script.src='https://wildroseautomations.ca/wildrose-widget-sandbox.js?v=published-config-20261007-publishfix2';
+      const script=document.createElement('script');script.src='https://wildroseautomations.ca/wildrose-widget-sandbox.js?v=voice-motion-20261013';
       script.dataset.apiBase='https://wildrose-widget.wildeautomations.com';script.dataset.loadPublished='false';script.dataset.mount='#rose-workground-widget';script.dataset.contained='true';
       script.dataset.businessId=identity.businessId||'preview';script.dataset.businessName=identity.businessName||config.settings?.businessName||website.hostname;script.dataset.ownerEmail=identity.ownerEmail||'';script.dataset.website=website.href;
       script.dataset.title=appearance.assistantName||'Rose';script.dataset.accent=appearance.brandPrimary||'#ff5722';
