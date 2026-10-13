@@ -133,6 +133,7 @@
         document.getElementById('signupEmail').value=result.email;
         document.getElementById('signupEmail').readOnly=true;
         emailInput.value=result.email;
+        document.querySelector('.signup .intro').textContent='Create a password to finish setting up your Workground account.';
         status.textContent='✓ Checkout confirmed. Create your password to open Workground.';
         signupButton.disabled=false;
         signupButton.textContent='Create account and open Workground';
