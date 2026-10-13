@@ -15,6 +15,7 @@
     .story:after{display:none}.story-foot{max-width:355px;display:grid;gap:10px;padding-top:20px;border-top:1px solid rgba(255,255,255,.2)}.story-foot:before{display:none}.story-foot>span{color:#b6cab9;font-size:10px;font-weight:730;letter-spacing:.13em;text-transform:uppercase}.story-foot .conversation-bubble{width:fit-content;max-width:100%;padding:11px 14px;border:1px solid rgba(255,255,255,.15);border-radius:12px 12px 12px 3px;background:rgba(255,255,255,.1);color:#f5f4eb;font-size:13px;line-height:1.45}.story-foot .conversation-bubble.reply{margin-left:25px;border-color:#c9d8c9;border-radius:12px 12px 3px 12px;background:#e7eee5;color:#2c4433}.story-foot .conversation-bubble b{display:block;margin-bottom:3px;color:#71826f;font-size:10px;letter-spacing:.08em;text-transform:uppercase}
     .signup{display:none}.signup-mode .signup{display:grid}.signup-mode .login{display:none}.signup-mode.show-login .signup{display:none}.signup-mode.show-login .login{display:grid}.signup-mode:not(.has-invite) .signup-password{display:none}.switch-mode{padding:0;border:0;background:none;font:inherit;cursor:pointer}.checkout-status{margin:0;padding:13px 15px;border-left:3px solid #bf7b5b;border-radius:0 7px 7px 0;background:#f7f1e9;color:#5b6259;font-size:13px;line-height:1.5}.checkout-status a{color:#a9441e;font-weight:700}.checkout-status.error{color:#a83a30}.signup .message{margin:0}
     .reset{display:none}.reset-mode .login,.reset-mode .signup,.reset-mode .invite-sent{display:none!important}.reset-mode .reset{display:grid}.reset-password{display:none}.reset-mode.has-reset-token .reset-password{display:grid}
+    .mfa-code,.mfa-back{display:none}.mfa-step .mfa-code{display:grid}.mfa-step .login .field:has(#password){display:none}.mfa-step .login .divider,.mfa-step .login .help{display:none}.mfa-step .mfa-back{display:inline-block}
     @media(max-width:760px){body{padding:0;background:var(--surface)}.layout{min-height:100vh;display:flex;flex-direction:column;border:0;border-radius:0;box-shadow:none}.story{min-height:0;gap:16px;padding:27px 25px 23px}.story:after,.story-foot,.story-copy p:last-child{display:none}.brand{font-size:14px}.story-copy{margin-top:20px}.story h1{max-width:370px;font-size:32px;line-height:1.12}.eyebrow{margin-bottom:8px;font-size:10px}.panel{flex:1;align-items:flex-start;padding:40px 25px 54px}.panel h2{font-size:36px}form{max-width:430px}.intro{margin-bottom:2px}}
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
   </style>
@@ -46,7 +47,9 @@
         <p class="intro">Sign in to continue managing your AI assistant, conversations, and settings.</p>
         <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false" placeholder="you@yourbusiness.com" required></div>
         <div class="field"><label for="password">Password</label><div class="password-wrap"><input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required><button class="reveal" id="revealPassword" type="button" aria-label="Show password">Show</button></div></div>
+        <div class="field mfa-code"><label for="mfaCode">Authenticator or recovery code</label><input id="mfaCode" inputmode="numeric" autocomplete="one-time-code" placeholder="6-digit code or recovery code"><small>Use the code in your authenticator app. A saved recovery code also works.</small></div>
         <button class="submit" id="submitButton" type="submit">Sign in to Workground&nbsp; →</button>
+        <button class="switch-mode mfa-back" id="mfaBack" type="button">Use a different account</button>
         <p class="message" id="message" role="alert" aria-live="polite"></p>
         <p class="help"><button class="switch-mode" id="showReset" type="button">Forgot password?</button></p>
         <div class="divider" aria-hidden="true"></div>
@@ -57,8 +60,8 @@
         <h2>Reset your password.</h2>
         <p class="intro" id="resetIntro">Enter your Workground email and we’ll send a secure reset link.</p>
         <div class="field"><label for="resetEmail">Email</label><input id="resetEmail" type="email" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false" required></div>
-        <div class="field reset-password"><label for="resetPassword">New password</label><input id="resetPassword" type="password" autocomplete="new-password" minlength="8"></div>
-        <div class="field reset-password"><label for="resetConfirm">Confirm new password</label><input id="resetConfirm" type="password" autocomplete="new-password" minlength="8"></div>
+        <div class="field reset-password"><label for="resetPassword">New password</label><input id="resetPassword" type="password" autocomplete="new-password" minlength="15"></div>
+        <div class="field reset-password"><label for="resetConfirm">Confirm new password</label><input id="resetConfirm" type="password" autocomplete="new-password" minlength="15"></div>
         <button class="submit" id="resetButton" type="submit">Send reset link</button>
         <p class="message" id="resetMessage" role="alert" aria-live="polite"></p>
         <p class="help"><button class="switch-mode" id="resetShowLogin" type="button">Back to sign in</button></p>
@@ -70,8 +73,8 @@
         <p class="payment-state" id="paymentState" role="status" aria-live="polite" hidden></p>
         <p class="checkout-status" id="checkoutStatus" role="status" aria-live="polite" hidden></p>
         <div class="field"><label for="signupEmail">Checkout email</label><input id="signupEmail" type="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" required></div>
-        <div class="field signup-password"><label for="signupPassword">Create password</label><input id="signupPassword" type="password" autocomplete="new-password" minlength="8"></div>
-        <div class="field signup-password"><label for="signupConfirm">Confirm password</label><input id="signupConfirm" type="password" autocomplete="new-password" minlength="8"></div>
+        <div class="field signup-password"><label for="signupPassword">Create password</label><input id="signupPassword" type="password" autocomplete="new-password" minlength="15"></div>
+        <div class="field signup-password"><label for="signupConfirm">Confirm password</label><input id="signupConfirm" type="password" autocomplete="new-password" minlength="15"></div>
         <button class="submit" id="signupButton" type="submit">Send my account link</button>
         <p class="message" id="signupMessage" role="alert" aria-live="polite"></p>
         <p class="help">Already have an account? <button class="switch-mode" id="showLogin" type="button">Sign in</button> · <a href="mailto:invites@wildroseautomations.ca?subject=Rose%20Workground%20access">Need help?</a></p>
@@ -104,7 +107,7 @@
     const signupButton=document.getElementById('signupButton');
     const status=document.getElementById('checkoutStatus');
     const paymentState=document.getElementById('paymentState');
-    let checkoutVerified=false;
+    let checkoutVerified=false,mfaPending=false;
     async function verifyInvite(){
       if(!signupToken)return;
       signupButton.disabled=true;
@@ -183,7 +186,7 @@
       if(!email){resetMessage.textContent='Enter your Workground email.';return}
       const settingPassword=document.body.classList.contains('has-reset-token');
       const password=document.getElementById('resetPassword').value;
-      if(settingPassword&&(password.length<8||password!==document.getElementById('resetConfirm').value)){resetMessage.textContent='Enter matching passwords of at least 8 characters.';return}
+      if(settingPassword&&(password.length<15||password!==document.getElementById('resetConfirm').value)){resetMessage.textContent='Enter matching passwords of at least 15 characters.';return}
       resetButton.disabled=true;
       try{
         const endpoint=settingPassword?'/api/rose-account/reset-password':'/api/rose-account/reset-request';
@@ -193,8 +196,9 @@
         if(!response.ok)throw new Error(result.error||'Could not reset your password. Try again.');
         if(settingPassword){
           document.body.classList.remove('reset-mode','has-reset-token');
-          emailInput.value=email;passwordInput.value=password;
-          form.requestSubmit();
+          emailInput.value=email;passwordInput.value='';document.getElementById('resetPassword').value='';document.getElementById('resetConfirm').value='';
+          message.textContent='Password changed. Sign in with your new password and authenticator code if you use two-step verification.';
+          emailInput.focus();
         }else resetMessage.textContent='If this email has a Workground account, check its inbox for a secure reset link.';
       }catch(error){resetMessage.textContent=error.message||'Could not reset your password. Try again.'}
       finally{resetButton.disabled=false}
@@ -221,7 +225,7 @@
         const message=document.getElementById('signupMessage');
         message.textContent='';
         if(!email){message.textContent='Enter your checkout email.';return}
-        if(signupToken&&(password.length<8||password!==confirm)){message.textContent='Enter matching passwords of at least 8 characters.';return}
+        if(signupToken&&(password.length<15||password!==confirm)){message.textContent='Enter matching passwords of at least 15 characters.';return}
         signupButton.disabled=true;signupButton.textContent=signupToken?'Creating account…':'Requesting setup link…';
         try{
           const endpoint=signupToken?'/api/rose-account-password':'/api/rose-account/invite';
@@ -248,18 +252,21 @@
         }catch(error){message.textContent=error.message||'Could not complete setup';signupButton.disabled=false;signupButton.textContent=signupToken?'Create account and open Workground':'Send my account link'}
     });
     document.getElementById('revealPassword').addEventListener('click',event=>{const showing=passwordInput.type==='text';passwordInput.type=showing?'password':'text';event.currentTarget.textContent=showing?'Show':'Hide';event.currentTarget.setAttribute('aria-label',showing?'Show password':'Hide password')});
+    document.getElementById('mfaBack').addEventListener('click',()=>{mfaPending=false;document.body.classList.remove('mfa-step');document.getElementById('mfaCode').value='';passwordInput.value='';message.textContent='';document.getElementById('formTitle').innerHTML='Welcome to<br>your Workground.';document.querySelector('.login .intro').textContent='Sign in to continue managing your AI assistant, conversations, and settings.';submitButton.textContent='Sign in to Workground →';emailInput.focus()});
     form.addEventListener('submit',async event=>{
       event.preventDefault();message.textContent='';
       if(!emailInput.value.trim()||!passwordInput.value){message.textContent='Enter your email and password to sign in.';return}
+      if(mfaPending&&!document.getElementById('mfaCode').value.trim()){message.textContent='Enter an authenticator or recovery code.';return}
       submitButton.disabled=true;submitButton.textContent='Signing in…';
       try{
-        const response=await fetch(`${API}/api/rose-account-login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:emailInput.value.trim(),password:passwordInput.value})});
+        const response=await fetch(`${API}/api/rose-account-login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:emailInput.value.trim(),password:passwordInput.value,mfaCode:mfaPending?document.getElementById('mfaCode').value.trim():''})});
         const result=await response.json().catch(()=>({}));
-        if(!response.ok||!result.token)throw new Error(response.status===401?'That email and password did not match an account.':(result.error||'Rose could not sign you in. Try again.'));
+        if(response.ok&&result.mfaRequired){mfaPending=true;document.body.classList.add('mfa-step');document.getElementById('formTitle').textContent='Verify it’s you.';document.querySelector('.login .intro').textContent='Enter the code from your authenticator app to open Workground.';submitButton.disabled=false;submitButton.textContent='Verify and sign in →';document.getElementById('mfaCode').focus();return}
+        if(!response.ok||!result.token)throw new Error(response.status===401?(mfaPending?'That code did not work. Try another authenticator or recovery code.':'That email and password did not match an account.'):(result.error||'Rose could not sign you in. Try again.'));
         const previousEmail=JSON.parse(localStorage.getItem('roseClientSettings')||'{}').ownerEmail||'';const signedInEmail=result.account?.email||emailInput.value.trim();if(previousEmail&&previousEmail.toLowerCase()!==signedInEmail.toLowerCase()){['roseCommandHistory','roseSavedContext','rosePreviewKnowledge','rosePreviewApiKeys','roseDraftConnections','roseConnectedConnections','roseDraftWorkflows','rosePendingWorkflowDrafts','rosePendingWorkflowAnswerId','roseDraftConfig','rosePendingContextReview','roseLastSiteScan','roseContextWebSnapshot','rosePendingToolClarification','rosePendingCalendarRequest','roseBuilderTaskState','roseBuilderTaskProtocol'].forEach(key=>localStorage.removeItem(key))}localStorage.setItem('wildroseDashboardToken',result.token);localStorage.removeItem('roseDashboardToken');
         localStorage.setItem('roseClientSettings',JSON.stringify({businessName:result.customer?.businessName||'',website:result.customer?.website||'',ownerEmail:result.account?.email||emailInput.value.trim()}));
         location.replace(next);
-      }catch(error){message.textContent=error.message||'Could not connect to Rose. Check your connection and try again.';submitButton.disabled=false;submitButton.textContent='Sign in to Workground  →'}
+      }catch(error){message.textContent=mfaPending&&error.message==='That email and password did not match an account.'?'That code did not work. Try the next authenticator code or a recovery code.':(error.message||'Could not connect to Rose. Check your connection and try again.');submitButton.disabled=false;submitButton.textContent=mfaPending?'Verify and sign in →':'Sign in to Workground  →'}
     });
     if(!checkoutReturn&&params.get('signup')!=='1'&&params.get('forgot')!=='1'&&!signupToken&&!resetToken&&(localStorage.getItem('wildroseDashboardToken')||localStorage.getItem('roseDashboardToken')))location.replace(next);
   </script>
