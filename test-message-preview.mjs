@@ -21,6 +21,16 @@ test('structured email copy becomes a draft preview without losing template fiel
   assert.match(result.body,/{{customer_first_name}}/);
 });
 
+test('owner-directed preview keeps its recipient and never invents a customer',()=>{
+  const owner=context.preview({emailDraft:{to:'owner@example.test',subject:'New quote request',body:'{{lead_summary}}'}});
+  assert.equal(owner.to,'owner@example.test');
+  assert.equal(context.fromHistory(context.toHistory(owner)).to,'owner@example.test');
+  const missing=context.preview({emailDraft:{subject:'New quote request',body:'{{lead_summary}}'}});
+  assert.match(context.toHistory(missing),/To: recipient not set/);
+  assert.equal(context.fromHistory(context.toHistory(missing)).to,'');
+  assert.doesNotMatch(context.toHistory(missing),/customer from workflow/i);
+});
+
 test('structured SMS copy becomes a text preview',()=>{
   const result=context.preview({reply:'Here is a text.',smsDraft:{body:'Your booking is confirmed for {{booking_start}}.'}});
   assert.equal(result.kind,'sms');
