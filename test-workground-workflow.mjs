@@ -406,9 +406,9 @@ test("delivery confirmation advances from sample email to full review", () => {
   assert.doesNotMatch(sent, /data-workflow-activate/);
   wf.sampleDeliveries.email.status = "received";
   const received = context.cardHtml(wf);
-  assert.match(received, /Review your full workflow/);
   assert.match(received, /Rose → Gmail/);
   assert.match(received, /data-workflow-activate/);
+  assert.doesNotMatch(received, /Review your full workflow|Starts when|Email goes to|Advanced routing|Test preview/);
 });
 
 test("Builder asks for one connection at a time across a multi-app workflow", () => {
