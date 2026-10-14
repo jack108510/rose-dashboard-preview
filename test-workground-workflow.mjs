@@ -327,6 +327,7 @@ test("confirmed booking draft shows its event and distinct phone fields", () => 
 });
 
 test("owner setup asks for real details and shows a clear path to launch", () => {
+  context.workflowSampleChannels = () => [];
   vm.runInContext(`${section("workflowOwnerSetupItems", "firstWorkflowQuestion")}${section("workflowGuideHtml", "workflowCardHtml")}\nthis.ownerItems=workflowOwnerSetupItems;this.guide=workflowGuideHtml;`, context);
   const workflow = { triggerType: "confirmed_booking", active: false, puzzleComplete: true, testEvents: [], setup: [{ id: "ownerPhone", blocking: true, status: "done" }, { id: "booking_event_verified", blocking: true, status: "required" }, { id: "oauth_twilio", blocking: true, status: "required" }] };
   context.allWorkflowToolsConnected = () => true;
@@ -334,14 +335,14 @@ test("owner setup asks for real details and shows a clear path to launch", () =>
   const before = context.guide(workflow);
   assert.match(before, /Connect tools/);
   assert.match(before, /Confirm booking source/);
-  assert.match(before, /Run safe test/);
+  assert.match(before, /Check workflow/);
   assert.match(before, /class="current"[^>]*><span>3<\/span>Confirm booking source/);
   workflow.bookingSourceVerifiedAt = "2026-10-11T00:00:00Z";
-  assert.match(context.guide(workflow), /class="current"[^>]*><span>4<\/span>Run safe test/);
+  assert.match(context.guide(workflow), /class="current"[^>]*><span>4<\/span>Check workflow/);
 });
 
 test("workflow card gives one next action before it is ready to turn on", () => {
-  Object.assign(context, { workflowStatus: () => ({ tone: "warn", label: "Connect Gmail", next: "Connect Gmail to send lead updates." }), workflowReadyToPublish: () => false, workflowSetupFields: () => "", workflowFlowHtml: () => "<div>flow</div>", workflowPlanHtml: () => "", workflowRunHtml: () => "", workflowToolLogo: () => "", workflowDisplayTitle: workflow => workflow.title, workflowNotes: new Map(), allWorkflowToolsConnected: () => false });
+  Object.assign(context, { workflowStatus: () => ({ tone: "warn", label: "Connect Gmail", next: "Connect Gmail to send lead updates." }), workflowReadyToPublish: () => false, workflowNextSampleChannel: () => "", workflowSetupFields: () => "", workflowFlowHtml: () => "<div>flow</div>", workflowPlanHtml: () => "", workflowRunHtml: () => "", workflowToolLogo: () => "", workflowDisplayTitle: workflow => workflow.title, workflowNotes: new Map(), allWorkflowToolsConnected: () => false });
   vm.runInContext(`${section("workflowGuideHtml", "workflowKey")}\nthis.cardHtml=workflowCardHtml;`, context);
   const workflow = { id: "lead-email", title: "New lead email", provider: "gmail", requiredTools: ["gmail"], setup: [], testEvents: [], puzzleComplete: false, active: false };
   const draft = context.cardHtml(workflow);
@@ -367,14 +368,47 @@ test("Builder shows the next action while folding workflow details", () => {
     workflowFlowHtml: () => '<div class="wf-flow">Rose → Gmail</div>',
     workflowPlanHtml: () => '<details class="wf-plan"><summary>Advanced routing</summary></details>',
     workflowMessageAvailable: (_workflow, channel) => channel === "email",
+    workflowNextSampleChannel: () => "email",
     workflowNotes: new Map(), allWorkflowToolsConnected: () => true,
   });
   const html = context.cardHtml({ id: "quote-email", title: "Email me quote requests", provider: "gmail", requiredTools: ["gmail"], setup: [], testEvents: [], puzzleComplete: true, active: false });
   assert.doesNotMatch(html, /class="wf-flow"/);
   assert.doesNotMatch(html, /class="wf-guide"/);
   assert.match(html, /<details class="wf-edit-details"><summary>Review email and details<\/summary>/);
-  assert.match(html, /data-workflow-test/);
+  assert.match(html, /Run a safe test to/);
+  assert.match(html, /data-workflow-sample-send="email"/);
   assert.doesNotMatch(html, /data-workflow-activate/);
+});
+
+test("delivery confirmation advances from sample email to full review", () => {
+  Object.assign(context, {
+    isConnected: () => true,
+    workflowStatus: () => ({ tone: "ready", label: "Ready to test", next: "Send a sample" }),
+    workflowReadyToPublish: wf => wf.sampleDeliveries?.email?.status === "received",
+    workflowNextSampleChannel: wf => wf.sampleDeliveries?.email?.status === "received" ? "" : "email",
+    workflowMessageAvailable: (_wf, channel) => channel === "email",
+    workflowSetupFields: () => "",
+    workflowPlanHtml: () => "",
+    workflowFlowHtml: () => '<div class="wf-flow">Rose → Gmail</div>',
+    workflowNotes: new Map(),
+  });
+  const wf = { id: "test-email", title: "Email requests", provider: "gmail", requiredTools: ["gmail"], puzzleComplete: true, active: false, config: { recipientEmail: "owner@example.com" }, testEvents: [{ ok: true, mode: "runtime_dry_run" }] };
+  const before = context.cardHtml(wf);
+  assert.match(before, /Run a safe test to/);
+  assert.match(before, /data-workflow-sample-to="email"/);
+  assert.match(before, /Send test email/);
+  assert.doesNotMatch(before, /data-workflow-activate/);
+  wf.sampleDeliveries = { email: { status: "sent", to: "review@example.com" } };
+  const sent = context.cardHtml(wf);
+  assert.match(sent, /I received it/);
+  assert.match(sent, /I didn’t receive it/);
+  assert.match(sent, /review@example.com/);
+  assert.doesNotMatch(sent, /data-workflow-activate/);
+  wf.sampleDeliveries.email.status = "received";
+  const received = context.cardHtml(wf);
+  assert.match(received, /Review your full workflow/);
+  assert.match(received, /Rose → Gmail/);
+  assert.match(received, /data-workflow-activate/);
 });
 
 test("Builder asks for one connection at a time across a multi-app workflow", () => {
