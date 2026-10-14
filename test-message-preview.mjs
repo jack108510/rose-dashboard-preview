@@ -64,3 +64,24 @@ test('saved conversation restores edited email and text previews',()=>{
     if(draft.kind==='email')assert.equal(restored.subject,draft.subject);
   }
 });
+
+test('AI Email Draft uses the saved workflow and returns reviewable copy',async()=>{
+  const start=source.indexOf('async function generateWorkflowEmailDraft(');
+  const end=source.indexOf('function renderMessagePreview(',start);
+  assert.ok(start>0&&end>start);
+  const calls=[];
+  const context={
+    syncRoseWorkflow:async(action,wf)=>calls.push({action,id:wf.id}),
+    roseAccountToken:()=> 'account-token',
+    fetch:async(url,options)=>{calls.push({url,options});return {ok:true,json:async()=>({ok:true,subject:'New quote for {{business_name}}',body:'{{lead_summary}}'})}},
+  };
+  vm.runInNewContext(`${source.slice(start,end)}\nthis.draft=generateWorkflowEmailDraft`,context);
+  const result=await context.draft({id:'quote-workflow'});
+  assert.equal(result.subject,'New quote for {{business_name}}');
+  assert.equal(result.body,'{{lead_summary}}');
+  assert.equal(calls[0].action,'save');
+  assert.match(calls[1].url,/rose-workflow-message-draft$/);
+  assert.equal(JSON.parse(calls[1].options.body).workflowId,'quote-workflow');
+  assert.equal(calls[1].options.headers.Authorization,'Bearer account-token');
+  assert.match(source.slice(end,source.indexOf('function messagePreviewIntro(',end)),/data-ai-email-draft>AI Email Draft/);
+});
