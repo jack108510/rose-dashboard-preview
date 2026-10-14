@@ -346,8 +346,12 @@ test("workflow card gives one next action before it is ready to turn on", () => 
   const workflow = { id: "lead-email", title: "New lead email", provider: "gmail", requiredTools: ["gmail"], setup: [], testEvents: [], puzzleComplete: false, active: false };
   const draft = context.cardHtml(workflow);
   assert.match(draft, /Connect Gmail/);
-  assert.match(draft, /Run safe test/);
+  assert.doesNotMatch(draft, /data-workflow-test/);
   assert.doesNotMatch(draft, /data-workflow-activate/);
+  context.isConnected = () => true;
+  const setup = context.cardHtml(workflow);
+  assert.match(setup, /Reply below to answer this question/);
+  assert.doesNotMatch(setup, /data-workflow-test/);
   context.workflowReadyToPublish = () => true;
   context.allWorkflowToolsConnected = () => true;
   const ready = context.cardHtml({ ...workflow, puzzleComplete: true, testEvents: [{ ok: true, mode: "runtime_dry_run" }] });
@@ -369,8 +373,23 @@ test("Builder shows the next action while folding workflow details", () => {
   assert.doesNotMatch(html, /class="wf-flow"/);
   assert.doesNotMatch(html, /class="wf-guide"/);
   assert.match(html, /<details class="wf-edit-details"><summary>Review email and details<\/summary>/);
-  assert.match(html, /<\/details><div class="workflow-actions">/);
   assert.match(html, /data-workflow-test/);
+  assert.doesNotMatch(html, /data-workflow-activate/);
+});
+
+test("Builder asks for one connection at a time across a multi-app workflow", () => {
+  Object.assign(context, {
+    isConnected: slug => slug === "hubspot",
+    workflowReadyToPublish: () => false,
+    workflowSetupFields: () => "",
+    workflowPlanHtml: () => "",
+    workflowStatus: () => ({ tone: "warn", label: "Connect Gmail", next: "Connect Gmail to continue." }),
+  });
+  const workflow = { id: "multi", title: "Route leads", provider: "hubspot", requiredTools: ["hubspot", "gmail", "slack"], setup: [], puzzleComplete: false, active: false };
+  const html = context.cardHtml(workflow);
+  assert.match(html, /data-workflow-connect="gmail"/);
+  assert.doesNotMatch(html, /data-workflow-connect="slack"/);
+  assert.doesNotMatch(html, /data-workflow-test|data-workflow-activate/);
 });
 
 test("email copy approval defers the Builder workflow card while saving the draft", () => {

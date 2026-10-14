@@ -44,3 +44,20 @@ test("Builder resets to a plain welcome when its last turn expires", () => {
   assert.equal(context.builderTaskState, null);
   assert.equal(storage.get("roseCommandHistory"), "[]");
 });
+
+test("Builder restores only the current workflow step after a reload", () => {
+  const start=source.indexOf('function restoreBuilderWorkflowCard(');
+  const end=source.indexOf('function clearUnchosenConnectionCards(',start);
+  assert.ok(start>0&&end>start);
+  const shown=[];
+  const context={currentSection:'Appearance',chatHistory:[
+    {role:'assistant',workflowId:'older'},
+    {role:'assistant',deferredWorkflowIds:['newer'],approvedCopy:false},
+  ],ensureWorkflowCards:id=>shown.push(id)};
+  vm.runInNewContext(`${source.slice(start,end)}\nthis.restore=restoreBuilderWorkflowCard`,context);
+  context.restore();
+  assert.deepEqual(shown,[]);
+  context.chatHistory[1].approvedCopy=true;
+  context.restore();
+  assert.deepEqual(shown,['newer']);
+});

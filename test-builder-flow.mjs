@@ -11,7 +11,7 @@ function extract(name){
   assert.ok(end>start,`${name} has a following function`);
   return source.slice(start,end);
 }
-const functions=['builderQuestion','trackBackendSetupQuestion','workflowSetupAnswerCheck','askWorkflowSetupQuestion','askNextWorkflowSetupQuestion'].map(extract).join('\n');
+const functions=['builderQuestion','trackBackendSetupQuestion','workflowSetupAnswerCheck','askWorkflowSetupQuestion','focusWorkflowSetupQuestion','askNextWorkflowSetupQuestion'].map(extract).join('\n');
 
 test('a backend setup question stays attached to its workflow',()=>{
   const workflow={id:'workflow-1',active:false,puzzleComplete:false,askedFirstQuestion:false};
@@ -66,4 +66,16 @@ test('workflow setup asks each question once and moves to the next unasked workf
   assert.deepEqual(prompts,['Setup for first?','Setup for second?']);
   assert.deepEqual(history.map(turn=>turn.content),prompts);
   assert.equal(context.pendingWorkflowAnswerId,'second');
+});
+
+test('workflow setup focuses one question without adding another chat message',()=>{
+  const wf={id:'one',active:false,puzzleComplete:false,askedFirstQuestion:false};
+  const storage=new Map(),messages=[];
+  const context={pendingWorkflowAnswerId:'',allWorkflowToolsConnected:()=>true,saveDraftLocal:()=>{},localStorage:{setItem:(key,value)=>storage.set(key,value)},add:(_role,text)=>messages.push(text)};
+  vm.runInNewContext(`${functions}\nthis.focus=focusWorkflowSetupQuestion`,context);
+  context.focus(wf);
+  assert.equal(wf.askedFirstQuestion,true);
+  assert.equal(context.pendingWorkflowAnswerId,'one');
+  assert.equal(storage.get('rosePendingWorkflowAnswerId'),'one');
+  assert.deepEqual(messages,[]);
 });
