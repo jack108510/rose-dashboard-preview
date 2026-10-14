@@ -355,7 +355,7 @@ test("workflow card gives one next action before it is ready to turn on", () => 
   assert.match(ready, /data-workflow-activate/);
 });
 
-test("Builder keeps the visual workflow and test visible while folding detailed setup", () => {
+test("Builder shows the next action while folding workflow details", () => {
   Object.assign(context, {
     workflowStatus: () => ({ tone: "warn", label: "Ready to test", next: "Run a safe test." }),
     workflowReadyToPublish: () => false,
@@ -366,8 +366,28 @@ test("Builder keeps the visual workflow and test visible while folding detailed 
     workflowNotes: new Map(), allWorkflowToolsConnected: () => true,
   });
   const html = context.cardHtml({ id: "quote-email", title: "Email me quote requests", provider: "gmail", requiredTools: ["gmail"], setup: [], testEvents: [], puzzleComplete: true, active: false });
-  assert.match(html, /class="wf-flow">Rose → Gmail<\/div>/);
+  assert.doesNotMatch(html, /class="wf-flow"/);
+  assert.doesNotMatch(html, /class="wf-guide"/);
   assert.match(html, /<details class="wf-edit-details"><summary>Review email and details<\/summary>/);
   assert.match(html, /<\/details><div class="workflow-actions">/);
   assert.match(html, /data-workflow-test/);
+});
+
+test("email copy approval defers the Builder workflow card while saving the draft", () => {
+  const shown = [], saved = [], drafts = [];
+  const isolated = {
+    messages: { querySelectorAll: () => [] },
+    backendWorkflowToLocal: () => ({ id: "quote-email", provider: "gmail", requiredTools: ["gmail"], setup: [], config: {}, active: false }),
+    workflows: drafts, pendingWorkflowDrafts: [],
+    workflowOwnerSetupItems: () => [], isConnected: () => true,
+    ensureWorkflowCards: id => shown.push(id), refreshWorkflowCards: () => {},
+    accountValidated: true, syncRoseWorkflow: (_action, wf) => { saved.push(wf.id); return Promise.resolve(); },
+  };
+  vm.runInNewContext(`${section("addWorkflowDraftFromBackend", "trackBackendSetupQuestion")}\nthis.addDraft=addWorkflowDraftFromBackend`, isolated);
+  assert.equal(isolated.addDraft({ title: "Email me quote requests" }, { deferBuilderCard: true }), true);
+  assert.deepEqual(shown, []);
+  assert.equal(drafts.length, 1);
+  assert.deepEqual(saved, ["quote-email"]);
+  isolated.ensureWorkflowCards("quote-email");
+  assert.deepEqual(shown, ["quote-email"]);
 });
