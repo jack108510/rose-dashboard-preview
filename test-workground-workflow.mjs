@@ -354,3 +354,20 @@ test("workflow card gives one next action before it is ready to turn on", () => 
   assert.match(ready, /Turn on workflow/);
   assert.match(ready, /data-workflow-activate/);
 });
+
+test("Builder keeps the visual workflow and test visible while folding detailed setup", () => {
+  Object.assign(context, {
+    workflowStatus: () => ({ tone: "warn", label: "Ready to test", next: "Run a safe test." }),
+    workflowReadyToPublish: () => false,
+    workflowSetupFields: () => '<div class="workflow-setup-fields"><label>Recipient<input></label></div>',
+    workflowFlowHtml: () => '<div class="wf-flow">Rose → Gmail</div>',
+    workflowPlanHtml: () => '<details class="wf-plan"><summary>Advanced routing</summary></details>',
+    workflowMessageAvailable: (_workflow, channel) => channel === "email",
+    workflowNotes: new Map(), allWorkflowToolsConnected: () => true,
+  });
+  const html = context.cardHtml({ id: "quote-email", title: "Email me quote requests", provider: "gmail", requiredTools: ["gmail"], setup: [], testEvents: [], puzzleComplete: true, active: false });
+  assert.match(html, /class="wf-flow">Rose → Gmail<\/div>/);
+  assert.match(html, /<details class="wf-edit-details"><summary>Review email and details<\/summary>/);
+  assert.match(html, /<\/details><div class="workflow-actions">/);
+  assert.match(html, /data-workflow-test/);
+});
