@@ -432,6 +432,34 @@ test("opened workflow keeps the flow and next action in view", () => {
   assert.doesNotMatch(html, /wf-detail-progress|wf-detail-panel|Make it live|Test preview/);
 });
 
+test("opened workflow keeps unfinished setup behind its action", () => {
+  Object.assign(context, {
+    isConnected: () => true,
+    workflowStatus: () => ({ tone: "warn", label: "Needs setup", next: "Add the recipient." }),
+    workflowReadyToPublish: () => false,
+    workflowNextSampleChannel: () => "",
+    workflowSetupFields: () => '<div class="workflow-setup-fields"><label>Email<input></label></div>',
+    workflowPlanHtml: () => "",
+    workflowFlowHtml: () => '<div class="wf-flow">Rose → Gmail</div>',
+    workflowNotes: new Map(),
+  });
+  const wf = { id: "quote", title: "Email requests", provider: "gmail", requiredTools: ["gmail"], puzzleComplete: false, active: false };
+  const html = context.cardHtml(wf, true);
+  assert.match(html, /data-workflow-open-setup>Finish setup/);
+  assert.match(html, /<details class="wf-detail-more wf-detail-setup"><summary>Message and settings/);
+  assert.equal((html.match(/class="workflow-setup-fields"/g) || []).length, 1);
+});
+
+test("restored workflow ignores the publish step when calculating setup completion", () => {
+  vm.runInContext(`${section("workflowOwnerSetupItems", "firstWorkflowQuestion")}\nthis.normalizeLoadedWorkflow=normalizeLoadedWorkflow;`, context);
+  const restored = context.normalizeLoadedWorkflow({ status: "setup_required", setup: [
+    { id: "destination", blocking: true, status: "done" },
+    { id: "publish", blocking: true, status: "final" },
+    { id: "oauth_gmail", blocking: true, status: "done" },
+  ] });
+  assert.equal(restored.puzzleComplete, true);
+});
+
 test("Builder asks for one connection at a time across a multi-app workflow", () => {
   Object.assign(context, {
     isConnected: slug => slug === "hubspot",
