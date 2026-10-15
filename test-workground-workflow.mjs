@@ -429,9 +429,11 @@ test("opened workflow keeps the flow and next action in view", () => {
   assert.match(html, /class="wf-detail-canvas"/);
   assert.match(html, /Rose → Gmail/);
   assert.match(html, /data-workflow-activate/);
-  assert.match(html, /<summary>Message and settings<\/summary>/);
-  assert.match(html, /<summary>Advanced details<\/summary>/);
-  assert.doesNotMatch(html, /wf-detail-progress|wf-detail-panel|Make it live|Test preview/);
+  assert.match(html, /data-workflow-view="overview"/);
+  assert.match(html, /data-workflow-view="settings">Settings/);
+  assert.match(html, /data-workflow-panel="settings" hidden/);
+  assert.match(html, /aria-label="More workflow actions"/);
+  assert.doesNotMatch(html, /wf-detail-progress|Make it live|Test preview|<summary>Message and settings/);
 });
 
 test("opened workflow keeps unfinished setup behind its action", () => {
@@ -448,7 +450,7 @@ test("opened workflow keeps unfinished setup behind its action", () => {
   const wf = { id: "quote", title: "Email requests", provider: "gmail", requiredTools: ["gmail"], puzzleComplete: false, active: false };
   const html = context.cardHtml(wf, true);
   assert.match(html, /data-workflow-open-setup>Finish setup/);
-  assert.match(html, /<details class="wf-detail-more wf-detail-setup"><summary>Message and settings/);
+  assert.match(html, /<div class="wf-detail-setup"><div class="workflow-setup-fields"/);
   assert.equal((html.match(/class="workflow-setup-fields"/g) || []).length, 1);
 });
 
