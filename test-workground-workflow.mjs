@@ -196,7 +196,7 @@ test("email-only booking shows an editable confirmation without an SMS field", (
     ],
   });
   const html = context.setupFields(workflow);
-  assert.match(html, /Customer confirmation email copy/);
+  assert.match(html, /Customer confirmation email message/);
   assert.match(html, /data-workflow-config="customerSubject"/);
   assert.match(html, /data-workflow-config="customerBody"/);
   assert.match(html, /data-workflow-config="emailDeliveryMode"/);
@@ -216,7 +216,9 @@ test("lead email workflow exposes editable subject and body", () => {
     ],
   });
   const html = context.setupFields(workflow);
-  assert.match(html, /Lead email copy/);
+  assert.match(html, /Lead email message/);
+  assert.match(html, /AI email draft/);
+  assert.match(html, /Available message details/);
   assert.match(html, /data-workflow-config="subject"/);
   assert.match(html, /data-workflow-config="body"/);
   assert.match(html, /data-workflow-ai="email"/);

@@ -615,6 +615,32 @@
     @media(min-width:901px) and (min-height:700px){.preview .widget-slot{transform:translateY(52px)}}
     @media(prefers-reduced-transparency:reduce){.top,.composer,.starter-picker,.account-menu-panel,.notification-panel,.widget-preview-switch,.account-settings>.fb-gate,.website-overview,.install-choice-card,.website-demo-card,.business-details-card,.account-card,.account-billing-card,.account-details,.security-card,.security-recovery,.support-request-card,.support-history-card,.workflows-page .wf-overview-card,.workflows-page .workflows-empty{background:#fff;backdrop-filter:none;-webkit-backdrop-filter:none}}
   </style>
+  <style id="workflow-detail-editor-polish">
+    .wf-detail-dialog{background:#f7f4f0;border-color:#e8e2db}
+    .wf-detail-header{background:rgba(255,255,255,.97);border-color:#eae5df}
+    .wf-detail-secondary{background:#f7f4f0}
+    .wf-detail-setup[open]>summary{color:#302720}
+    .wf-detail-setup .workflow-setup-fields{gap:18px 20px;padding:7px 0 22px}
+    .wf-detail-setup .workflow-setup-fields>label{display:grid;align-content:start;gap:8px;color:#554b43;font-size:12px;font-weight:700;letter-spacing:0;text-transform:none}
+    .wf-detail-setup .workflow-setup-fields>label input,.wf-detail-setup .workflow-setup-fields>label select{box-sizing:border-box;width:100%;min-height:46px;margin:0;padding:11px 13px;border:1px solid #dfd7cf;border-radius:10px;background:#fff;color:#2e2721;font:500 14px/1.4 Inter,system-ui;box-shadow:0 1px 2px rgba(40,29,22,.025)}
+    .wf-detail-setup input:focus,.wf-detail-setup textarea:focus,.wf-detail-setup select:focus{outline:none!important;border-color:#d97b55!important;box-shadow:0 0 0 3px rgba(217,123,85,.12)!important}
+    .wf-detail-setup .wf-email-draft{padding:21px 22px;border:1px solid #e5ded7;border-radius:16px;background:#fff;box-shadow:0 7px 22px rgba(39,27,19,.035)}
+    .wf-detail-setup .wf-email-draft>summary{color:#2c241e;font-size:16px;font-weight:750;letter-spacing:-.025em}
+    .wf-detail-setup .wf-email-fields{gap:17px;margin-top:19px}
+    .wf-detail-setup .wf-email-draft label{display:grid;gap:8px;color:#554b43;font-size:12px;font-weight:700;letter-spacing:0;text-transform:none}
+    .wf-detail-setup .wf-email-draft input,.wf-detail-setup .wf-email-draft textarea{box-sizing:border-box;width:100%;min-height:46px;margin:0;padding:11px 13px;border:1px solid #dfd7cf;border-radius:10px;background:#fff;color:#2e2721;font:500 14px/1.5 Inter,system-ui;box-shadow:0 1px 2px rgba(40,29,22,.025)}
+    .wf-detail-setup .wf-email-draft textarea{min-height:150px;resize:vertical}
+    .wf-detail-setup .wf-ai-compose{gap:10px;padding:8px;border:1px solid #e8e1da;border-radius:12px;background:#faf8f5}
+    .wf-detail-setup .wf-ai-compose input{flex:1;min-width:0;border:0;background:transparent;box-shadow:none;font-weight:450}
+    .wf-detail-setup .wf-ai-compose input:focus{box-shadow:none!important;border:0!important}
+    .wf-detail-setup .wf-ai-compose button{min-height:38px;padding:0 14px;border:1px solid #dbd0c7;border-radius:9px;background:#fff;color:#362a21;font-size:12px;font-weight:750}
+    .wf-detail-setup .wf-compose-actions button[data-workflow-preview]{padding:10px 15px;border-radius:9px;background:#29211b;border-color:#29211b;font-size:12px}
+    .wf-detail-setup .wf-email-hint{margin:0;color:#74685e;font-size:12px;line-height:1.5}
+    .wf-detail-setup .wf-token-help{border-top:1px solid #eee9e3;padding-top:12px;color:#766a60;font-size:11px;line-height:1.55}
+    .wf-detail-setup .wf-token-help>summary{width:max-content;cursor:pointer;color:#605349;font-size:12px;font-weight:700}
+    .wf-detail-setup .wf-token-help>span{display:block;margin-top:9px;overflow-wrap:anywhere}
+    @media(max-width:720px){.wf-detail-setup .workflow-setup-fields{grid-template-columns:1fr;gap:15px}.wf-detail-setup .wf-email-draft{padding:18px}.wf-detail-setup .wf-ai-compose{display:grid}.wf-detail-setup .wf-ai-compose button{width:100%}}
+  </style>
 </head>
 <body>
   <main class="shell" data-build="jack-blank-1">
@@ -1092,7 +1118,7 @@ function connectCardLabel(kind){return kind==='crm'?'CRM / lead destination':kin
       const subject=wf.config?.[subjectKey]||mappedValue(mapped?.fields?.subject)||(mapped?'':defaultSubject);
       const bodyBinding=mapped?.fields?.body||mapped?.fields?.Body||mapped?.fields?.message||mapped?.fields?.markdown_text||mapped?.fields?.text;
       const body=wf.config?.[bodyKey]||mappedValue(bodyBinding)||(mapped?'':defaultBody);
-      return `<details class="wf-email-draft" open><summary>${title} copy</summary><div class="wf-email-fields">${channel==='email'?`<label>Subject<input data-workflow-config="${subjectKey}" maxlength="180" value="${esc(subject)}" placeholder="Paste an email subject"></label>`:''}<label>Message<textarea data-workflow-config="${bodyKey}" maxlength="${channel==='sms'?'600':'4000'}" placeholder="Paste the message you want Rose to use">${esc(body)}</textarea></label><div class="wf-ai-compose"><input data-workflow-ai-instruction="${channel}" maxlength="600" placeholder="Optional: tell Rose the tone or what to include"><button type="button" data-workflow-ai="${channel}">Draft with Rose</button></div>${channel==='slack'?'':`<div class="wf-compose-actions"><button type="button" data-workflow-preview="${channel}">Preview ${channel==='email'?'email':'text'}</button></div>`}<small>Paste your own wording or generate a draft, then edit it here. ${mapped?'A blank field keeps the action’s current mapping.':channel==='email'?'':'Leave this empty to keep the current automatic summary.'} Available details: ${fields}. Run the safe test after changes.</small></div></details>`;
+      return `<details class="wf-email-draft" open><summary>${title} message</summary><div class="wf-email-fields">${channel==='email'?`<label>Subject<input data-workflow-config="${subjectKey}" maxlength="180" value="${esc(subject)}" placeholder="Email subject"></label>`:''}<label>Message<textarea data-workflow-config="${bodyKey}" maxlength="${channel==='sms'?'600':'4000'}" placeholder="Write the message Rose should use">${esc(body)}</textarea></label><div class="wf-ai-compose"><input data-workflow-ai-instruction="${channel}" maxlength="600" placeholder="Describe the tone or what to include"><button type="button" data-workflow-ai="${channel}">${channel==='email'?'AI email draft':channel==='sms'?'AI text draft':'Draft with Rose'}</button></div>${channel==='slack'?'':`<div class="wf-compose-actions"><button type="button" data-workflow-preview="${channel}">Preview ${channel==='email'?'email':'text'}</button></div>`}<p class="wf-email-hint">${mapped?'A blank field keeps the action’s current mapping.':channel==='email'?'Edit the message or create a draft with Rose.':'Leave this blank to keep the automatic summary.'} Run a safe test after changes.</p><details class="wf-token-help"><summary>Available message details</summary><span>${fields}</span></details></div></details>`;
     }
     function workflowSetupFields(wf){
       const required=[...new Set((wf.requiredTools||[wf.provider]).map(t=>toolMeta(t).slug))],fields=[];
