@@ -734,6 +734,36 @@
     #workflowDetailDialog .wf-detail-activity{margin-bottom:20px}
     @media(max-width:720px){#workflowDetailDialog .wf-detail-nav{padding:0 20px}#workflowDetailDialog .wf-detail-settings-view{padding:21px 20px 28px}#workflowDetailDialog .wf-detail-nav [role="tablist"]{gap:18px}}
   </style>
+  <style id="business-settings-apollo-inspired">
+    .account-settings-panel[data-settings-panel="business"]{gap:0}
+    .business-settings-header{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:16px;padding:0}
+    .business-settings-header h2{margin:0 0 5px}
+    .business-settings-header p{margin:0}
+    .business-settings-action{display:grid;justify-items:end;gap:7px;padding-top:1px}
+    .business-settings-action [data-save-business]{min-height:40px;padding:0 18px;border:0;border-radius:7px;background:#24211e;color:#fff;font-size:13px;font-weight:750;cursor:pointer}
+    .business-settings-action [data-save-business]:hover{background:#39332d}
+    .business-settings-action [data-save-business]:disabled{opacity:.6;cursor:wait}
+    .business-settings-action .account-save-status{max-width:290px;margin:0;color:#667085;font-size:12px;text-align:right;line-height:1.4}
+    .business-settings-action .account-save-status:empty{display:none}
+    .business-settings-tabs{display:flex;gap:26px;margin-top:28px;border-bottom:1px solid #dedfdf}
+    .business-settings-tabs button{min-height:43px;padding:0 2px;border:0;border-bottom:2px solid transparent;background:transparent;color:#6c6965;font:650 13px Inter,system-ui;cursor:pointer}
+    .business-settings-tabs button:hover{color:#272523}
+    .business-settings-tabs button[aria-selected="true"]{border-bottom-color:#25221f;color:#25221f}
+    .business-settings-tabs button:focus-visible{outline:2px solid #d3613b;outline-offset:3px}
+    .account-settings-panel[data-settings-panel="business"] .business-details-card{width:min(680px,100%);margin-top:25px;border:1px solid #e1e2e2;border-radius:10px;background:#fff;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+    .business-details-card .business-details-section{padding:27px 30px 31px;border:0}
+    .business-details-card .business-details-section[hidden]{display:none}
+    .business-details-card .business-details-section-head{margin-bottom:23px}
+    .business-details-card .business-details-section-head h3{font-size:17px;letter-spacing:-.025em}
+    .business-details-card .business-details-section-head p{font-size:12px}
+    .business-details-card .business-details-fields{grid-template-columns:minmax(0,1fr);gap:19px;max-width:570px}
+    .business-details-card .fb-profile-field{gap:7px}
+    .business-details-card .fb-profile-field label{color:#44413e;font-size:12px;font-weight:700}
+    .business-details-card .fb-profile-field input{min-height:44px;border:1px solid #dfe1e1;border-radius:7px;background:#f9f9f8;color:#252320;font-size:14px}
+    .business-details-card .fb-profile-field input:focus{background:#fff;border-color:#88827b;outline:3px solid rgba(208,99,57,.13)}
+    .business-details-card .fb-field-help{margin-top:2px;color:#77726c;font-size:12px}
+    @media(max-width:620px){.business-settings-header{grid-template-columns:1fr}.business-settings-action{justify-items:start}.business-settings-action .account-save-status{text-align:left}.business-settings-tabs{margin-top:19px}.business-details-card .business-details-section{padding:22px 20px 25px}}
+  </style>
 </head>
 <body>
   <main class="shell" data-build="jack-blank-1">
@@ -1609,7 +1639,7 @@ function connectCardLabel(kind){return kind==='crm'?'CRM / lead destination':kin
       if(!accountValidated){openAccountDialog('Sign in to manage business details');return}
       const button=event.currentTarget,status=document.getElementById('businessSaveStatus');
       const field=id=>document.getElementById(id);
-      for(const id of ['businessName','contactEmail','leadDestination']){const input=field(id);if(input&&!input.checkValidity()){input.reportValidity();return}}
+      for(const id of ['businessName','contactEmail','leadDestination']){const input=field(id);if(input&&!input.checkValidity()){document.querySelector(`[data-business-tab="${input.closest('[data-business-pane]')?.dataset.businessPane}"]`)?.click();input.reportValidity();return}}
       const payload={businessName:field('businessName').value.trim(),contactName:field('contactName').value.trim(),contactEmail:field('contactEmail').value.trim(),phone:field('phone').value.trim(),leadDestination:field('leadDestination').value.trim()};
       button.disabled=true;button.textContent='Saving…';status.dataset.state='saving';status.textContent='Saving to your account…';
       try{
@@ -1878,8 +1908,11 @@ function connectCardLabel(kind){return kind==='crm'?'CRM / lead destination':kin
       page.querySelector('.account-release-card')?.remove();
       const business=roseAccountProfile.business||{};
       const card=document.createElement('section');card.className='business-details-card';
-      card.innerHTML=`<div class="business-details-section"><div class="business-details-section-head"><h3>Business information</h3><p>Keep these contact details up to date for your team.</p></div><div class="business-details-fields"><div class="fb-profile-field"><label for="businessName">Business name</label><input id="businessName" maxlength="180" autocomplete="organization" value="${esc(business.businessName||settings.businessName)}" placeholder="Your business" required></div><div class="fb-profile-field"><label for="contactName">Contact name</label><input id="contactName" maxlength="140" autocomplete="name" value="${esc(business.contactName||'')}" placeholder="Your name"></div><div class="fb-profile-field"><label for="contactEmail">Contact email</label><input id="contactEmail" type="email" maxlength="180" autocomplete="email" value="${esc(business.contactEmail||'')}" placeholder="you@example.com"></div><div class="fb-profile-field"><label for="phone">Phone</label><input id="phone" type="tel" maxlength="80" autocomplete="tel" value="${esc(business.phone||'')}" placeholder="+1 555 000 0000"></div></div></div><div class="business-details-section"><div class="business-details-section-head"><h3>Lead delivery</h3><p>Where Rose sends new lead emails.</p></div><div class="business-details-fields single"><div class="fb-profile-field"><label for="leadDestination">Delivery email</label><input id="leadDestination" type="email" maxlength="240" value="${esc(business.leadDestination||'')}" placeholder="leads@example.com" required><small class="fb-field-help">This can be different from your sign-in email.</small></div></div></div><div class="business-details-actions"><button class="fb-save" type="button" data-save-business>${accountValidated?'Save changes':'Sign in to save'}</button><span class="fb-save-status account-save-status" id="businessSaveStatus" role="status" aria-live="polite"></span></div>`;
-      panels.business.append(intro('Business details','Your business contact and lead delivery information.'),card);
+      card.innerHTML=`<div class="business-details-section" data-business-pane="profile" role="tabpanel" id="businessProfilePanel" aria-labelledby="businessProfileTab"><div class="business-details-section-head"><h3>Business profile</h3><p>Information your team uses to manage this workspace.</p></div><div class="business-details-fields"><div class="fb-profile-field"><label for="businessName">Business name</label><input id="businessName" maxlength="180" autocomplete="organization" value="${esc(business.businessName||settings.businessName)}" placeholder="Your business" required></div><div class="fb-profile-field"><label for="contactName">Contact name</label><input id="contactName" maxlength="140" autocomplete="name" value="${esc(business.contactName||'')}" placeholder="Your name"></div><div class="fb-profile-field"><label for="contactEmail">Contact email</label><input id="contactEmail" type="email" maxlength="180" autocomplete="email" value="${esc(business.contactEmail||'')}" placeholder="you@example.com"></div><div class="fb-profile-field"><label for="phone">Phone</label><input id="phone" type="tel" maxlength="80" autocomplete="tel" value="${esc(business.phone||'')}" placeholder="+1 555 000 0000"></div></div></div><div class="business-details-section" data-business-pane="delivery" role="tabpanel" id="businessDeliveryPanel" aria-labelledby="businessDeliveryTab" hidden><div class="business-details-section-head"><h3>Lead delivery</h3><p>New lead emails from Rose go to this address.</p></div><div class="business-details-fields"><div class="fb-profile-field"><label for="leadDestination">Delivery email</label><input id="leadDestination" type="email" maxlength="240" value="${esc(business.leadDestination||'')}" placeholder="leads@example.com" required><small class="fb-field-help">This can be different from your sign-in email.</small></div></div></div>`;
+      const businessHeader=intro('Business details','Manage your company information and lead delivery.');businessHeader.classList.add('business-settings-header');businessHeader.innerHTML+=`<div class="business-settings-action"><button class="fb-save" type="button" data-save-business>${accountValidated?'Save changes':'Sign in to save'}</button><span class="fb-save-status account-save-status" id="businessSaveStatus" role="status" aria-live="polite"></span></div>`;
+      const businessTabs=document.createElement('div');businessTabs.className='business-settings-tabs';businessTabs.setAttribute('role','tablist');businessTabs.setAttribute('aria-label','Business settings');businessTabs.innerHTML='<button type="button" role="tab" id="businessProfileTab" aria-controls="businessProfilePanel" aria-selected="true" data-business-tab="profile">Business profile</button><button type="button" role="tab" id="businessDeliveryTab" aria-controls="businessDeliveryPanel" aria-selected="false" data-business-tab="delivery">Lead delivery</button>';
+      businessTabs.querySelectorAll('[data-business-tab]').forEach(tab=>{tab.tabIndex=tab.dataset.businessTab==='profile'?0:-1;tab.addEventListener('click',()=>{businessTabs.querySelectorAll('[data-business-tab]').forEach(item=>{const selected=item===tab;item.setAttribute('aria-selected',String(selected));item.tabIndex=selected?0:-1});card.querySelectorAll('[data-business-pane]').forEach(pane=>pane.hidden=pane.dataset.businessPane!==tab.dataset.businessTab)});tab.addEventListener('keydown',event=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;event.preventDefault();const tabs=[...businessTabs.querySelectorAll('[data-business-tab]')],index=tabs.indexOf(tab),next=event.key==='Home'?0:event.key==='End'?tabs.length-1:(index+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;tabs[next].click();tabs[next].focus()})});
+      panels.business.append(businessHeader,businessTabs,card);
       const usage=window.__roseVoiceUsage,billing=summary.querySelector('.account-billing-card');
       if(billing){const hasUsage=Number.isFinite(usage?.included);billing.querySelector('.account-meter').hidden=!hasUsage;billing.querySelector('#accountBillingCycle').hidden=!hasUsage}
       panels.account.append(intro('Account & billing','Manage sign-in and get help with your plan.'),summary);
