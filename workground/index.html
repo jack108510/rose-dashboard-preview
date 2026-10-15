@@ -641,6 +641,53 @@
     .wf-detail-setup .wf-token-help>span{display:block;margin-top:9px;overflow-wrap:anywhere}
     @media(max-width:720px){.wf-detail-setup .workflow-setup-fields{grid-template-columns:1fr;gap:15px}.wf-detail-setup .wf-email-draft{padding:18px}.wf-detail-setup .wf-ai-compose{display:grid}.wf-detail-setup .wf-ai-compose button{width:100%}}
   </style>
+  <style id="workflow-detail-product-layout">
+    #workflowDetailDialog{width:min(980px,calc(100vw - 32px));border:1px solid #dfe3e8;border-radius:16px;background:#fff;color:#1d2939;box-shadow:0 28px 80px rgba(16,24,40,.22)}
+    #workflowDetailDialog::backdrop{background:rgba(16,24,40,.5);backdrop-filter:blur(4px)}
+    #workflowDetailDialog .wf-detail-header{padding:22px 32px;border-bottom:1px solid #eaecf0;background:#fff}
+    #workflowDetailDialog .wf-detail-eyebrow{color:#667085;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:none}
+    #workflowDetailDialog .wf-detail-header h2{margin-top:5px;color:#101828;font:700 25px/1.25 Inter,system-ui;letter-spacing:-.035em}
+    #workflowDetailDialog .wf-detail-close{width:34px;height:34px;border:1px solid #eaecf0;border-radius:8px;color:#667085;font-size:20px;line-height:1}
+    #workflowDetailDialog .wf-detail-close:hover{border-color:#d0d5dd;background:#f9fafb;color:#344054}
+    #workflowDetailDialog .wf-detail-body{max-height:calc(100dvh - 104px)}
+    #workflowDetailDialog .wf-detail-overview{padding:23px 32px 0;background:#fff}
+    #workflowDetailDialog .wf-detail-overview .wf-state{padding:6px 10px;border:1px solid #f5d9b5;border-radius:6px;background:#fffbeb;color:#805500;font:700 11px/1.2 Inter,system-ui;letter-spacing:0;text-transform:none}
+    #workflowDetailDialog .wf-detail-overview .wf-state.active{border-color:#b7e4c7;background:#ecfdf3;color:#067647}
+    #workflowDetailDialog .wf-detail-overview .wf-state.warn{border-color:#f9d8a8;background:#fffaeb;color:#9a6700}
+    #workflowDetailDialog .wf-detail-overview .wf-state i{width:7px;height:7px}
+    #workflowDetailDialog .wf-detail-canvas{padding:21px 32px 27px;border-bottom:1px solid #eaecf0;background:#fff}
+    #workflowDetailDialog .wf-detail-canvas-head{margin:0 0 14px;color:#475467;font:700 13px Inter,system-ui;letter-spacing:0;text-transform:none}
+    #workflowDetailDialog .wf-detail-canvas .wf-flow{gap:12px;padding:0;overflow-x:auto}
+    #workflowDetailDialog .wf-detail-canvas .wf-step{display:grid;grid-template-columns:44px minmax(0,1fr);grid-template-rows:auto auto;align-content:center;justify-items:start;gap:3px 12px;min-height:116px;padding:18px 16px;border:1px solid #e4e7ec;border-radius:11px;background:#fff;box-shadow:none;text-align:left}
+    #workflowDetailDialog .wf-detail-canvas .wf-step:not(:last-child):after{top:50%;right:-19px;transform:translateY(-50%);width:25px;height:25px;border:1px solid #e4e7ec;border-radius:50%;background:#fff;color:#98a2b3;font:600 17px/1 Inter,system-ui;box-shadow:none}
+    #workflowDetailDialog .wf-detail-canvas .wf-step-number{top:13px;right:14px;left:auto;color:#98a2b3;font:650 10px Inter,system-ui}
+    #workflowDetailDialog .wf-detail-canvas .wf-node{grid-row:1/3;width:43px;height:43px;margin:0;border-radius:10px;box-shadow:none}
+    #workflowDetailDialog .wf-detail-canvas .wf-node svg{width:19px;height:19px}
+    #workflowDetailDialog .wf-detail-canvas .wf-node img{width:29px;height:29px}
+    #workflowDetailDialog .wf-detail-canvas .wf-step-ai .wf-node img{width:32px;height:32px;filter:none}
+    #workflowDetailDialog .wf-detail-canvas .wf-step small{grid-column:2;margin:0;color:#667085;font:700 11px/1.3 Inter,system-ui;letter-spacing:0;text-transform:none}
+    #workflowDetailDialog .wf-detail-canvas .wf-step b{grid-column:2;max-width:none;color:#344054;font:600 12px/1.45 Inter,system-ui;-webkit-line-clamp:3}
+    #workflowDetailDialog .wf-detail-focus{margin:22px 32px 16px;padding:17px 20px;border:1px solid #e4e7ec;border-radius:11px;background:#f9fafb}
+    #workflowDetailDialog .wf-detail-focus-copy{gap:4px}
+    #workflowDetailDialog .wf-detail-focus-copy span{color:#667085;font:700 11px Inter,system-ui;letter-spacing:0;text-transform:none}
+    #workflowDetailDialog .wf-detail-focus-copy strong{color:#344054;font:600 13px/1.4 Inter,system-ui}
+    #workflowDetailDialog .workflow-actions .primary{min-height:40px;border:1px solid #1d2939;border-radius:8px;background:#1d2939;color:#fff;box-shadow:none;font:650 12px Inter,system-ui}
+    #workflowDetailDialog .workflow-actions .primary:hover{background:#344054;border-color:#344054}
+    #workflowDetailDialog .wf-detail-secondary{padding:0 32px 25px;background:#fff}
+    #workflowDetailDialog .wf-detail-more{border-color:#eaecf0}
+    #workflowDetailDialog .wf-detail-more>summary{min-height:54px;color:#344054;font:650 13px Inter,system-ui}
+    #workflowDetailDialog .wf-detail-more>summary:after{color:#98a2b3;font-size:17px}
+    #workflowDetailDialog .wf-detail-setup .workflow-setup-fields{gap:18px 20px;padding:10px 0 24px}
+    #workflowDetailDialog .wf-detail-setup .wf-email-draft{border-color:#e4e7ec;box-shadow:none}
+    #workflowDetailDialog .wf-detail-setup .wf-email-draft>summary{color:#1d2939;font:700 15px Inter,system-ui;letter-spacing:-.01em}
+    #workflowDetailDialog .wf-detail-setup .workflow-setup-fields>label,#workflowDetailDialog .wf-detail-setup .wf-email-draft label{color:#475467;font-size:12px}
+    #workflowDetailDialog .wf-detail-setup input,#workflowDetailDialog .wf-detail-setup select,#workflowDetailDialog .wf-detail-setup textarea{border-color:#d0d5dd;border-radius:8px;color:#344054}
+    #workflowDetailDialog .wf-detail-setup .wf-ai-compose{border-color:#e4e7ec;border-radius:8px;background:#f9fafb}
+    #workflowDetailDialog .wf-detail-setup .wf-ai-compose button{border-color:#d0d5dd;border-radius:7px;color:#344054}
+    #workflowDetailDialog .wf-detail-setup .wf-compose-actions button[data-workflow-preview]{border-radius:8px;background:#fff;border-color:#d0d5dd;color:#344054}
+    #workflowDetailDialog .wf-detail-setup .wf-email-hint,#workflowDetailDialog .wf-detail-setup .wf-token-help{color:#667085}
+    @media(max-width:720px){#workflowDetailDialog{width:calc(100vw - 20px);border-radius:12px}#workflowDetailDialog .wf-detail-header{padding:18px 20px}#workflowDetailDialog .wf-detail-header h2{font-size:20px}#workflowDetailDialog .wf-detail-overview{padding:18px 20px 0}#workflowDetailDialog .wf-detail-canvas{padding:18px 20px 22px}#workflowDetailDialog .wf-detail-canvas .wf-flow{grid-template-columns:1fr;gap:11px}#workflowDetailDialog .wf-detail-canvas .wf-step{min-height:94px;padding:14px}#workflowDetailDialog .wf-detail-canvas .wf-step:not(:last-child):after{top:auto;right:auto;bottom:-19px;left:24px;transform:rotate(90deg)}#workflowDetailDialog .wf-detail-focus{margin:19px 20px 13px}#workflowDetailDialog .wf-detail-secondary{padding:0 20px 20px}}
+  </style>
 </head>
 <body>
   <main class="shell" data-build="jack-blank-1">
