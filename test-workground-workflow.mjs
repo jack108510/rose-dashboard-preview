@@ -411,6 +411,27 @@ test("delivery confirmation advances from sample email to full review", () => {
   assert.doesNotMatch(received, /Review your full workflow|Starts when|Email goes to|Advanced routing|Test preview/);
 });
 
+test("opened workflow keeps the flow and next action in view", () => {
+  Object.assign(context, {
+    isConnected: () => true,
+    workflowStatus: () => ({ tone: "ready", label: "Ready to publish", next: "Review the flow, then turn it on." }),
+    workflowReadyToPublish: () => true,
+    workflowNextSampleChannel: () => "",
+    workflowSetupFields: () => '<div class="workflow-setup-fields"><label>Email<input></label></div>',
+    workflowPlanHtml: () => '<details class="wf-plan"><summary>Advanced routing</summary></details>',
+    workflowFlowHtml: () => '<div class="wf-flow">Rose → Gmail</div>',
+    workflowNotes: new Map(),
+  });
+  const wf = { id: "quote", title: "Email requests", provider: "gmail", requiredTools: ["gmail"], puzzleComplete: true, active: false, testEvents: [{ ok: true, mode: "runtime_dry_run" }] };
+  const html = context.cardHtml(wf, true);
+  assert.match(html, /class="wf-detail-canvas"/);
+  assert.match(html, /Rose → Gmail/);
+  assert.match(html, /data-workflow-activate/);
+  assert.match(html, /<summary>Message and settings<\/summary>/);
+  assert.match(html, /<summary>Advanced details<\/summary>/);
+  assert.doesNotMatch(html, /wf-detail-progress|wf-detail-panel|Make it live|Test preview/);
+});
+
 test("Builder asks for one connection at a time across a multi-app workflow", () => {
   Object.assign(context, {
     isConnected: slug => slug === "hubspot",
