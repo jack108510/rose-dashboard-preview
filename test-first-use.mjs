@@ -117,3 +117,21 @@ test('preview task opens Chat and puts the visitor input in focus', () => {
   context.openChatPreview();
   assert.deepEqual(calls, ['open', 'chat', 'focus']);
 });
+
+test('the demo opens with a useful customer greeting', () => {
+  const initStart = source.indexOf('    if(swiftDemo){\n      state.name=');
+  const initEnd = source.indexOf('    if(swiftDemo){\n      document.body', initStart);
+  const copyStart = source.indexOf('    function applyWidgetCopyToPreview(){');
+  const copyEnd = source.indexOf('    function wireWidgetTextEditing(){', copyStart);
+  assert.ok(initStart >= 0 && initEnd > initStart && copyStart >= 0 && copyEnd > copyStart);
+  const message = { textContent: '' };
+  const context = {
+    swiftDemo: true,
+    state: { widgetCopy: {} },
+    window: { __roseSwiftlineWidgetPreviewMode: 'draft' },
+    document: { querySelector: () => message },
+  };
+  vm.runInNewContext(`${source.slice(initStart, initEnd)}\n${source.slice(copyStart, copyEnd)}\napplyWidgetCopyToPreview()`, context);
+  assert.match(message.textContent, /answer questions and help you prepare a locate request/i);
+  assert.match(message.textContent, /nothing is sent or booked/i);
+});
