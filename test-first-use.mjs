@@ -9,11 +9,9 @@ const actionEnd = source.indexOf('    starterButton.addEventListener(', actionSt
 assert.ok(actionStart >= 0 && actionEnd > actionStart);
 
 function firstUseContext() {
-  const listeners = {};
   const calls = [];
   const input = { value: '', focus: () => calls.push('focus'), dispatchEvent: () => calls.push('input') };
   const context = {
-    messages: { addEventListener: (event, handler) => { listeners[event] = handler; } },
     input,
     modeText: { textContent: '' },
     showSection: section => calls.push(section),
@@ -22,14 +20,14 @@ function firstUseContext() {
     Event: class { constructor(type) { this.type = type; } },
   };
   vm.runInNewContext(`${source.slice(actionStart, actionEnd)}\nthis.startWorkflowFromGallery=startWorkflowFromGallery`, context);
-  return { context, listeners, calls, input };
+  return { context, calls, input };
 }
 
-test('Builder first steps prepare an editable request without sending it', () => {
-  const { listeners, calls, input } = firstUseContext();
-  listeners.click({ target: { closest: () => ({ dataset: { emptyAction: 'greeting' } }) } });
-  assert.match(input.value, /opening greeting/i);
-  assert.deepEqual(calls, ['input', 'focus']);
+test('empty Builder returns to the simple prompt without starter actions', () => {
+  const html = source.match(/<div class="thread" id="messages">([\s\S]*?)<\/div><\/div>/)?.[1] || '';
+  assert.match(html, /What should Rose help with\?/);
+  assert.doesNotMatch(html, /data-empty-action|empty-actions/);
+  assert.match(source, /function emptyPromptHtml\(\)\{return `<div class="empty"/);
 });
 
 test('New workflow opens examples and preserves an unfinished Builder request', () => {
