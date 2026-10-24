@@ -64,38 +64,10 @@ test('Choosing a workflow example leaves its request in the composer for review'
   assert.equal(context.modeText.textContent, 'Review workflow request');
 });
 
-test('setup path follows the account release and website state', () => {
-  const start = source.indexOf('    function renderSetupPath(){');
-  const end = source.indexOf("    document.getElementById('setupPathActions')?.addEventListener", start);
-  assert.ok(start >= 0 && end > start);
-  const classes = [];
-  const elements = {
-    setupPath: { hidden: true, closest: () => ({ classList: { toggle: (...args) => classes.push(args) } }) },
-    setupPathTitle: { textContent: '' },
-    setupPathText: { textContent: '' },
-    setupPathActions: { innerHTML: '' },
-  };
-  const context = {
-    document: { getElementById: id => elements[id] },
-    accountValidated: true,
-    swiftDemo: false,
-    currentSection: 'Appearance',
-    roseAccountProfile: { published: null },
-    accountInstallState: () => ({ connected: false }),
-  };
-  vm.runInNewContext(`${source.slice(start, end)}\nthis.renderSetupPath=renderSetupPath`, context);
-  context.renderSetupPath();
-  assert.equal(elements.setupPath.hidden, false);
-  assert.match(elements.setupPathText.textContent, /test a visitor question/i);
-  assert.match(elements.setupPathActions.innerHTML, /data-setup-action="test"/);
-
-  context.roseAccountProfile.published = { publishedAt: '2026-10-18T00:00:00Z' };
-  context.renderSetupPath();
-  assert.match(elements.setupPathActions.innerHTML, /data-setup-action="install"/);
-  context.accountInstallState = () => ({ connected: true });
-  context.renderSetupPath();
-  assert.equal(elements.setupPath.hidden, true);
-  assert.deepEqual(classes.at(-1), ['has-setup-path', false]);
+test('Builder has no full-width setup status strip; connection remains in Settings', () => {
+  assert.doesNotMatch(source, /id="setupPath"|has-setup-path|renderSetupPath/);
+  assert.match(source, /Connect Rose to your website/);
+  assert.match(source, /data-check-install/);
 });
 
 test('preview task opens Chat and puts the visitor input in focus', () => {
