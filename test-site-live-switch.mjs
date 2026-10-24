@@ -36,7 +36,7 @@ test('switch reflects the saved account state and stays unavailable without serv
   const active = setup(true, () => { throw Error('should not fetch'); });
   active.context.renderSiteLiveSwitch();
   assert.equal(active.button.disabled, false);
-  assert.equal(active.label.textContent, 'Site on');
+  assert.equal(active.label.textContent, 'Widget on');
   assert.equal(active.attributes['aria-checked'], 'true');
 });
 
