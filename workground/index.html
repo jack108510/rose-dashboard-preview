@@ -1511,7 +1511,8 @@ function connectCardLabel(kind){return kind==='crm'?'CRM / lead destination':kin
       const supported=typeof roseAccountProfile.widgetActive==='boolean',active=roseAccountProfile.widgetActive===true;
       button.disabled=!supported||siteLiveSwitchSaving;
       button.setAttribute('aria-checked',String(active));
-      button.querySelector('#siteLiveSwitchLabel').textContent=supported?(active?'Widget on':'Widget off'):'Switch unavailable';
+      const connected=accountInstallState().connected;
+      button.querySelector('#siteLiveSwitchLabel').textContent=supported?(active?(connected?'Widget on':'On after install'):'Widget off'):'Switch unavailable';
       button.title=!supported?'The website visibility setting is unavailable right now.':siteLiveSwitchSaving?'Saving website visibility…':active?'Rose is enabled where installed. Turn off to hide it without removing the install code.':'Rose is hidden for new visits. Turn on to show it where installed.';
     }
     async function toggleSiteLiveSwitch(){
