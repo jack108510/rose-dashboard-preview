@@ -777,8 +777,23 @@
     .business-details-card .fb-field-help{margin-top:2px;color:#77726c;font-size:12px}
     @media(max-width:620px){.business-settings-header{grid-template-columns:1fr}.business-settings-action{justify-items:start}.business-settings-action .account-save-status{text-align:left}.business-settings-tabs{margin-top:19px}.business-details-card .business-details-section{padding:22px 20px 25px}}
   </style>
+
+  <style id="desktop-only-gate-style">
+    .dg-gate{display:none}
+    @media (max-width:900px){
+      html,body{background:#17100d!important;overflow:hidden!important}
+      body>*:not(.dg-gate){display:none!important}
+      .dg-gate{display:flex;position:fixed;inset:0;z-index:2147483000;flex-direction:column;justify-content:center;padding:36px 30px;background:#17100d;color:#fff9f2;font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif}
+      .dg-mark{margin:0 0 26px;color:#ff672c;font-size:30px;line-height:1}
+      .dg-eyebrow{margin:0 0 14px;color:#ff9d70;font-size:11px;font-weight:750;letter-spacing:.18em;text-transform:uppercase}
+      .dg-gate h1{margin:0;max-width:340px;font-family:Georgia,"Times New Roman",serif;font-size:38px;font-weight:400;line-height:1.08;letter-spacing:-.03em;color:#fff9f2}
+      .dg-copy{margin:18px 0 0;max-width:320px;color:#cdbfb4;font-size:15px;line-height:1.6}
+      .dg-rule{width:34px;height:1px;margin:26px 0 0;background:#ff672c}
+    }
+  </style>
 </head>
 <body>
+  <div class="dg-gate" id="desktopGate" role="note" aria-label="Desktop only"><p class="dg-mark" aria-hidden="true">✳</p><p class="dg-eyebrow">ROSE WORKGROUND</p><h1>This one needs a bigger screen.</h1><p class="dg-copy">Rose Workground is a desktop tool, so it is not available on phones or small screens. Open this page on a computer to sign in and get to work.</p><div class="dg-rule" aria-hidden="true"></div></div>
   <main class="shell" data-build="jack-blank-1">
     <header class="top">
       <div class="brand"><img class="brand-logo" src="logos/wildrose.png" alt="Wildrose"><span>Rose Workground</span></div>
