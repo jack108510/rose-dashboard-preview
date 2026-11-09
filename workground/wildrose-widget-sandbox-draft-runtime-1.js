@@ -70,7 +70,7 @@
       <header class="wr-head"><div class="wr-top"><div class="wr-brand"><div class="wr-mark"><img src="${cfg.logo}" alt=""></div><div class="wr-title"><h3>${cfg.title}</h3><small>${cfg.subtitle}</small></div></div><button class="wr-close" aria-label="Close">×</button></div></header>
       <div class="wr-tabs" role="tablist"><button class="wr-tab" data-view="chat">Chat</button><button class="wr-tab active" data-view="voice">Voice</button></div>
       <main class="wr-view" data-view="chat"><div class="wr-chat-log"><div class="wr-row"><div class="wr-avatar"><img src="${cfg.logo}" alt=""></div><div class="wr-msg bot">${cfg.greeting}</div></div></div></main>
-      <main class="wr-view active" data-view="voice"><div class="wr-voice"><div><div class="wr-orb"></div><div class="wr-status">Ready when you are</div><div class="wr-note">Tap start and speak naturally.</div><button class="wr-primary wr-start-voice">Start talking</button><button class="wr-secondary wr-end-voice" style="display:none">End</button></div></div></main>
+      <main class="wr-view active" data-view="voice"><div class="wr-voice"><div><div class="wr-orb"></div><div class="wr-status">Ready when you are</div><div class="wr-note">Tap start and speak naturally.</div><button class="wr-primary wr-start-voice">Start talking</button><button class="wr-secondary wr-end-voice" style="display:none">End</button><div class="wr-live-transcript" aria-live="polite"><div class="wr-live-label">Conversation</div><div class="wr-live-lines"></div></div></div></div></main>
       <div class="wr-compose"><input class="wr-input" placeholder="${cfg.placeholder}"><button class="wr-send" aria-label="Send"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12h12M12 7l5 5-5 5" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div><div class="wr-toast"></div>
     </section>`;
   const mount = cfg.mount ? document.querySelector(cfg.mount) : null;
@@ -190,6 +190,18 @@
     }
     clearVoiceTranscriptBubbles();
     groups.forEach(g => addVoiceParagraph(g.speaker, g.parts.join("\n\n")));
+    const live = root.querySelector('.wr-live-transcript');
+    const lines = live?.querySelector('.wr-live-lines');
+    if (lines) {
+      lines.replaceChildren();
+      for (const group of groups.slice(-2)) {
+        const line = document.createElement('div');
+        line.className = `wr-live-line ${group.speaker}`;
+        line.textContent = `${group.speaker === 'user' ? 'You' : 'Rose'}: ${group.parts.join(' ').slice(0, 240)}`;
+        lines.append(line);
+      }
+      live.classList.toggle('has-lines', groups.length > 0);
+    }
   }
   function appendVoiceTranscript(role, text, partial = false) {
     const clean = String(text || "").trim();
@@ -258,15 +270,18 @@
     const status = $(".wr-status"), note = $(".wr-note"), orb = $(".wr-orb"), startBtn = $(".wr-start-voice"), endBtn = $(".wr-end-voice");
     if (voiceBusy) return;
     voiceBusy = true;
+    root.querySelector('.wr-live-lines')?.replaceChildren();
+    root.querySelector('.wr-live-transcript')?.classList.remove('has-lines');
     startBtn.disabled = true;
     try { retellClient?.stopCall(); } catch {}
     try {
       status.textContent = "Connecting…";
-      const [{ RetellWebClient }, call] = await Promise.all([
-        import("https://esm.sh/retell-client-js-sdk@2.0.7"),
-        api("/api/voice/start", { page: location.href, businessId: cfg.businessId, ownerEmail: cfg.ownerEmail, businessName: cfg.businessName, website: cfg.website, businessContext: cfg.businessContext, services: cfg.services, title: cfg.title, assistantName: cfg.title, greetingMessage: cfg.greeting, previewMode: cfg.inline || !cfg.loadPublished })
+      const [{ RetellClient }, { RoseV3VoiceClient }, call] = await Promise.all([
+        import("https://esm.sh/retell-client-js-sdk@3.0.4"),
+        import(`${String(cfg.apiBase || "").replace(/\/+$/, "")}/api/voice/start?module=voice`),
+        api("/api/voice/start", { page: location.href, businessId: cfg.businessId, ownerEmail: cfg.ownerEmail, businessName: cfg.businessName, website: cfg.website, businessContext: cfg.businessContext, services: cfg.services, title: cfg.title, assistantName: cfg.title, greetingMessage: cfg.greeting, previewMode: cfg.inline || !cfg.loadPublished, retellClientVersion: 3 })
       ]);
-      retellClient = new RetellWebClient();
+      retellClient = new RoseV3VoiceClient(RetellClient, cfg.apiBase);
       let speechReleaseTimer = null;
       const SPEECH_RELEASE_DELAY = 1150;
       const clearSpeechRelease = () => {
@@ -299,9 +314,10 @@
       retellClient.on("agent_stop_talking", easeBackToListening);
       retellClient.on("user_start_talking", setListening);
       retellClient.on("user_stop_talking", () => { clearSpeechRelease(); panel.classList.remove("speaking"); status.textContent = "Thinking"; orb.classList.remove("listening", "speaking"); });
+      retellClient.on("transcript_error", () => { note.textContent = "Live transcript is unavailable. Voice is still connected."; });
       retellClient.on("call_ended", () => { voiceBusy = false; startBtn.disabled = false; clearSpeechRelease(); panel.classList.remove("speaking"); status.textContent = "Call ended"; note.textContent = "Start another conversation anytime."; orb.classList.remove("live", "listening", "speaking"); startBtn.style.display = "inline-block"; endBtn.style.display = "none"; });
       retellClient.on("error", err => { voiceBusy = false; startBtn.disabled = false; clearSpeechRelease(); panel.classList.remove("speaking"); console.error(err); status.textContent = "Voice connection failed"; note.textContent = "Please check microphone permission or use chat."; orb.classList.remove("live", "listening", "speaking"); startBtn.style.display = "inline-block"; endBtn.style.display = "none"; });
-      await retellClient.startCall({ accessToken: call.accessToken });
+      await retellClient.startCall({ accessToken: call.accessToken, callId: call.callId, transport: call.transport, iceServers: call.ice_servers, monitorToken: call.monitorToken });
     } catch (err) {
       voiceBusy = false;
       startBtn.disabled = false;
