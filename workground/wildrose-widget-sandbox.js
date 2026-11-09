@@ -206,7 +206,7 @@
   }
   async function ensureChat() {
     if (chatId) return chatId;
-    const data = await api("/api/chat/start", { page: location.href, businessId: cfg.businessId, ownerEmail: cfg.ownerEmail, businessName: cfg.businessName, website: cfg.website, businessContext: cfg.businessContext, services: cfg.services, title: cfg.title, assistantName: cfg.title, greetingMessage: cfg.greeting, previewMode: cfg.inline || !cfg.loadPublished });
+    const data = await api("/api/chat/start", { page: location.href, businessId: cfg.businessId, ownerEmail: cfg.ownerEmail, businessName: cfg.businessName, website: cfg.website, businessContext: cfg.businessContext, services: cfg.services, title: cfg.title, assistantName: cfg.title, greetingMessage: cfg.greeting, previewMode: cfg.inline || !cfg.loadPublished, retellClientVersion: 3 });
     chatId = data.chatId;
     return chatId;
   }
@@ -236,11 +236,12 @@
     try { retellClient?.stopCall(); } catch {}
     try {
       status.textContent = "Connecting…";
-      const [{ RetellWebClient }, call] = await Promise.all([
-        import("https://esm.sh/retell-client-js-sdk@2.0.7"),
-        api("/api/voice/start", { page: location.href, businessId: cfg.businessId, ownerEmail: cfg.ownerEmail, businessName: cfg.businessName, website: cfg.website, businessContext: cfg.businessContext, services: cfg.services, title: cfg.title, assistantName: cfg.title, greetingMessage: cfg.greeting, previewMode: cfg.inline || !cfg.loadPublished })
+      const [{ RetellClient }, { RoseV3VoiceClient }, call] = await Promise.all([
+        import("https://esm.sh/retell-client-js-sdk@3.0.4"),
+        import(`${String(cfg.apiBase || "").replace(/\/+$/, "")}/api/voice/start?module=voice`),
+        api("/api/voice/start", { page: location.href, businessId: cfg.businessId, ownerEmail: cfg.ownerEmail, businessName: cfg.businessName, website: cfg.website, businessContext: cfg.businessContext, services: cfg.services, title: cfg.title, assistantName: cfg.title, greetingMessage: cfg.greeting, previewMode: cfg.inline || !cfg.loadPublished, retellClientVersion: 3 })
       ]);
-      retellClient = new RetellWebClient();
+      retellClient = new RoseV3VoiceClient(RetellClient, cfg.apiBase);
       let speechReleaseTimer = null;
       const SPEECH_RELEASE_DELAY = 1150;
       const clearSpeechRelease = () => {
@@ -273,9 +274,10 @@
       retellClient.on("agent_stop_talking", easeBackToListening);
       retellClient.on("user_start_talking", setListening);
       retellClient.on("user_stop_talking", () => { clearSpeechRelease(); panel.classList.remove("speaking"); status.textContent = "Thinking"; orb.classList.remove("listening", "speaking"); });
+      retellClient.on("transcript_error", () => { note.textContent = "Live transcript is unavailable. Voice is still connected."; });
       retellClient.on("call_ended", () => { voiceBusy = false; startBtn.disabled = false; clearSpeechRelease(); panel.classList.remove("speaking"); status.textContent = "Call ended"; note.textContent = "Start another conversation anytime."; orb.classList.remove("live", "listening", "speaking"); startBtn.style.display = "inline-block"; endBtn.style.display = "none"; });
       retellClient.on("error", err => { voiceBusy = false; startBtn.disabled = false; clearSpeechRelease(); panel.classList.remove("speaking"); console.error(err); status.textContent = "Voice connection failed"; note.textContent = "Please check microphone permission or use chat."; orb.classList.remove("live", "listening", "speaking"); startBtn.style.display = "inline-block"; endBtn.style.display = "none"; });
-      await retellClient.startCall({ accessToken: call.accessToken });
+      await retellClient.startCall({ accessToken: call.accessToken, callId: call.callId, transport: call.transport, iceServers: call.ice_servers, monitorToken: call.monitorToken });
     } catch (err) {
       voiceBusy = false;
       startBtn.disabled = false;
